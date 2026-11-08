@@ -1,0 +1,15 @@
+# Design/planning docs and mocks are not part of the site
+docs/
+
+# Temporary and generated files
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+*.log
+*.tmp
+*.swp
+*~
+.DS_Store
+.claude/
