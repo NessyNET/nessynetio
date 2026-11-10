@@ -1,0 +1,15 @@
+---
+// Decorative shell prompt fragment (ux 7.8). Never announced: state goes through the live region instead.
+interface Props {
+  /** The command after the prompt, e.g. `ls -l ~`. */
+  cmd: string;
+}
+
+const { cmd } = Astro.props;
+---
+<span class="prompt" aria-hidden="true"><span class="p">$</span> {cmd}</span>
+<style>
+  .p {
+    color: var(--accent, var(--green));
+  }
+</style>

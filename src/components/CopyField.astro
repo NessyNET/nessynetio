@@ -1,0 +1,58 @@
+---
+// Code field with a copy button (ux 7.16). Markup only: the behaviour is attached by the copy script (025).
+import { COPY_LABEL, copyName } from '../lib/strings.ts';
+
+interface Props {
+  /** Exact text to show and copy. */
+  value: string;
+  /** What is copied, for the accessible name: `Copy {what}`. */
+  what: string;
+}
+
+const { value, what } = Astro.props;
+---
+<div class="copyrow">
+  <code>{value}</code>
+  <button class="copy" type="button" data-copy={value} data-js-only aria-label={copyName(what)}><span data-label>{COPY_LABEL}</span></button>
+</div>
+<style>
+  .copyrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 6px 6px 12px;
+    margin: 8px 0;
+  }
+  code {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--fg-bright);
+  }
+  .copy {
+    border: 1px solid var(--control-line);
+    background: var(--bg-light);
+    color: var(--primary);
+    border-radius: 4px;
+    padding: 0 12px;
+    min-height: 40px;
+    min-width: 10ch;
+  }
+  .copy:hover {
+    background: var(--selection);
+  }
+  .copy[data-state='copied'] {
+    background: var(--primary);
+    color: var(--bg-dark);
+    border-color: var(--primary);
+  }
+  .copy[data-state='failed'] {
+    background: var(--red);
+    color: var(--bg-dark);
+    border-color: var(--red);
+  }
+</style>

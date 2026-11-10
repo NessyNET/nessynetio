@@ -1,0 +1,23 @@
+---
+// `[active]` / `[retired]` (ux 5.3, R15): the word is always present, the brackets are dim and hidden from assistive tech.
+interface Props {
+  status: 'active' | 'retired';
+}
+
+const { status } = Astro.props;
+---
+<span class={`st st-${status}`}><span class="br" aria-hidden="true">[</span>{status}<span class="br" aria-hidden="true">]</span></span>
+<style>
+  .st {
+    white-space: nowrap;
+  }
+  .st-active {
+    color: var(--s-active);
+  }
+  .st-retired {
+    color: var(--s-retired);
+  }
+  .br {
+    color: var(--text-dim);
+  }
+</style>

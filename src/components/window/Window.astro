@@ -1,0 +1,36 @@
+---
+// Window frame (ux 7.4). Frame look lives in base.css (`.win`, `.tb`, `.tt`, `.tbm`, `.body`, `.cmdline`).
+import type { CategoryAccent } from '../../lib/palette.ts';
+import Prompt from './Prompt.astro';
+
+interface Props {
+  /** Key of the window: renders `section#sec-{prefix}-{id}` labelled by its title `#{prefix}-{id}`. */
+  id: string;
+  title: string;
+  /** `p` on the window that holds the page's `h1` (ux 7.4). */
+  titleTag?: 'h2' | 'p';
+  accent?: CategoryAccent | 'primary';
+  /** Right-hand title bar text, in `text-dim`. */
+  meta?: string;
+  /** Decorative command shown as the first body line (`cat INSTALL.md`). */
+  cmd?: string;
+  /** `w` for page windows (`sec-w-*`), `bm` for bookmark groups (`sec-bm-*`). */
+  idPrefix?: 'w' | 'bm';
+  class?: string;
+}
+
+const { id, title, titleTag = 'h2', accent, meta, cmd, idPrefix = 'w', class: className } = Astro.props;
+const Title = titleTag;
+const titleId = `${idPrefix}-${id}`;
+const classes = ['win', accent === undefined ? undefined : `accent-${accent}`, className].filter(Boolean).join(' ');
+---
+<section class={classes} id={`sec-${titleId}`} aria-labelledby={titleId}>
+  <div class="tb">
+    <Title id={titleId} class="tt">{title}</Title>
+    {meta !== undefined && <span class="tbm">{meta}</span>}
+  </div>
+  <div class="body">
+    {cmd !== undefined && <p class="cmdline" aria-hidden="true"><Prompt cmd={cmd} /></p>}
+    <slot />
+  </div>
+</section>

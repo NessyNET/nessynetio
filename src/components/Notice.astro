@@ -1,0 +1,39 @@
+---
+// Notice (ux 7.11, 6.3): fixed lowercase label and colon, then the owner's text. The label is never a link (R24).
+import type { Notice } from '../lib/content/model.ts';
+import { NOTICE_LABELS, retiredOn } from '../lib/strings.ts';
+
+type Props = { notice: Notice } | { kind: 'warn'; text: string };
+
+const props = Astro.props;
+const notice = 'notice' in props ? props.notice : undefined;
+const kind = notice?.kind ?? 'warn';
+const label = notice?.label ?? NOTICE_LABELS.warn;
+const text = notice?.text ?? ('text' in props ? props.text : '');
+const lead = notice?.kind === 'retired' && notice.date !== undefined ? `${retiredOn(notice.date)} ` : '';
+const COLOUR = { local: 'cyan', private: 'cyan', separate: 'cyan', retired: 'orange', warn: 'yellow' } as const;
+const classes = ['notice', `notice-${COLOUR[kind]}`, kind === 'separate' ? 'leaves' : undefined].join(' ').trim();
+---
+<p class={classes}><b>{label}:</b> {lead}{text}</p>
+<style>
+  .notice {
+    margin: 14px 0 0;
+    padding: 10px 14px;
+    border-left: 3px solid var(--n);
+    background: var(--bg-light);
+    border-radius: 0 4px 4px 0;
+  }
+  b {
+    color: var(--n);
+    font-weight: 700;
+  }
+  .notice-cyan {
+    --n: var(--cyan);
+  }
+  .notice-orange {
+    --n: var(--orange);
+  }
+  .notice-yellow {
+    --n: var(--yellow);
+  }
+</style>

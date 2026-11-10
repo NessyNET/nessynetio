@@ -1,0 +1,33 @@
+---
+// Get slot (ux 5.2, 6.2, 7.10): links in file order, or plain text when nothing is distributed (R7: never a link,
+// never struck, never a button). The bar shows a dim `get:` prefix; rows (ux 7.9) do not.
+import Link from './Link.astro';
+import type { GetSlot } from '../lib/content/model.ts';
+import { INSTALL_ON_CARD } from '../lib/strings.ts';
+
+interface Props {
+  slot: GetSlot;
+  context: 'bar' | 'row';
+}
+
+const { slot, context } = Astro.props;
+const entries = slot.kind === 'links' ? slot.links : [];
+---
+<span class="slot-get">
+  {context === 'bar' && <span class="pre">get: </span>}
+  {slot.kind === 'text'
+    ? <span class="na">{slot.text}</span>
+    : <span class="getlinks">{entries.map((entry, i) => (
+        <>{i > 0 && ' '}<Link href={entry.href ?? ''}>{context === 'row' && entry.kind === 'install' ? INSTALL_ON_CARD : entry.label}</Link></>
+      ))}</span>}
+</span>
+<style>
+  .pre {
+    color: var(--text-dim);
+  }
+  .getlinks {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px 3ch;
+  }
+</style>

@@ -1,0 +1,25 @@
+---
+// Source slot (ux 5.2, 7.10): a link, or plain `Source not available` (R7). In the bar the `source:` prefix is dropped
+// for the text case to avoid "source: Source not available".
+import Link from './Link.astro';
+import type { SourceSlot } from '../lib/content/model.ts';
+
+interface Props {
+  slot: SourceSlot;
+  context: 'bar' | 'row';
+}
+
+const ROW_LABEL = 'source';
+
+const { slot, context } = Astro.props;
+---
+<span class="slot-src">
+  {slot.kind === 'link'
+    ? <>{context === 'bar' && <span class="pre">source: </span>}<Link href={slot.href}>{context === 'bar' ? slot.label : ROW_LABEL}</Link></>
+    : <span class="na">{slot.text}</span>}
+</span>
+<style>
+  .pre {
+    color: var(--text-dim);
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+// Mini bookmark rows for category windows and "see also" (ux 7.13): `-> {name} ↗ [relation] {host}`, then a link to
+// the group on the bookmarks page.
+import Link from '../Link.astro';
+import type { Bookmark } from '../../lib/content/model.ts';
+import * as routes from '../../lib/routes.ts';
+
+interface Props {
+  bookmarks: readonly Bookmark[];
+  groupId: string;
+  max?: number;
+}
+
+const { bookmarks, groupId, max = 4 } = Astro.props;
+---
+{bookmarks.length > 0 && (
+  <>
+    <ul class="bmini">
+      {bookmarks.slice(0, max).map((b) => (
+        <li><span class="lnk" aria-hidden="true">-&gt;</span> <Link class="ext" href={b.url}>{b.name}</Link>{b.relation !== undefined && <> <span class="rel">{b.relation.id}</span></>} <span class="host">{b.host}</span></li>
+      ))}
+    </ul>
+    <p class="all"><Link href={routes.bookmarkGroup(groupId)}>all bookmarks</Link></p>
+  </>
+)}
+<style>
+  .bmini {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .bmini li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 1ch;
+  }
+  .lnk,
+  .host {
+    color: var(--text-dim);
+  }
+  .ext {
+    display: inline-block;
+    padding: 2px 0;
+  }
+  .rel {
+    color: var(--cyan);
+    border: 1px solid var(--control-line);
+    border-radius: 3px;
+    padding: 0 6px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .host {
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+  .all {
+    margin: 8px 0 0;
+  }
+</style>
