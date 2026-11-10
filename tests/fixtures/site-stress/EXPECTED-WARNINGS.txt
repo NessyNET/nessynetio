@@ -1,0 +1,7 @@
+# Warnings `npm run build -- --content tests/fixtures/site-stress` must print (not --strict): one per line,
+# `<code> <file> [<entry>] <field>`. tests/unit/fixtures.test.ts compares the codes and where they point.
+whoami/bio-long site.toml [whoami] bio
+whoami/tagline-markup site.toml [whoami] tagline
+whoami/tagline-markup site.toml [whoami] tagline
+whoami/unknown-link site.toml [whoami] links.discord
+project/install-without-repo-url projects/ffxiv/mark-board.toml [mark-board] get[0]

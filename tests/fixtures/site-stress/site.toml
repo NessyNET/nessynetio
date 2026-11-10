@@ -1,0 +1,16 @@
+# Stress content (plan section 8): over-long bio, malformed tagline, a link key that is not allowed.
+# The build warns about each; the pages must still hold their layout.
+[site]
+url = "https://nessynet.io"
+description = "Stress content for the browser tests: long bio, many tags, an opt-in empty category."
+
+[whoami]
+name = "Nessy"
+# `{red}` is not an allowed colour (falls back to the automatic colour, rendered green) and the last `*` is unclosed.
+tagline = "I make *plugins*{red}, *mods* and *small tools"
+bio = "I'm Nessy. I build small tools when a game or a desktop annoys me enough, and I keep them free. This is a deliberately long bio for the mock: it goes on about raid nights, Arch updates, peat bogs and the joy of a good terminal colour scheme, well past the suggested limit, to show that the layout still holds and that the build warns about it. Most of what is here started as something for me or my FC; if it helps you too, great."
+
+[whoami.links]
+github = "https://github.com/example"
+mail = "hello@nessynet.io"
+discord = "https://discord.example/nessy"

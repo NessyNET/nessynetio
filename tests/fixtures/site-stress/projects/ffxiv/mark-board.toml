@@ -1,0 +1,16 @@
+slug = "mark-board"
+name = "Mark Board"
+category = "ffxiv"
+status = "active"
+summary = "Mark Board summary, long enough to look like a real row in the project table."
+priority = 1
+updated = 2026-10-01
+version = "1.1.0"
+tags = ["plugin", "dalamud", "api12", "windows"]
+description = "Mark Board exists to give the tag row something to chew on."
+
+[[get]]
+kind = "install"
+
+[ffxiv]
+requires = "Dalamud API 12"

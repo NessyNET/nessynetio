@@ -1,0 +1,17 @@
+slug = "log-fisher"
+name = "Log Fisher"
+category = "ffxiv"
+status = "active"
+summary = "Log Fisher summary, long enough to look like a real row in the project table."
+priority = 6
+updated = 2026-10-06
+version = "1.6.0"
+tags = ["offline", "ui", "overlay", "fishing"]
+description = "Log Fisher exists to give the tag row something to chew on."
+
+[[get]]
+kind = "download"
+url = "https://example.com/dl.zip"
+
+[ffxiv]
+requires = "Python 3.12"

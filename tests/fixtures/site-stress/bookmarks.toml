@@ -1,0 +1,11 @@
+[[relation]]
+id = "uses"
+description = "a dependency or platform a project of mine runs on"
+
+[[bookmark]]
+name = "Dalamud"
+url = "https://github.com/goatcorp/Dalamud"
+note = "The plugin framework every FFXIV plugin here is built on."
+relation = "uses"
+category = "ffxiv"
+projects = ["mark-board"]

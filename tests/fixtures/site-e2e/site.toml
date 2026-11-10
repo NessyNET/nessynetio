@@ -1,0 +1,12 @@
+[site]
+url = "https://nessynet.io"
+description = "Plugins, mods and small tools for FFXIV, Minecraft and Linux, with the bookmarks behind them."
+
+[whoami]
+name = "Nessy"
+tagline = "I make *plugins*{green}, *mods*{yellow} and *small tools*{cyan}."
+bio = "FFXIV plugins and web tools, Minecraft mods and a modpack, and Linux utilities. Free to use. Some are open source; some live on private Git or only on my machine."
+
+[whoami.links]
+github = "https://github.com/example"
+mail = "hello@nessynet.io"

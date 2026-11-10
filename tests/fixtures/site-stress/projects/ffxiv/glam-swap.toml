@@ -1,0 +1,17 @@
+slug = "glam-swap"
+name = "Glam Swap"
+category = "ffxiv"
+status = "active"
+summary = "Glam Swap summary, long enough to look like a real row in the project table."
+priority = 4
+updated = 2026-10-04
+version = "1.4.0"
+tags = ["plugin", "glamour"]
+description = "Glam Swap exists to give the tag row something to chew on."
+
+[[get]]
+kind = "download"
+url = "https://example.com/dl.zip"
+
+[ffxiv]
+requires = "Dalamud API 12"

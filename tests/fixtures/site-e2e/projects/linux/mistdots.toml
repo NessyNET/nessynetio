@@ -1,0 +1,28 @@
+slug = "mistdots"
+name = "mistdots"
+category = "linux"
+status = "retired"
+summary = "Old dotfiles from before the Nessy theme."
+priority = 4
+updated = 2025-01-10
+version = "2023.12"
+tags = ["theme"]
+description = """
+My shell, editor and terminal settings from before I made a proper theme. Replaced by nessy-theme.
+"""
+
+[linux]
+language = "Shell"
+needs = []
+
+[linux.usage]
+synopsis = "not distributed"
+example = "not distributed"
+
+[[get]]
+kind = "none"
+
+[notice]
+kind = "retired"
+date = 2025-01-10
+text = "The nessy-theme project replaces it. Use that instead."

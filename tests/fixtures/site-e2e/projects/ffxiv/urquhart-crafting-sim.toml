@@ -1,0 +1,26 @@
+slug = "urquhart-crafting-sim"
+name = "Urquhart Crafting Sim"
+category = "ffxiv"
+status = "retired"
+summary = "Command-line crafting rotation solver. Superseded by community tools."
+priority = 8
+updated = 2024-12-01
+version = "0.9.0"
+licence = "MIT"
+tags = ["offline", "linux"]
+source = { host = "GitHub", url = "https://example.com/urquhart-crafting-sim" }
+description = """
+Searches for a crafting rotation that reaches the quality target in the fewest steps. The last build still works, so the download stays up.
+"""
+
+[ffxiv]
+requires = "Linux or Windows, Python 3.12"
+
+[[get]]
+kind = "download"
+url = "https://example.com/downloads/urquhart-crafting-sim-0.9.0.zip"
+
+[notice]
+kind = "retired"
+date = 2024-12-01
+text = "Community tools solve this better. The last download still works and the source stays up for reference."

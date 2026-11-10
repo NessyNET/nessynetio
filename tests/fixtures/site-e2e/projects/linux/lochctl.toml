@@ -1,0 +1,74 @@
+slug = "lochctl"
+name = "lochctl"
+category = "linux"
+status = "active"
+summary = "One command to check, update and roll back my Arch boxes."
+priority = 1
+updated = 2026-10-11
+version = "0.8.0"
+licence = "MIT"
+tags = ["cli", "aur"]
+issues = "https://example.com/lochctl/issues"
+source = { host = "GitHub", url = "https://example.com/lochctl" }
+description = """
+Shows pending updates and the news that needs reading, takes a snapshot, then updates. If an update goes wrong, one command restores the snapshot.
+"""
+
+[linux]
+language = "Rust"
+needs = ["pacman", "systemd"]
+distros = [
+  { name = "Arch, EndeavourOS, CachyOS", support = "supported", how = "AUR" },
+  { name = "Fedora, Debian, Ubuntu", support = "untested", how = "cargo / manual" },
+  { name = "NixOS", support = "unsupported" },
+]
+
+[[linux.install]]
+method = "Arch Linux (AUR)"
+command = "yay -S lochctl"
+note = "Or any AUR helper: paru -S lochctl."
+
+[[linux.install]]
+method = "Any distro (cargo)"
+command = "cargo install lochctl"
+note = "Needs Rust 1.80+."
+
+[[linux.install]]
+method = "Manual"
+command = "curl -LO https://example.com/lochctl/releases/latest/download/lochctl-x86_64.tar.gz && tar xf lochctl-x86_64.tar.gz && sudo install -m755 lochctl /usr/local/bin/"
+note = "Prebuilt x86_64 binary from the release page."
+
+[linux.usage]
+synopsis = "lochctl [check | update | rollback | status] [options]"
+example = "lochctl check && lochctl update -y"
+commands = [
+  { name = "check", help = "show pending updates and news that needs reading" },
+  { name = "update", help = "snapshot, then update; stops if a news item needs manual steps" },
+  { name = "rollback", help = "restore the last snapshot" },
+  { name = "status", help = "one-line health summary (new in 0.8)" },
+]
+options = [
+  { flag = "-n, --dry-run", help = "print what would happen" },
+  { flag = "-y, --yes", help = "do not ask" },
+]
+
+[[get]]
+kind = "install"
+
+[[screenshots]]
+file = "01.png"
+caption = "lochctl check output"
+
+[[screenshots]]
+file = "02.png"
+caption = "lochctl status in a prompt"
+
+[[changelog]]
+version = "0.8.0"
+date = 2026-10-11
+items = ["New status subcommand."]
+
+[[changelog]]
+version = "0.7.0"
+date = 2026-08-02
+items = ["Btrfs snapshot support."]

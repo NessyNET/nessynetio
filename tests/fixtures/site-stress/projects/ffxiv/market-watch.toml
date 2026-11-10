@@ -1,0 +1,17 @@
+slug = "market-watch"
+name = "Market Watch"
+category = "ffxiv"
+status = "active"
+summary = "Market Watch summary, long enough to look like a real row in the project table."
+priority = 3
+updated = 2026-10-03
+version = "1.3.0"
+tags = ["plugin", "market", "chat", "raiding"]
+description = "Market Watch exists to give the tag row something to chew on."
+
+[[get]]
+kind = "download"
+url = "https://example.com/dl.zip"
+
+[ffxiv]
+requires = "Dalamud API 12"

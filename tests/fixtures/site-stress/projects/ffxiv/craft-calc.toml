@@ -1,0 +1,17 @@
+slug = "craft-calc"
+name = "Craft Calc"
+category = "ffxiv"
+status = "active"
+summary = "Craft Calc summary, long enough to look like a real row in the project table."
+priority = 5
+updated = 2026-10-05
+version = "1.5.0"
+tags = ["offline", "python", "cli", "crafting"]
+description = "Craft Calc exists to give the tag row something to chew on."
+
+[[get]]
+kind = "download"
+url = "https://example.com/dl.zip"
+
+[ffxiv]
+requires = "Python 3.12"

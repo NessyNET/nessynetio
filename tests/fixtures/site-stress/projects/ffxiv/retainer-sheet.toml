@@ -1,0 +1,19 @@
+slug = "retainer-sheet"
+name = "Retainer Sheet"
+category = "ffxiv"
+status = "active"
+summary = "Retainer Sheet summary, long enough to look like a real row in the project table."
+priority = 7
+updated = 2026-10-07
+version = "1.7.0"
+tags = ["web", "retainers", "macros", "housing"]
+description = "Retainer Sheet exists to give the tag row something to chew on."
+
+[webtool]
+runs_in = "any modern browser"
+account = "none"
+data = "stays in your browser"
+
+[[get]]
+kind = "external"
+url = "https://sheet.nessynet.io"

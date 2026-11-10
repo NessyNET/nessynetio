@@ -1,0 +1,41 @@
+# 22 tags (the ffxiv.html?demo=manytags set): 3 type tags and 19 others, all used by the projects below.
+# No repo_url on purpose: the install project below shows the dev-only `Not distributed yet`.
+[[category]]
+id = "ffxiv"
+label = "Final Fantasy XIV"
+short_label = "FFXIV"
+blurb = "Dalamud plugins, browser tools, and desktop apps. Web tools open on their own subdomain."
+accent = "blue"
+tags = [
+  { id = "plugin", type = true, description = "Dalamud plugin; installs from the custom repo" },
+  { id = "web", type = true, label = "web tool", description = "Runs in the browser on its own subdomain" },
+  { id = "offline", type = true, label = "offline tool", description = "Desktop app or script" },
+  { id = "dalamud", description = "Built on the Dalamud framework" },
+  { id = "api12", description = "Works on Dalamud API 12" },
+  { id = "windows", description = "Runs on Windows" },
+  { id = "linux", description = "Runs on Linux" },
+  { id = "gear", description = "Gear and melds" },
+  { id = "hunts" },
+  { id = "market" },
+  { id = "chat" },
+  { id = "raiding" },
+  { id = "python" },
+  { id = "cli" },
+  { id = "crafting" },
+  { id = "ui" },
+  { id = "overlay" },
+  { id = "fishing" },
+  { id = "retainers" },
+  { id = "macros" },
+  { id = "housing" },
+  { id = "glamour" },
+]
+
+# Opt-in empty category: published with the "Nothing here yet" message (ux 5.8).
+[[category]]
+id = "terraria"
+label = "Terraria"
+blurb = "Terraria mods, coming one day."
+accent = "pink"
+show_empty = true
+tags = [{ id = "mod", type = true, description = "A single mod" }]

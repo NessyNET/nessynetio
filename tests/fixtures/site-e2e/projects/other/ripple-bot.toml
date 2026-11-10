@@ -1,0 +1,48 @@
+slug = "ripple-bot"
+name = "Ripple Bot"
+category = "other"
+status = "active"
+summary = "Discord bot for my FC: event reminders and raid sign-ups."
+priority = 1
+updated = 2026-09-01
+version = "2.1.0"
+tags = ["bot"]
+description = """
+Built after one too many missed raid nights. Uses Discord slash commands and buttons; data lives in SQLite on a small home server.
+"""
+
+[bot]
+platform = "Discord"
+hosting = "self-hosted"
+invite = false
+commands = [
+  { name = "/event new", help = "create an FC event with a sign-up button", who = "officers" },
+  { name = "/remind", help = "DM a reminder 30 minutes before an event", who = "everyone" },
+  { name = "/raid roster", help = "show who signed up, by job", who = "everyone" },
+]
+
+[[get]]
+kind = "none"
+
+[notice]
+kind = "private"
+what = "bot"
+text = "Ripple Bot runs only on my FC's Discord server. It cannot be invited elsewhere and the code is not published; it is here to show the work."
+
+[[screenshots]]
+file = "01.png"
+caption = "An event card with sign-ups"
+
+[[screenshots]]
+file = "02.png"
+caption = "Raid roster by job"
+
+[[changelog]]
+version = "2.1.0"
+date = 2026-09-01
+items = ["Raid roster grouped by role."]
+
+[[changelog]]
+version = "2.0.0"
+date = 2026-03-15
+items = ["Moved to slash commands."]

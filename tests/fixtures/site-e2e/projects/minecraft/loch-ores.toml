@@ -1,0 +1,27 @@
+slug = "loch-ores"
+name = "Loch Ores"
+category = "minecraft"
+status = "retired"
+summary = "Lake-bed ore veins. Folded into Bracken Biomes."
+priority = 4
+updated = 2024-06-01
+version = "0.3.1"
+licence = "MIT"
+tags = ["mod", "fabric", "worldgen"]
+source = { host = "GitHub", url = "https://example.com/loch-ores" }
+description = """
+Added ore veins under lake beds. The idea now lives on inside Bracken Biomes.
+"""
+
+[minecraft]
+loader = "Fabric"
+game_versions = ["1.20.1"]
+side = "both"
+
+[[get]]
+kind = "none"
+
+[notice]
+kind = "retired"
+date = 2024-06-01
+text = "It is folded into Bracken Biomes. The source stays up for reference."

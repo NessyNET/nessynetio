@@ -1,0 +1,44 @@
+slug = "gorse-gearplanner"
+name = "Gorse Gearplanner"
+category = "ffxiv"
+status = "active"
+summary = "Plan best-in-slot gear sets and materia melds in the browser."
+priority = 2
+updated = 2026-10-02
+version = "2026.10"
+licence = "MIT"
+tags = ["web", "gear"]
+issues = "https://example.com/gorse-gearplanner/issues"
+source = { host = "GitHub", url = "https://example.com/gorse-gearplanner" }
+description = """
+Pick a job and a raid tier; see every best-in-slot option side by side. Plan materia melds with live stat totals and tier breakpoints.
+
+Share a set as a short link; anyone can open it, no login.
+"""
+
+[webtool]
+runs_in = "any modern browser"
+account = "none"
+data = "stays in your browser"
+
+[[get]]
+kind = "external"
+url = "https://gear.nessynet.io"
+
+[notice]
+kind = "separate"
+text = "Gorse Gearplanner runs on gear.nessynet.io and opens in a new tab. Nothing to install, no account; your gear sets stay in your browser."
+
+[[screenshots]]
+file = "01.png"
+caption = "The gear planner with a job selected and melds shown"
+
+[[changelog]]
+version = "2026.10"
+date = 2026-10-02
+items = ["New raid tier sets."]
+
+[[changelog]]
+version = "2026.07"
+date = 2026-07-15
+items = ["Short share links."]
