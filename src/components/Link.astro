@@ -1,0 +1,30 @@
+---
+// The only component that renders <a> (design 3.5.2; scripts/lint.mjs L4). The build decides externality.
+import { classifyHref } from '../lib/links.ts';
+import { EXTERNAL_ARROW, OPENS_IN_NEW_TAB } from '../lib/strings.ts';
+
+interface Props {
+  href: string;
+  /** Defaults to the host of `Astro.site`. */
+  siteHost?: string;
+  class?: string;
+  ariaLabel?: string;
+  current?: 'page' | 'true';
+}
+
+const { href, siteHost, class: className, ariaLabel, current } = Astro.props;
+
+const host = siteHost ?? Astro.site?.host;
+if (host === undefined) {
+  throw new Error(`Link.astro (href "${href}"): pass a siteHost prop or set \`site\` so that Astro.site is available.`);
+}
+const external = classifyHref(href, host) === 'external';
+---
+<a
+  href={href}
+  class={className}
+  aria-label={ariaLabel}
+  aria-current={current}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+><slot />{external && (<> <span class="xa" aria-hidden="true">{EXTERNAL_ARROW}</span><span class="sr-only">{OPENS_IN_NEW_TAB}</span></>)}</a>
