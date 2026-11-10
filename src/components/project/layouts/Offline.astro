@@ -5,7 +5,7 @@ import Link from '../../Link.astro';
 import Window from '../../window/Window.astro';
 import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
-import { GET_THE_FILE, INSTALL_CMD, INSTALL_TITLE, NEEDS, REQUIRES_LABEL } from '../../../lib/strings.ts';
+import { GET_OR, INSTALL_CMD, INSTALL_TITLE, offlineGetLead, offlineRequiresStep, REQUIRES_LABEL } from '../../../lib/strings.ts';
 
 interface Props {
   project: Project;
@@ -22,8 +22,8 @@ const accentProp = accent === undefined ? {} : { accent };
 {region === 'install' && downloads.length > 0 && (
   <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
     <ol class="steps">
-      {downloads.map((entry) => <li>{GET_THE_FILE} <Link href={entry.href ?? ''}>{entry.label}</Link></li>)}
-      {requires !== undefined && <li>{NEEDS} {requires}.</li>}
+      {requires !== undefined && <li>{offlineRequiresStep(requires)}</li>}
+      <li>{offlineGetLead(project.name)}{downloads.map((entry, i) => <>{i > 0 && GET_OR}<Link href={entry.href ?? ''}>{entry.label}</Link></>)}.</li>
     </ol>
   </Window>
 )}

@@ -20,3 +20,6 @@ dist/
 test-results/
 playwright-report/
 .lighthouseci/
+
+# Isolated build outputs (npm run build -- --out)
+.builds/

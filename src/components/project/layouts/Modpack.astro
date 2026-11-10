@@ -7,6 +7,7 @@ import Window from '../../window/Window.astro';
 import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
 import { INSTALL_CMD, INSTALL_TITLE, PACK_BY_ME, PACK_BY_OTHER, PACK_FULL_LIST, PACK_IMPORT_COPY_NAME, PACK_IMPORT_STEP, PACK_MODS_CAPTION, PACK_MODS_COLUMNS, PACK_MODS_TITLE, PACK_STAT, packLauncherStep, packMemory, packModsCmd, packModsMeta, packRamStep, packShowing } from '../../../lib/strings.ts';
+import StepText from './StepText.astro';
 import KvTable from './KvTable.astro';
 
 interface Props {
@@ -28,7 +29,7 @@ const accentProp = accent === undefined ? {} : { accent };
   <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
     <ol class="steps">
       <li>{packLauncherStep(details.launcher)}</li>
-      <li>{PACK_IMPORT_STEP}<CopyField value={details.importUrl} what={PACK_IMPORT_COPY_NAME} /></li>
+      <li><StepText parts={PACK_IMPORT_STEP} /><CopyField value={details.importUrl} what={PACK_IMPORT_COPY_NAME} /></li>
       <li>{packRamStep(details.memoryGb)}</li>
     </ol>
   </Window>

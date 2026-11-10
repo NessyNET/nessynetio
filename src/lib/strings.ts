@@ -169,8 +169,11 @@ export const INSTALL_CMD = 'cat INSTALL.md';
 export const REQUIRES_LABEL = 'requires';
 export const REPO_URL_COPY_NAME = 'repository URL';
 /** Offline layout: one step per download get entry, then the requirement. */
-export const GET_THE_FILE = 'Get the file:';
-export const NEEDS = 'Needs';
+/** Offline install: the prerequisite comes first, then one step listing every download. */
+export const offlineRequiresStep = (requires: string): string => `Check that you have ${requires}.`;
+export const offlineGetLead = (name: string): string => `Get ${name}: `;
+/** Joins several download links in one step (offline and mod). */
+export const GET_OR = ' or ';
 export const WHAT_TITLE = 'what it does';
 export const whatCmd = (slug: string): string => `${slug} --help`;
 export const PREVIEW_TITLE = 'preview';
@@ -258,10 +261,15 @@ export const TITLE_BOOKMARKS = 'Bookmarks';
 export const TITLE_NOT_FOUND = 'Not found';
 
 // --- Other project layouts (ux 4.3): mod, modpack, tool, bot. Wording is provisional (Freya).
-export const modLoaderStep = (loader: string) => `Install the ${loader} loader for your Minecraft version (see versions).`;
+export const modLoaderStep = (loader: string): readonly StepPart[] => [
+  t('Install the '),
+  strong(loader),
+  t(' loader for your Minecraft version (see '),
+  strong('versions'),
+  t(').'),
+];
 export const modGetLead = (name: string) => `Get ${name} from `;
-export const MOD_GET_OR = ' or ';
-export const MOD_DROP_STEP = 'Put the .jar and its required dependencies in your mods/ folder.';
+export const MOD_DROP_STEP: readonly StepPart[] = [t('Put the '), code('.jar'), t(' and its required dependencies in your '), code('mods/'), t(' folder.')];
 export const MOD_VERSIONS_TITLE = 'versions';
 export const MOD_VERSIONS_CMD = 'ls releases/';
 export const MOD_VERSIONS_CAPTION = 'Compatible files';
@@ -271,10 +279,10 @@ export const MOD_DEPS_CMD = 'cat fabric.mod.json | jq .depends';
 export const MOD_DEPS_CAPTION = 'Dependencies';
 export const MOD_DEPS_COLUMNS = ['mod', 'need', 'why'] as const;
 export const MOD_STAT = { loader: 'loader', minecraft: 'minecraft', side: 'side' } as const;
-export const packLauncherStep = (launcher: string | undefined) => `Install ${launcher ?? 'a launcher that imports modpacks'}.`;
-export const PACK_IMPORT_STEP = 'Choose Add Instance, then Import, and paste this link:';
+export const packLauncherStep = (launcher: string | undefined) => `Install ${launcher ?? 'a launcher that can import modpacks'}.`;
+export const PACK_IMPORT_STEP: readonly StepPart[] = [t('Choose '), strong('Add Instance'), t(', then '), strong('Import'), t(', and paste this link:')];
 export const PACK_IMPORT_COPY_NAME = 'import link';
-export const packRamStep = (gb: number) => `Launch the instance. Allocate at least ${gb} GB RAM.`;
+export const packRamStep = (gb: number) => `Allocate at least ${gb} GB of RAM to the instance, then launch it.`;
 export const PACK_MODS_TITLE = 'mods.txt';
 export const packModsMeta = (n: number) => `${n} ${n === 1 ? 'mod' : 'mods'}`;
 export const packModsCmd = (n: number): string => `head -n ${n} mods.txt`;

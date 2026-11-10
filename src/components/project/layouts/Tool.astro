@@ -38,10 +38,10 @@ const accentProp = accent === undefined ? {} : { accent };
       <dl class="man">
         <div><dt>{TOOL_MAN_SECTIONS.synopsis}</dt><dd><code>{usage.synopsis}</code></dd></div>
         {usage.commands.length > 0 && (
-          <div><dt>{TOOL_MAN_SECTIONS.commands}</dt><dd><dl class="opts">{usage.commands.map((c) => <div><dt>{c.name}</dt><dd>{c.help}</dd></div>)}</dl></dd></div>
+          <div><dt>{TOOL_MAN_SECTIONS.commands}</dt><dd><dl class="opts">{usage.commands.map((c) => <div><dt><code>{c.name}</code></dt><dd>{c.help}</dd></div>)}</dl></dd></div>
         )}
         {usage.options.length > 0 && (
-          <div><dt>{TOOL_MAN_SECTIONS.options}</dt><dd><dl class="opts">{usage.options.map((o) => <div><dt>{o.flag}</dt><dd>{o.help}</dd></div>)}</dl></dd></div>
+          <div><dt>{TOOL_MAN_SECTIONS.options}</dt><dd><dl class="opts">{usage.options.map((o) => <div><dt><code>{o.flag}</code></dt><dd>{o.help}</dd></div>)}</dl></dd></div>
         )}
         <div><dt>{TOOL_MAN_SECTIONS.example}</dt><dd><CopyField value={usage.example} what={TOOL_EXAMPLE_COPY_NAME} /></dd></div>
       </dl>
@@ -94,6 +94,11 @@ const accentProp = accent === undefined ? {} : { accent };
   dt {
     color: var(--text-dim);
     overflow-wrap: anywhere;
+  }
+  /* Section names (SYNOPSIS, COMMANDS, ...) rank above the command and flag names nested under them. */
+  .man > div > dt {
+    font-weight: 800;
+    color: var(--fg-bright);
   }
   dd {
     margin: 0;

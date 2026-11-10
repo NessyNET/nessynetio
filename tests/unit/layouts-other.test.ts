@@ -79,6 +79,8 @@ describe('mod layout (peatmoss)', () => {
       'Get Peatmoss from Modrinth (opens in new tab) or CurseForge (opens in new tab).',
       'Put the .jar and its required dependencies in your mods/ folder.',
     ]);
+    expect(inst).toContain('<li>Install the <strong>Fabric</strong> loader for your Minecraft version (see <strong>versions</strong>).</li>');
+    expect(inst).toContain('<li>Put the <code>.jar</code> and its required dependencies in your <code>mods/</code> folder.</li>');
     expect(inst).toContain('href="https://example.com/modrinth/peatmoss"');
   });
 
@@ -131,9 +133,13 @@ describe('modpack layout (highland-pack)', () => {
     expect(count(inst, 'data-copy=')).toBe(1);
     expect(inst).toContain('data-copy="https://example.com/modrinth/highland-pack"');
     expect(inst).toContain('aria-label="Copy import link"');
-    const text1 = spoken(inst);
-    expect(text1).toContain('Prism Launcher');
-    expect(text1).toContain('6 GB');
+    const steps = [...inst.matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => spoken((m[1] ?? '').replace(/<div class="copyrow">[\s\S]*$/, '')));
+    expect(steps).toEqual([
+      'Install Prism Launcher.',
+      'Choose Add Instance, then Import, and paste this link:',
+      'Allocate at least 6 GB of RAM to the instance, then launch it.',
+    ]);
+    expect(inst).toContain('<li>Choose <strong>Add Instance</strong>, then <strong>Import</strong>, and paste this link:');
   });
 
   it('has mods.txt: first 5 mods, "Showing 5 of 42 mods", link to the full list', async () => {
@@ -205,7 +211,8 @@ describe('tool layout (lochctl)', () => {
     expect(dts(man.replace(/<dl class="opts">[\s\S]*?<\/dl>/g, ''))).toEqual(['SYNOPSIS', 'COMMANDS', 'OPTIONS', 'EXAMPLE']);
     expect(man).toContain('<code>lochctl [check | update | rollback | status] [options]</code>');
     expect(man).toContain('show pending updates and news that needs reading');
-    expect(man).toContain('-n, --dry-run');
+    expect(man).toContain('<dt><code>check</code></dt>');
+    expect(man).toContain('<dt><code>-n, --dry-run</code></dt>');
     expect(count(man, 'data-copy=')).toBe(1);
     expect(man).toContain('aria-label="Copy example command"');
   });

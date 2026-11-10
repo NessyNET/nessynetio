@@ -3,12 +3,12 @@
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const USAGE = 'Usage: npm run build -- [--strict] [--allow-samples] [--content <dir>]';
+export const USAGE = 'Usage: npm run build -- [--strict] [--allow-samples] [--content <dir>] [--out <dir>]';
 
 /** @param {string[]} argv
- *  @returns {{ strict: boolean, allowSamples: boolean, contentDir: string }} */
+ *  @returns {{ strict: boolean, allowSamples: boolean, contentDir: string, outDir: string | undefined }} */
 export function parseBuildArgs(argv) {
-  const args = { strict: false, allowSamples: false, contentDir: resolve('content') };
+  const args = { strict: false, allowSamples: false, contentDir: resolve('content'), outDir: undefined };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--strict') args.strict = true;
@@ -17,6 +17,10 @@ export function parseBuildArgs(argv) {
       const value = argv[++i];
       if (value === undefined || value.startsWith('--')) throw new Error('--content requires a directory');
       args.contentDir = resolve(value);
+    } else if (arg === '--out') {
+      const value = argv[++i];
+      if (value === undefined || value.startsWith('--')) throw new Error('--out requires a directory');
+      args.outDir = resolve(value);
     } else throw new Error(`Unknown argument: ${arg}`);
   }
   return args;
@@ -35,7 +39,7 @@ async function main() {
   process.env.NESSY_CONTENT_DIR = args.contentDir;
   try {
     const { build } = await import('astro');
-    await build({ root: process.cwd() });
+    await build({ root: process.cwd(), ...(args.outDir === undefined ? {} : { outDir: args.outDir }) });
   } catch (error) {
     console.error(error);
     process.exit(1);

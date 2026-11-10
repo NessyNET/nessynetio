@@ -158,3 +158,21 @@ describe('mutation-resistance cases carried from the 008 review', () => {
     });
   });
 });
+
+describe('project/install-without-steps wording (Freya, 020-022 review)', () => {
+  const steps = (ds: Diagnostic[]): Diagnostic[] => ds.filter((d) => d.code === 'project/install-without-steps');
+
+  it('local: the entry is dropped', async () => {
+    const { diagnostics } = await run('project__install-without-steps', false);
+    expect(steps(diagnostics).map((d) => d.message)).toEqual([
+      'install entry needs at least one install method in [linux] install; the entry is dropped',
+    ]);
+  });
+
+  it('strict: says how to fix it', async () => {
+    const { diagnostics } = await run('project__install-without-steps', true);
+    expect(steps(diagnostics).map((d) => d.message)).toEqual([
+      'install entry needs at least one install method in [linux] install; add an install method or remove the install entry',
+    ]);
+  });
+});

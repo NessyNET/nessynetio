@@ -59,7 +59,7 @@ export const RULES: readonly Rule[] = [
   { code: 'project/get-none-not-alone', local: 'error', strict: 'error', uxRow: 'project/get-none-not-alone: a none get entry alongside other get entries', message: () => "a 'none' get entry must be the only get entry" },
   { code: 'project/external-get-own-host', local: 'warning', strict: 'warning', uxRow: "'external' get link on nessynet.io: warning; rendered as internal", message: (c) => `external link '${c['url']}' is on the site host; it is rendered as an internal link` },
   { code: 'project/install-without-repo-url', local: 'warning', strict: 'error', sampleExempt: true, uxRow: 'Plugin project with an install get entry, in a category without repo_url (rev 4, R28)', message: (c) => `install entry needs repo_url on category '${c['category']}'; the entry is dropped` },
-  { code: 'project/install-without-steps', local: 'warning', strict: 'error', uxRow: 'Tool project with an install get entry and no [linux] install methods: warning; the install entry is dropped (no dangling see install)', message: () => "install entry needs at least one [[linux.install]] method; the entry is dropped" },
+  { code: 'project/install-without-steps', local: 'warning', strict: 'error', uxRow: 'Tool project with an install get entry and no [linux] install methods: warning; the install entry is dropped (no dangling see install)', message: (c) => `install entry needs at least one install method in [linux] install; ${c['mode'] === 'strict' ? 'add an install method or remove the install entry' : 'the entry is dropped'}` },
   { code: 'project/modpack-mine-unmatched', local: 'warning', strict: 'warning', uxRow: 'Modpack mod with mine = true whose name matches no published project name: warning in both modes; rendered as plain text with the me badge', message: (c) => `mod '${c['name']}' is marked mine but no published project has exactly that name; it is shown as plain text` },
   { code: 'project/notice-missing', local: 'warning', strict: 'error', uxRow: 'Retired project without a notice date, or get = none without a notice', message: (c) => c['detail'] ?? '' },
   { code: 'project/screenshot-file', local: 'error', strict: 'error', uxRow: 'Screenshot file must exist (design 3.3)', message: (c) => c['detail'] ?? '' },
@@ -114,7 +114,7 @@ class Report {
     const rule = RULE_BY_CODE.get(code);
     if (rule === undefined) throw new Error(`Unknown rule code ${code}`);
     const level = resolveLevel(rule, { strict: this.#opts.strict, allowSamples: this.#opts.allowSamples, isSample });
-    this.diagnostics.push({ code, level, ...where, message: rule.message(ctx) });
+    this.diagnostics.push({ code, level, ...where, message: rule.message({ mode: this.#opts.strict ? 'strict' : 'local', ...ctx }) });
   }
 }
 

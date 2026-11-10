@@ -1,0 +1,18 @@
+---
+// One install step's text: plain text, `<strong>` for UI and loader names, `<code>` for typed paths and commands
+// (ux 7.1 "command text"). The colour comes from the global `code` rule; nothing is styled here.
+import type { StepPart } from '../../../lib/strings.ts';
+
+interface Props {
+  parts: readonly StepPart[];
+  /** Fills a `projectName` part. */
+  name?: string;
+}
+
+const { parts, name = '' } = Astro.props;
+---
+{parts.map((part) =>
+  part.kind === 'projectName' ? <strong>{name}</strong>
+  : part.kind === 'code' ? <code>{part.text}</code>
+  : part.kind === 'strong' ? <strong>{part.text}</strong>
+  : part.text)}

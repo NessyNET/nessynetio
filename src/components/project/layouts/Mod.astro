@@ -5,7 +5,8 @@ import Link from '../../Link.astro';
 import Window from '../../window/Window.astro';
 import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
-import { INSTALL_CMD, INSTALL_TITLE, MOD_DEPS_CAPTION, MOD_DEPS_CMD, MOD_DEPS_COLUMNS, MOD_DEPS_TITLE, MOD_DROP_STEP, MOD_GET_OR, MOD_STAT, MOD_VERSIONS_CAPTION, MOD_VERSIONS_CMD, MOD_VERSIONS_COLUMNS, MOD_VERSIONS_TITLE, modGetLead, modLoaderStep } from '../../../lib/strings.ts';
+import { GET_OR, INSTALL_CMD, INSTALL_TITLE, MOD_DEPS_CAPTION, MOD_DEPS_CMD, MOD_DEPS_COLUMNS, MOD_DEPS_TITLE, MOD_DROP_STEP, MOD_STAT, MOD_VERSIONS_CAPTION, MOD_VERSIONS_CMD, MOD_VERSIONS_COLUMNS, MOD_VERSIONS_TITLE, modGetLead, modLoaderStep } from '../../../lib/strings.ts';
+import StepText from './StepText.astro';
 import KvTable from './KvTable.astro';
 
 interface Props {
@@ -23,9 +24,9 @@ const accentProp = accent === undefined ? {} : { accent };
 {details !== undefined && region === 'install' && (
   <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
     <ol class="steps">
-      <li>{modLoaderStep(details.loader)}</li>
-      {links.length > 0 && <li>{modGetLead(project.name)}{links.map((entry, i) => <>{i > 0 && MOD_GET_OR}<Link href={entry.href ?? ''}>{entry.label}</Link></>)}.</li>}
-      <li>{MOD_DROP_STEP}</li>
+      <li><StepText parts={modLoaderStep(details.loader)} /></li>
+      {links.length > 0 && <li>{modGetLead(project.name)}{links.map((entry, i) => <>{i > 0 && GET_OR}<Link href={entry.href ?? ''}>{entry.label}</Link></>)}.</li>}
+      <li><StepText parts={MOD_DROP_STEP} /></li>
     </ol>
   </Window>
 )}

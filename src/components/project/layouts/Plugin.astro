@@ -5,6 +5,7 @@
 import CopyField from '../../CopyField.astro';
 import Notice from '../../Notice.astro';
 import Window from '../../window/Window.astro';
+import StepText from './StepText.astro';
 import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
 import { DALAMUD_STEPS, INSTALL_CMD, INSTALL_TITLE, REPO_URL_COPY_NAME, REQUIRES_LABEL } from '../../../lib/strings.ts';
@@ -25,11 +26,7 @@ const accentProp = accent === undefined ? {} : { accent };
   <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
     <ol class="steps">
       {DALAMUD_STEPS.map((step) => (
-        <li>{step.parts.map((part) =>
-          part.kind === 'projectName' ? <strong>{project.name}</strong>
-          : part.kind === 'code' ? <code>{part.text}</code>
-          : part.kind === 'strong' ? <strong>{part.text}</strong>
-          : part.text)}{step.repoUrlCopy === true && <CopyField value={repoUrl} what={REPO_URL_COPY_NAME} />}</li>
+        <li><StepText parts={step.parts} name={project.name} />{step.repoUrlCopy === true && <CopyField value={repoUrl} what={REPO_URL_COPY_NAME} />}</li>
       ))}
     </ol>
     {project.caution !== undefined && <Notice kind="warn" text={project.caution} />}

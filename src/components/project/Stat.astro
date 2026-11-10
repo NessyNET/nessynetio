@@ -57,9 +57,11 @@ const { typeTag, getSlot, sourceSlot, issues, licence, version } = project;
     padding: 2px 0;
     overflow-wrap: anywhere;
   }
+  /* The 2 px of padding keeps the 24 px target; the matching negative margin keeps the text level with text rows. */
   table :global(td a) {
     display: inline-block;
     padding: 2px 0;
+    margin-block: -2px;
   }
   .na {
     color: var(--text-dim);

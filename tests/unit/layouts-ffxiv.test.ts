@@ -189,7 +189,9 @@ describe('offline layout', () => {
     const inst = section(html, 'inst');
     expect(inst).toContain('<span class="p">$</span> cat INSTALL.md');
     expect(inst).toContain('href="https://example.com/downloads/mist-macro-editor-1.2.0.zip"');
-    expect(count(inst, '<li>')).toBeGreaterThanOrEqual(1);
+    const steps = [...inst.matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => (m[1] ?? '').replace(/<[^>]*>/g, ''));
+    expect(steps).toEqual(['Check that you have Windows 10 or Linux.', expect.stringMatching(/^Get Mist Macro Editor: download v1\.2\.0/)]);
+    expect(steps[1]).not.toContain('Get the file');
     expect(windowIds(html).slice(0, 2)).toEqual(['readme', 'inst']);
   });
 

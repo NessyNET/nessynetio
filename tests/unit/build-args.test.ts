@@ -8,6 +8,7 @@ describe('parseBuildArgs', () => {
       strict: false,
       allowSamples: false,
       contentDir: resolve('content'),
+      outDir: undefined,
     });
   });
 
@@ -17,7 +18,17 @@ describe('parseBuildArgs', () => {
       strict: true,
       allowSamples: true,
       contentDir: resolve('tests/fixtures/x'),
+      outDir: undefined,
     });
+  });
+
+  it('reads --out as an absolute output directory', () => {
+    expect(parseBuildArgs(['--out', '.builds/038']).outDir).toBe(resolve('.builds/038'));
+  });
+
+  it('throws when --out has no value or is followed by another flag', () => {
+    expect(() => parseBuildArgs(['--out'])).toThrow(/--out/);
+    expect(() => parseBuildArgs(['--out', '--strict'])).toThrow(/--out/);
   });
 
   it('throws on an unknown flag', () => {

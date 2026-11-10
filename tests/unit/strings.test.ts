@@ -60,8 +60,6 @@ describe('ux 6.2 fixed strings (verbatim)', () => {
     ['install window command', s.INSTALL_CMD, 'cat INSTALL.md'],
     ['requires stat row', s.REQUIRES_LABEL, 'requires'],
     ['repo URL copy name', s.REPO_URL_COPY_NAME, 'repository URL'],
-    ['offline download step', s.GET_THE_FILE, 'Get the file:'],
-    ['offline requirement step', s.NEEDS, 'Needs'],
     ['web what window title', s.WHAT_TITLE, 'what it does'],
     ['web what window command', s.whatCmd('gorse-gearplanner'), 'gorse-gearplanner --help'],
     ['web preview window title', s.PREVIEW_TITLE, 'preview'],
@@ -246,11 +244,22 @@ describe('bookmarks page and permission wording', () => {
   });
 });
 
+// Flattens step parts to text with `**strong**` and `code` markers, so the pins read like Freya's wording.
+const marked = (parts: readonly s.StepPart[]): string =>
+  parts.map((p) => (p.kind === 'strong' ? `**${p.text}**` : p.kind === 'code' ? `\`${p.text}\`` : p.kind === 'text' ? p.text : '{name}')).join('');
+
+describe('offline install steps', () => {
+  it('check requirement first, then get the file', () => {
+    expect(s.offlineRequiresStep('Windows 10 or Linux')).toBe('Check that you have Windows 10 or Linux.');
+    expect(s.offlineGetLead('Mist Macro Editor')).toBe('Get Mist Macro Editor: ');
+  });
+});
+
 describe('other project layouts (mod, modpack, tool, bot)', () => {
   it('mod strings', () => {
-    expect(s.modLoaderStep('Fabric')).toBe('Install the Fabric loader for your Minecraft version (see versions).');
-    expect([s.modGetLead('Loch Lantern'), s.MOD_GET_OR]).toEqual(['Get Loch Lantern from ', ' or ']);
-    expect(s.MOD_DROP_STEP).toBe('Put the .jar and its required dependencies in your mods/ folder.');
+    expect(marked(s.modLoaderStep('Fabric'))).toBe('Install the **Fabric** loader for your Minecraft version (see **versions**).');
+    expect([s.modGetLead('Loch Lantern'), s.GET_OR]).toEqual(['Get Loch Lantern from ', ' or ']);
+    expect(marked(s.MOD_DROP_STEP)).toBe('Put the `.jar` and its required dependencies in your `mods/` folder.');
     expect([s.MOD_VERSIONS_TITLE, s.MOD_VERSIONS_CMD, s.MOD_VERSIONS_CAPTION]).toEqual(['versions', 'ls releases/', 'Compatible files']);
     expect([...s.MOD_VERSIONS_COLUMNS]).toEqual(['minecraft', 'loader', 'file', 'released']);
     expect([s.MOD_DEPS_TITLE, s.MOD_DEPS_CMD, s.MOD_DEPS_CAPTION]).toEqual(['dependencies', 'cat fabric.mod.json | jq .depends', 'Dependencies']);
@@ -260,9 +269,9 @@ describe('other project layouts (mod, modpack, tool, bot)', () => {
 
   it('modpack strings', () => {
     expect(s.packLauncherStep('Prism Launcher')).toBe('Install Prism Launcher.');
-    expect(s.packLauncherStep(undefined)).toBe('Install a launcher that imports modpacks.');
-    expect([s.PACK_IMPORT_STEP, s.PACK_IMPORT_COPY_NAME]).toEqual(['Choose Add Instance, then Import, and paste this link:', 'import link']);
-    expect(s.packRamStep(6)).toBe('Launch the instance. Allocate at least 6 GB RAM.');
+    expect(s.packLauncherStep(undefined)).toBe('Install a launcher that can import modpacks.');
+    expect([marked(s.PACK_IMPORT_STEP), s.PACK_IMPORT_COPY_NAME]).toEqual(['Choose **Add Instance**, then **Import**, and paste this link:', 'import link']);
+    expect(s.packRamStep(6)).toBe('Allocate at least 6 GB of RAM to the instance, then launch it.');
     expect([s.PACK_MODS_TITLE, s.packModsMeta(1), s.packModsMeta(12), s.packModsCmd(5)]).toEqual(['mods.txt', '1 mod', '12 mods', 'head -n 5 mods.txt']);
     expect([s.PACK_MODS_CAPTION, s.PACK_BY_ME, s.PACK_BY_OTHER, s.PACK_FULL_LIST]).toEqual(['Mods in this pack', 'me', 'other', 'Full list (mods.txt)']);
     expect([...s.PACK_MODS_COLUMNS]).toEqual(['mod', 'version', 'by']);
