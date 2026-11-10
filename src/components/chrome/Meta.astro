@@ -1,5 +1,5 @@
 ---
-// <title>, description and canonical (R19). 027 adds the social-card tags here.
+// <title>, description, canonical (R19) and the Open Graph / Twitter tags. Image tags only when a card is set.
 import * as routes from '../../lib/routes.ts';
 import type { PageMeta } from '../../lib/meta.ts';
 
@@ -9,7 +9,24 @@ interface Props {
 }
 
 const { meta, siteUrl } = Astro.props;
+const siteName = new URL(siteUrl).host;
+const url = routes.canonical(siteUrl, meta.canonicalPath);
+const image = meta.og === null ? null : { ...meta.og, url: routes.canonical(siteUrl, meta.og.path) };
 ---
 <title>{meta.title}</title>
 <meta name="description" content={meta.description} />
-<link rel="canonical" href={routes.canonical(siteUrl, meta.canonicalPath)} />
+<link rel="canonical" href={url} />
+<meta property="og:type" content={meta.ogType} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={meta.ogTitle} />
+<meta property="og:description" content={meta.ogDescription} />
+<meta property="og:url" content={url} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={meta.ogTitle} />
+<meta name="twitter:description" content={meta.ogDescription} />
+{image !== null && <meta property="og:image" content={image.url} />}
+{image !== null && <meta property="og:image:width" content={String(image.width)} />}
+{image !== null && <meta property="og:image:height" content={String(image.height)} />}
+{image !== null && <meta property="og:image:alt" content={image.alt} />}
+{image !== null && <meta name="twitter:image" content={image.url} />}
+{image !== null && <meta name="twitter:image:alt" content={image.alt} />}
