@@ -1,0 +1,44 @@
+/* Holding page palette: the site's tokens, copied as values because this page ships without the build (CSP: no inline style). */
+html {
+  background: #0e1a1c;
+  color: #cfdcd5;
+  font-family: "JetBrains Mono", ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+main {
+  max-width: 44ch;
+  border: 1px solid #223639;
+  border-radius: 6px;
+  background: #121f22;
+  padding: 24px 28px;
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+  color: #a3d9a5;
+}
+
+.cmd {
+  margin: 0;
+  color: #7f9c98;
+}
+
+.cmd span {
+  color: #e3d08a;
+}
+
+p {
+  margin: 0 0 12px;
+}

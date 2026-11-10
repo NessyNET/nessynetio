@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+# Server-side release activation (design 3.6.4, 3.6.5). Installed root-owned at /srv/nessynet/bin/activate and run by
+# deploy-gate. It is the last line of defence: it refuses any release that was not built strict, without samples,
+# from `main` by the release script, whatever the client says.
+#
+#   activate <id>                  validate releases/<id>, point `current` at it, prune to the newest 5
+#   activate --rollback [<id>]     point `current` at <id>, or at the release before the active one
+#   activate --previous            same as `--rollback` without an id
+#
+# NESSY_ROOT (default /srv/nessynet) holds releases/ and `current`; tests point it at a temp directory.
+set -euo pipefail
+
+ROOT="${NESSY_ROOT:-/srv/nessynet}"
+RELEASES="$ROOT/releases"
+KEEP=5
+ID_RE='^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{7,12}$'
+
+die() {
+  echo "activate: $*" >&2
+  exit 1
+}
+
+usage() {
+  echo "usage: activate <id> | activate --rollback [<id>] | activate --previous" >&2
+  exit 2
+}
+
+# Prints the reason and exits 1 unless the build meta is what a release must carry. Plain `json` module, no eval.
+CHECK_META='
+import json, re, sys
+path, release_id = sys.argv[1], sys.argv[2]
+def refuse(reason):
+    sys.stderr.write("activate: refusing %s: %s\n" % (release_id, reason))
+    sys.exit(1)
+try:
+    with open(path, encoding="utf-8") as handle:
+        meta = json.load(handle)
+except (OSError, ValueError) as error:
+    refuse("cannot read .build-meta.json as json (%s)" % error)
+if not isinstance(meta, dict):
+    refuse("build meta is not a json object")
+if meta.get("strict") is not True:
+    refuse("strict is not true")
+if meta.get("samplesAllowed") is not False:
+    refuse("samplesAllowed is not false")
+if meta.get("ref") != "main":
+    refuse("ref is not main")
+commit = meta.get("commit")
+if not isinstance(commit, str) or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+    refuse("commit is not a full 40-hex sha")
+if not commit.startswith(release_id.rsplit("-", 1)[1]):
+    refuse("commit does not match the release id")
+'
+
+check_release() {
+  local id="$1"
+  [[ "$id" =~ $ID_RE ]] || die "invalid release id: $id"
+  [[ -d "$RELEASES/$id" && ! -L "$RELEASES/$id" ]] || die "no such release: $id"
+  [[ -f "$RELEASES/$id/.build-meta.json" ]] || die "release $id has no .build-meta.json"
+  # nginx follows symlinks and `rsync -a` uploads them as links, so one inside a release could expose any file the
+  # web server can read. Our builds contain none.
+  local link
+  link="$(find "$RELEASES/$id" -type l -print -quit)"
+  [[ -z "$link" ]] || die "refusing $id: it contains a symlink (${link#"$RELEASES/$id/"})"
+  python3 -c "$CHECK_META" "$RELEASES/$id/.build-meta.json" "$id"
+}
+
+# Release ids, oldest first (the UTC timestamp prefix sorts chronologically).
+release_ids() {
+  [[ -d "$RELEASES" ]] || return 0
+  find "$RELEASES" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | { grep -E "$ID_RE" || true; } | sort
+}
+
+# The id `current` points at, or nothing (it points at holding/ before the first release).
+active_id() {
+  local target id
+  target="$(readlink "$ROOT/current" 2>/dev/null || true)"
+  id="${target#releases/}"
+  if [[ "$target" == "releases/$id" && "$id" =~ $ID_RE ]]; then
+    echo "$id"
+  fi
+}
+
+swap_to() {
+  ln -sfn "releases/$1" "$ROOT/current.tmp"
+  mv -T "$ROOT/current.tmp" "$ROOT/current"
+}
+
+prune() {
+  local active ids id keep_from
+  active="$(active_id)"
+  mapfile -t ids < <(release_ids)
+  ((${#ids[@]} > KEEP)) || return 0
+  keep_from=$((${#ids[@]} - KEEP))
+  for ((i = 0; i < keep_from; i++)); do
+    id="${ids[$i]}"
+    [[ "$id" == "$active" ]] || rm -rf -- "${RELEASES:?}/$id"
+  done
+}
+
+previous_id() {
+  local active id previous=""
+  active="$(active_id)"
+  [[ -n "$active" ]] || return 0
+  while read -r id; do
+    [[ "$id" == "$active" ]] && break
+    previous="$id"
+  done < <(release_ids)
+  echo "$previous"
+}
+
+case "${1:-}" in
+  --rollback | --previous)
+    (($# <= 2)) || usage
+    [[ "${1}" == "--previous" && $# -eq 2 ]] && usage
+    target="${2:-}"
+    if [[ -z "$target" ]]; then
+      target="$(previous_id)"
+      [[ -n "$target" ]] || die "no previous release to roll back to"
+    fi
+    check_release "$target"
+    swap_to "$target"
+    echo "rolled back to $target"
+    ;;
+  "" | -*)
+    usage
+    ;;
+  *)
+    (($# == 1)) || usage
+    check_release "$1"
+    swap_to "$1"
+    prune
+    echo "activated $1"
+    ;;
+esac

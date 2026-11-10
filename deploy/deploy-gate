@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Forced command of the CI deploy key (design 3.6.4): `restrict,command="/srv/nessynet/bin/deploy-gate" ssh-ed25519 ...`.
+# Reads SSH_ORIGINAL_COMMAND and allows exactly three forms; anything else exits 1 without running it.
+#
+#   rsync --server ...      upload through rrsync, write-only, confined to releases/
+#   activate <id>           activate a release (the script validates the build meta)
+#   rollback [<id>]         re-point `current` at <id>, or at the previous release
+#
+# The GATE_* variables exist so tests can substitute stubs. sshd does not pass client-chosen variables to a forced
+# command (no PermitUserEnvironment, AcceptEnv is not set for them), so they are defaults in production.
+set -euo pipefail
+
+RRSYNC="${GATE_RRSYNC:-/usr/bin/rrsync}"
+ACTIVATE="${GATE_ACTIVATE:-/srv/nessynet/bin/activate}"
+RELEASES="${GATE_RELEASES:-/srv/nessynet/releases}"
+ID='[0-9]{8}T[0-9]{6}Z-[0-9a-f]{7,12}'
+
+refuse() {
+  echo "deploy-gate: refused: $1" >&2
+  exit 1
+}
+
+command="${SSH_ORIGINAL_COMMAND:-}"
+[[ -n "$command" ]] || refuse "no command (shell access is not allowed)"
+
+# Whole-string matches only: a newline or any metacharacter simply fails to match.
+if [[ "$command" =~ ^activate\ ($ID)$ ]]; then
+  exec "$ACTIVATE" "${BASH_REMATCH[1]}"
+elif [[ "$command" == "rollback" ]]; then
+  exec "$ACTIVATE" --rollback
+elif [[ "$command" =~ ^rollback\ ($ID)$ ]]; then
+  exec "$ACTIVATE" --rollback "${BASH_REMATCH[1]}"
+elif [[ "$command" == "rsync --server "* ]]; then
+  # rrsync parses SSH_ORIGINAL_COMMAND itself and enforces the root and write-only; this check only lets plain
+  # upload invocations through: no download, no absolute or parent paths, no shell metacharacters.
+  [[ "$command" =~ ^[A-Za-z0-9\ ._/=,:+@%-]+$ ]] || refuse "unexpected characters in the rsync command"
+  read -r -a words <<<"$command"
+  for word in "${words[@]}"; do
+    [[ "$word" == "--sender" ]] && refuse "rsync downloads are not allowed"
+    [[ "$word" == /* ]] && refuse "absolute paths are not allowed"
+    [[ "$word" == *..* ]] && refuse "parent paths are not allowed"
+  done
+  exec "$RRSYNC" -wo "$RELEASES"
+fi
+refuse "command not allowed"
