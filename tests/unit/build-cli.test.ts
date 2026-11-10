@@ -1,4 +1,6 @@
 import { spawnSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { VALIDATION_DIR, withFixture } from '../helpers/content-fixture.ts';
 
@@ -6,7 +8,18 @@ const SLOW = 180_000;
 
 // The content gate stays silent under Vitest (which inherits into children), so the child must not look like Vitest.
 const { VITEST: _vitest, ...childEnv } = process.env;
-const build = (args: string[]) => spawnSync(process.execPath, ['scripts/build.mjs', ...args], { encoding: 'utf8', env: childEnv });
+const run = (args: string[]) => spawnSync(process.execPath, ['scripts/build.mjs', ...args], { encoding: 'utf8', env: childEnv });
+// Every build goes to its own output under the git-ignored `.builds/` (same device as the project, which Astro's
+// renames need), so running the tests never rewrites the shared `dist/`.
+const build = (args: string[]) => {
+  mkdirSync('.builds', { recursive: true });
+  const out = mkdtempSync(resolve('.builds', 'build-cli-'));
+  try {
+    return run([...args, '--out', out]);
+  } finally {
+    rmSync(out, { recursive: true, force: true });
+  }
+};
 const buildFixture = (name: string, args: string[]) => withFixture(name, async (dir) => build([...args, '--content', dir]));
 
 describe('node scripts/build.mjs (slow: runs Astro)', () => {
@@ -34,7 +47,7 @@ describe('node scripts/build.mjs (slow: runs Astro)', () => {
   }, SLOW);
 
   it('exits 2 on a malformed argument list without building', () => {
-    const result = build(['--content', '--strict']);
+    const result = run(['--content', '--strict']);
     expect(result.status).toBe(2);
   });
 });
