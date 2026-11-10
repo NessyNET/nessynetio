@@ -5,9 +5,13 @@
 // rows for the stat table, `install` content is one window (this component adds the `#install` wrapper).
 import type { Layout, Project } from '../../lib/content/model.ts';
 import type { CategoryAccent } from '../../lib/palette.ts';
+import Bot from './layouts/Bot.astro';
 import Generic from './layouts/Generic.astro';
+import Mod from './layouts/Mod.astro';
+import Modpack from './layouts/Modpack.astro';
 import Offline from './layouts/Offline.astro';
 import Plugin from './layouts/Plugin.astro';
+import Tool from './layouts/Tool.astro';
 import Web from './layouts/Web.astro';
 
 type Region = 'install' | 'windows' | 'stat';
@@ -32,6 +36,10 @@ const LAYOUTS: Partial<Record<Layout, Registered>> = {
   plugin: { component: Plugin, regions: (p, repoUrl) => (repoUrl !== undefined && p.get.some((g) => g.kind === 'install') ? ['install', 'stat'] : ['stat']) },
   offline: { component: Offline, regions: (p) => (p.get.some((g) => g.kind === 'download') ? ['install', 'stat'] : ['stat']) },
   web: { component: Web, regions: ['windows', 'stat'] },
+  mod: { component: Mod, regions: (p) => (p.get.some((g) => g.href !== undefined) ? ['install', 'windows', 'stat'] : ['windows', 'stat']) },
+  modpack: { component: Modpack, regions: ['install', 'windows', 'stat'] },
+  tool: { component: Tool, regions: (p) => (p.layout === 'tool' && p.details.install.length > 0 ? ['install', 'windows', 'stat'] : ['windows', 'stat']) },
+  bot: { component: Bot, regions: ['windows', 'stat'] },
 };
 
 const { project, region, accent, repoUrl } = Astro.props;

@@ -1,0 +1,105 @@
+---
+// Minecraft modpack layout (ux 4.3): INSTALL (launcher, import link with copy, RAM), the `mods.txt` window (first 5
+// mods; own mods link internally with a `me` badge) and loader / minecraft / mods / memory stat rows.
+import CopyField from '../../CopyField.astro';
+import Link from '../../Link.astro';
+import Window from '../../window/Window.astro';
+import type { Project } from '../../../lib/content/model.ts';
+import type { CategoryAccent } from '../../../lib/palette.ts';
+import * as routes from '../../../lib/routes.ts';
+import { INSTALL_CMD, INSTALL_TITLE } from '../../../lib/strings.ts';
+import KvTable from './KvTable.astro';
+
+interface Props {
+  project: Project;
+  region: 'install' | 'windows' | 'stat';
+  accent?: CategoryAccent | 'primary' | undefined;
+  repoUrl?: string | undefined;
+}
+
+// STRINGS-TODO (021): move into strings.ts with literal pins.
+const MAX_MODS = 5;
+const launcherStep = (launcher: string | undefined) => `Install ${launcher ?? 'a launcher that imports modpacks'}.`;
+const IMPORT_STEP = 'Choose Add Instance, then Import, and paste this link:';
+const IMPORT_COPY_NAME = 'import link';
+const ramStep = (gb: number) => `Launch the instance. Allocate at least ${gb} GB RAM.`;
+const modsTitle = 'mods.txt';
+const modsMeta = (n: number) => `${n} ${n === 1 ? 'mod' : 'mods'}`;
+const MODS_CMD = `head -n ${MAX_MODS} mods.txt`;
+const MODS_CAPTION = 'Mods in this pack';
+const MODS_COLUMNS = ['mod', 'version', 'by'] as const;
+const BY_ME = 'me';
+const BY_OTHER = 'other';
+const showing = (shown: number, total: number) => `Showing ${shown} of ${total} ${total === 1 ? 'mod' : 'mods'}.`;
+const FULL_LIST = 'Full list (mods.txt)';
+const STAT = { loader: 'loader', minecraft: 'minecraft', mods: 'mods', memory: 'memory' } as const;
+const memory = (gb: number) => `${gb} GB`;
+
+const { project, region, accent } = Astro.props;
+const details = project.layout === 'modpack' ? project.details : undefined;
+// Own mods carry no path in the model: they are assumed to be projects of this category whose slug is the name, lower-cased.
+const slugOf = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const shown = details === undefined ? [] : details.mods.slice(0, MAX_MODS);
+const accentProp = accent === undefined ? {} : { accent };
+---
+{details !== undefined && region === 'install' && (
+  <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
+    <ol class="steps">
+      <li>{launcherStep(details.launcher)}</li>
+      <li>{IMPORT_STEP}<CopyField value={details.importUrl} what={IMPORT_COPY_NAME} /></li>
+      <li>{ramStep(details.memoryGb)}</li>
+    </ol>
+  </Window>
+)}
+{details !== undefined && region === 'windows' && shown.length > 0 && (
+  <Window id="mods" title={modsTitle} meta={modsMeta(details.modsTotal)} cmd={MODS_CMD} {...accentProp}>
+    <KvTable caption={MODS_CAPTION} columns={MODS_COLUMNS}>
+      {shown.map((mod) => (
+        <tr>
+          <td>{mod.mine
+            ? <Link href={routes.project(project.categoryId, slugOf(mod.name))}>{mod.name}</Link>
+            : mod.url === undefined ? mod.name : <Link href={mod.url}>{mod.name}</Link>}</td>
+          <td>{mod.version}</td>
+          <td>{mod.mine ? <span class="me">{BY_ME}</span> : BY_OTHER}</td>
+        </tr>
+      ))}
+    </KvTable>
+    <p class="more">{showing(shown.length, details.modsTotal)}{details.modsUrl !== undefined && <>{' '}<Link href={details.modsUrl}>{FULL_LIST}</Link></>}</p>
+  </Window>
+)}
+{details !== undefined && region === 'stat' && (
+  <>
+    <tr><th scope="row">{STAT.loader}</th><td>{details.loader}</td></tr>
+    <tr><th scope="row">{STAT.minecraft}</th><td>{details.gameVersions.join(', ')}</td></tr>
+    <tr><th scope="row">{STAT.mods}</th><td>{details.modsTotal}</td></tr>
+    <tr><th scope="row">{STAT.memory}</th><td>{memory(details.memoryGb)}</td></tr>
+  </>
+)}
+<style>
+  .steps {
+    margin: 0;
+    padding-left: 3ch;
+  }
+  .steps li {
+    padding: 3px 0;
+  }
+  .steps li::marker {
+    color: var(--text-dim);
+  }
+  .steps :global(a),
+  .more :global(a) {
+    display: inline-block;
+    padding: 2px 0;
+  }
+  .more {
+    margin: 8px 0 0;
+    color: var(--text-dim);
+  }
+  .me {
+    color: var(--cyan);
+    border: 1px solid var(--control-line);
+    border-radius: 3px;
+    padding: 0 6px;
+    font-size: 13px;
+  }
+</style>

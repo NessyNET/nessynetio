@@ -1,0 +1,41 @@
+---
+// Other: bot layout (ux 4.3): no INSTALL (the private-bot notice and get slot come from the README window), a
+// `commands` table, and platform / hosting / invite stat rows.
+import Window from '../../window/Window.astro';
+import type { Project } from '../../../lib/content/model.ts';
+import type { CategoryAccent } from '../../../lib/palette.ts';
+import KvTable from './KvTable.astro';
+
+interface Props {
+  project: Project;
+  region: 'install' | 'windows' | 'stat';
+  accent?: CategoryAccent | 'primary' | undefined;
+  repoUrl?: string | undefined;
+}
+
+// STRINGS-TODO (021): move into strings.ts with literal pins.
+const COMMANDS_TITLE = 'commands';
+const commandsCmd = (slug: string) => `${slug} --help`;
+const COMMANDS_CAPTION = 'Bot commands';
+const COMMANDS_COLUMNS = ['command', 'what it does', 'who'] as const;
+const STAT = { platform: 'platform', hosting: 'hosting', invite: 'invite' } as const;
+const INVITE = { open: 'public', closed: 'not public' } as const;
+
+const { project, region, accent } = Astro.props;
+const details = project.layout === 'bot' ? project.details : undefined;
+const accentProp = accent === undefined ? {} : { accent };
+---
+{details !== undefined && region === 'windows' && details.commands.length > 0 && (
+  <Window id="cmd" title={COMMANDS_TITLE} cmd={commandsCmd(project.slug)} {...accentProp}>
+    <KvTable caption={COMMANDS_CAPTION} columns={COMMANDS_COLUMNS}>
+      {details.commands.map((c) => <tr><td><code>{c.name}</code></td><td>{c.help}</td><td>{c.who}</td></tr>)}
+    </KvTable>
+  </Window>
+)}
+{details !== undefined && region === 'stat' && (
+  <>
+    <tr><th scope="row">{STAT.platform}</th><td>{details.platform}</td></tr>
+    <tr><th scope="row">{STAT.hosting}</th><td>{details.hosting}</td></tr>
+    <tr><th scope="row">{STAT.invite}</th><td>{details.invite ? INVITE.open : INVITE.closed}</td></tr>
+  </>
+)}

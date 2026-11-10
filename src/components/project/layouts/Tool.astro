@@ -1,0 +1,122 @@
+---
+// Linux tool layout (ux 4.3): one INSTALL block per method with its own copy field, the `man <tool>` window (SYNOPSIS,
+// COMMANDS, OPTIONS, EXAMPLE with copy), a `distros` table, and language / needs / distros stat rows.
+import CopyField from '../../CopyField.astro';
+import Window from '../../window/Window.astro';
+import type { Project } from '../../../lib/content/model.ts';
+import type { CategoryAccent } from '../../../lib/palette.ts';
+import { INSTALL_CMD, INSTALL_TITLE } from '../../../lib/strings.ts';
+import KvTable from './KvTable.astro';
+
+interface Props {
+  project: Project;
+  region: 'install' | 'windows' | 'stat';
+  accent?: CategoryAccent | 'primary' | undefined;
+  repoUrl?: string | undefined;
+}
+
+// STRINGS-TODO (021): move into strings.ts with literal pins.
+const commandCopyName = (command: string) => `command: ${command}`;
+const manTitle = (slug: string) => `man ${slug}`;
+const MAN_SECTIONS = { synopsis: 'SYNOPSIS', commands: 'COMMANDS', options: 'OPTIONS', example: 'EXAMPLE' } as const;
+const EXAMPLE_COPY_NAME = 'example command';
+const DIST_TITLE = 'distros';
+const DIST_CMD = 'cat SUPPORT.md';
+const DIST_CAPTION = 'Supported distributions';
+const DIST_COLUMNS = ['distro', 'support', 'how'] as const;
+const SUPPORT_WORDS = { supported: 'supported', untested: 'works, untested', unsupported: 'not supported' } as const;
+const NO_VALUE = '-';
+const STAT = { language: 'language', needs: 'needs', distros: 'distros' } as const;
+
+const { project, region, accent } = Astro.props;
+const details = project.layout === 'tool' ? project.details : undefined;
+const usage = details?.usage;
+const supported = details === undefined ? [] : details.distros.filter((d) => d.support === 'supported').map((d) => d.name);
+const accentProp = accent === undefined ? {} : { accent };
+---
+{details !== undefined && region === 'install' && details.install.length > 0 && (
+  <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
+    {details.install.map((method) => (
+      <div class="method">
+        <h3>{method.method}</h3>
+        <CopyField value={method.command} what={commandCopyName(method.command)} />
+        {method.note !== undefined && <p class="note">{method.note}</p>}
+      </div>
+    ))}
+  </Window>
+)}
+{details !== undefined && usage !== undefined && region === 'windows' && (
+  <>
+    <Window id="man" title={manTitle(project.slug)} cmd={manTitle(project.slug)} {...accentProp}>
+      <dl class="man">
+        <div><dt>{MAN_SECTIONS.synopsis}</dt><dd><code>{usage.synopsis}</code></dd></div>
+        {usage.commands.length > 0 && (
+          <div><dt>{MAN_SECTIONS.commands}</dt><dd><dl class="opts">{usage.commands.map((c) => <div><dt>{c.name}</dt><dd>{c.help}</dd></div>)}</dl></dd></div>
+        )}
+        {usage.options.length > 0 && (
+          <div><dt>{MAN_SECTIONS.options}</dt><dd><dl class="opts">{usage.options.map((o) => <div><dt>{o.flag}</dt><dd>{o.help}</dd></div>)}</dl></dd></div>
+        )}
+        <div><dt>{MAN_SECTIONS.example}</dt><dd><CopyField value={usage.example} what={EXAMPLE_COPY_NAME} /></dd></div>
+      </dl>
+    </Window>
+    {details.distros.length > 0 && (
+      <Window id="dist" title={DIST_TITLE} cmd={DIST_CMD} {...accentProp}>
+        <KvTable caption={DIST_CAPTION} columns={DIST_COLUMNS}>
+          {details.distros.map((d) => <tr><td>{d.name}</td><td>{SUPPORT_WORDS[d.support]}</td><td>{d.how ?? NO_VALUE}</td></tr>)}
+        </KvTable>
+      </Window>
+    )}
+  </>
+)}
+{details !== undefined && region === 'stat' && (
+  <>
+    <tr><th scope="row">{STAT.language}</th><td>{details.language}</td></tr>
+    {details.needs.length > 0 && <tr><th scope="row">{STAT.needs}</th><td>{details.needs.join(', ')}</td></tr>}
+    {supported.length > 0 && <tr><th scope="row">{STAT.distros}</th><td>{supported.join(', ')}</td></tr>}
+  </>
+)}
+<style>
+  .method + .method {
+    margin-top: 12px;
+  }
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    color: var(--fg-bright);
+  }
+  .note {
+    margin: 0;
+    color: var(--text-dim);
+  }
+  .man,
+  .opts {
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .man > div {
+    display: grid;
+    grid-template-columns: 12ch minmax(0, 1fr);
+    gap: 1ch;
+  }
+  .opts > div {
+    display: grid;
+    grid-template-columns: 18ch minmax(0, 1fr);
+    gap: 1ch;
+  }
+  dt {
+    color: var(--text-dim);
+    overflow-wrap: anywhere;
+  }
+  dd {
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 760px) {
+    .man > div,
+    .opts > div {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

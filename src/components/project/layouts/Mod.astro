@@ -1,0 +1,89 @@
+---
+// Minecraft mod layout (ux 4.3): INSTALL (loader, where to get it, mods/ folder), `versions` and `dependencies`
+// tables, and loader / minecraft / side stat rows. Windows without data are omitted.
+import Link from '../../Link.astro';
+import Window from '../../window/Window.astro';
+import type { Project } from '../../../lib/content/model.ts';
+import type { CategoryAccent } from '../../../lib/palette.ts';
+import { INSTALL_CMD, INSTALL_TITLE } from '../../../lib/strings.ts';
+import KvTable from './KvTable.astro';
+
+interface Props {
+  project: Project;
+  region: 'install' | 'windows' | 'stat';
+  accent?: CategoryAccent | 'primary' | undefined;
+  repoUrl?: string | undefined;
+}
+
+// STRINGS-TODO (021): move into strings.ts with literal pins.
+const loaderStep = (loader: string) => `Install the ${loader} loader for your Minecraft version (see versions).`;
+const GET_STEP_LEAD = (name: string) => `Get ${name} from `;
+const OR = ' or ';
+const DROP_STEP = 'Put the .jar and its required dependencies in your mods/ folder.';
+const VERSIONS_TITLE = 'versions';
+const VERSIONS_CMD = 'ls releases/';
+const VERSIONS_CAPTION = 'Compatible files';
+const VERSIONS_COLUMNS = ['minecraft', 'loader', 'file', 'released'] as const;
+const DEPS_TITLE = 'dependencies';
+const DEPS_CMD = 'cat fabric.mod.json | jq .depends';
+const DEPS_CAPTION = 'Dependencies';
+const DEPS_COLUMNS = ['mod', 'need', 'why'] as const;
+const STAT = { loader: 'loader', minecraft: 'minecraft', side: 'side' } as const;
+
+const { project, region, accent } = Astro.props;
+const details = project.layout === 'mod' ? project.details : undefined;
+const links = project.get.filter((entry) => entry.href !== undefined);
+const accentProp = accent === undefined ? {} : { accent };
+---
+{details !== undefined && region === 'install' && (
+  <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
+    <ol class="steps">
+      <li>{loaderStep(details.loader)}</li>
+      {links.length > 0 && <li>{GET_STEP_LEAD(project.name)}{links.map((entry, i) => <>{i > 0 && OR}<Link href={entry.href ?? ''}>{entry.label}</Link></>)}.</li>}
+      <li>{DROP_STEP}</li>
+    </ol>
+  </Window>
+)}
+{details !== undefined && region === 'windows' && (
+  <>
+    {details.files.length > 0 && (
+      <Window id="ver" title={VERSIONS_TITLE} cmd={VERSIONS_CMD} {...accentProp}>
+        <KvTable caption={VERSIONS_CAPTION} columns={VERSIONS_COLUMNS}>
+          {details.files.map((file) => <tr><td>{file.game}</td><td>{file.loader}</td><td>{file.file}</td><td>{file.date}</td></tr>)}
+        </KvTable>
+      </Window>
+    )}
+    {details.dependencies.length > 0 && (
+      <Window id="dep" title={DEPS_TITLE} cmd={DEPS_CMD} {...accentProp}>
+        <KvTable caption={DEPS_CAPTION} columns={DEPS_COLUMNS}>
+          {details.dependencies.map((dep) => (
+            <tr><td>{dep.url === undefined ? dep.name : <Link href={dep.url}>{dep.name}</Link>}</td><td>{dep.need}</td><td>{dep.why}</td></tr>
+          ))}
+        </KvTable>
+      </Window>
+    )}
+  </>
+)}
+{details !== undefined && region === 'stat' && (
+  <>
+    <tr><th scope="row">{STAT.loader}</th><td>{details.loader}</td></tr>
+    <tr><th scope="row">{STAT.minecraft}</th><td>{details.gameVersions.join(', ')}</td></tr>
+    <tr><th scope="row">{STAT.side}</th><td>{details.side}</td></tr>
+  </>
+)}
+<style>
+  .steps {
+    margin: 0;
+    padding-left: 3ch;
+  }
+  .steps li {
+    padding: 3px 0;
+  }
+  .steps li::marker {
+    color: var(--text-dim);
+  }
+  .steps :global(a) {
+    display: inline-block;
+    padding: 2px 0;
+  }
+</style>
