@@ -118,7 +118,8 @@ async function main() {
     const { build } = await import('astro');
     await build({ root: process.cwd(), outDir: distDir });
 
-    const checked = verifyOutput({ distDir, siteUrl: gate.siteUrl, samplesAllowed: args.allowSamples });
+    // Samples and the dev-only fallback text are only forbidden where the data gate forbids them: strict, without --allow-samples.
+    const checked = verifyOutput({ distDir, siteUrl: gate.siteUrl, samplesAllowed: args.allowSamples || !args.strict });
     for (const f of checked.findings) console.log(`${f.rule} ${f.file} ${f.selector} ${f.message}`);
     console.log(formatBudget(checked.budget));
     if (!checked.ok) {

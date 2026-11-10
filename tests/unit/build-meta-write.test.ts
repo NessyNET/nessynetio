@@ -103,6 +103,16 @@ describe('samples', () => {
   }, SLOW);
 });
 
+describe('a local (non-strict) build keeps the dev-only fallback text', () => {
+  it('builds the stress fixture, where a dropped install entry shows "Not distributed yet", without an output-check failure', () => {
+    const out = outDir();
+    const result = build(['--content', 'tests/fixtures/site-stress', '--out', out]);
+    expect(result.status, result.stdout + result.stderr).toBe(0);
+    expect(result.stdout).not.toMatch(/^O[0-9] /m);
+    expect(readMeta(out)).toMatchObject({ strict: false, samplesAllowed: false });
+  }, SLOW);
+});
+
 describe('content gate failure', () => {
   it('prints the diagnostics and the gate message only: no Astro hook error, no stack trace', async () => {
     const result = await withFixture('project__screenshot-file', async (dir) => build(['--content', dir, '--out', outDir()]));
