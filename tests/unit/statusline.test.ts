@@ -44,7 +44,7 @@ describe('StatusLine.astro', () => {
   it('home: NESSY | ~ | N projects | spacer | dirs, 1 link | github | mail, in that order', async () => {
     const c = cells(await render({ kind: 'home', projects: 19, dirs: 4 }));
     expect(c.map((x) => x.cls)).toEqual(['mode', 'pth', 'mid', 'sp', 'rt', 'a', 'a']);
-    expect(c.map((x) => x.text)).toEqual(['NESSY', '~', '19 projects', '', '4 dirs, 1 link', 'github ↗ (opens in new tab)', 'mail']);
+    expect(c.map((x) => x.text)).toEqual(['NESSY', '~', '19 projects', '', '4 dirs, 1 link', 'github\u00a0↗ (opens in new tab)', 'mail']);
   });
 
   it('github goes through Link (external: new tab, rel, arrow); mail is a mailto link', async () => {
@@ -59,7 +59,7 @@ describe('StatusLine.astro', () => {
     const noGithub = cells(await render({ kind: 'home', projects: 1, dirs: 1 }, { mail: 'hello@nessynet.io' }));
     expect(noGithub.map((x) => x.text)).toEqual(['NESSY', '~', '1 project', '', '1 dir, 1 link', 'mail']);
     const noMail = cells(await render({ kind: 'home', projects: 1, dirs: 1 }, { github: 'https://github.com/nessy' }));
-    expect(noMail.map((x) => x.text).at(-1)).toBe('github ↗ (opens in new tab)');
+    expect(noMail.map((x) => x.text).at(-1)).toBe('github\u00a0↗ (opens in new tab)');
     expect(noMail.some((x) => x.text === 'mail')).toBe(false);
     const none = cells(await render({ kind: 'home', projects: 1, dirs: 1 }, {}));
     expect(none.map((x) => x.cls)).toEqual(['mode', 'pth', 'mid', 'sp', 'rt']);

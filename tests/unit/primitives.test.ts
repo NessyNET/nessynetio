@@ -258,12 +258,12 @@ describe('BookmarkMini', () => {
     expect(html).toContain('href="https://host1.example/path"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('<span class="rel">uses</span>');
-    expect(text(html)).toContain(`-&gt; Name1 ${S.EXTERNAL_ARROW} (opens in new tab) uses host1.example/path`);
+    expect(text(html)).toContain(`-&gt;&nbsp;Name1 ${S.EXTERNAL_ARROW} (opens in new tab) uses host1.example/path`);
   });
 
-  it('keeps the arrow and name together so the arrow is never orphaned', async () => {
+  it('keeps the arrow with the first word of the name (no-break space) and lets long names wrap', async () => {
     const html = await render(BookmarkMini, { bookmarks: [bm(1)], groupId: 'ffxiv' });
-    expect(html).toMatch(/<span class="nm"><span class="lnk" aria-hidden="true">-&gt;<\/span> <a [^>]*class="ext"[^>]*>Name1/);
+    expect(html).toMatch(/<span class="nm"><span class="lnk" aria-hidden="true">-&gt;<\/span>&nbsp;<a [^>]*class="ext"[^>]*>Name1/);
   });
 
   it('omits the relation badge when there is none', async () => {

@@ -138,7 +138,7 @@ describe('BookmarkRow', () => {
   it('symlink format: hidden permissions, name link, arrow, host, note, badge, author, related links', async () => {
     const out = await row(base);
     expect(out).toContain('<span class="perm" aria-hidden="true">lrwxrwxrwx</span>');
-    expect(out).toMatch(/<a href="https:\/\/github.com\/goatcorp\/Dalamud" class="ext nm" target="_blank" rel="noopener noreferrer">Dalamud /);
+    expect(out).toMatch(/<a href="https:\/\/github.com\/goatcorp\/Dalamud" class="ext nm" target="_blank" rel="noopener noreferrer">Dalamud\u00a0/);
     expect(out).toContain('<span class="lnk" aria-hidden="true">-&gt;</span> <span class="host">github.com/goatcorp/Dalamud</span>');
     expect(out).toContain('<p>The plugin framework.</p>');
     expect(out).toContain('<span class="rel">uses</span>');

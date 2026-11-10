@@ -18,6 +18,8 @@ const host = siteHost ?? Astro.site?.host;
 if (host === undefined) {
   throw new Error(`Link.astro (href "${href}"): pass a siteHost prop or set \`site\` so that Astro.site is available.`);
 }
+// A no-break space keeps the arrow from being orphaned on its own line.
+const NBSP = '\u00a0';
 const external = classifyHref(href, host) === 'external';
 // aria-label overrides the sr-only span, so the new-tab hint must be part of the label itself.
 const label = ariaLabel !== undefined && external ? `${ariaLabel}${OPENS_IN_NEW_TAB}` : ariaLabel;
@@ -29,4 +31,4 @@ const label = ariaLabel !== undefined && external ? `${ariaLabel}${OPENS_IN_NEW_
   aria-current={current}
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener noreferrer' : undefined}
-><slot />{external && (<> <span class="xa" aria-hidden="true">{EXTERNAL_ARROW}</span><span class="sr-only">{OPENS_IN_NEW_TAB}</span></>)}</a>
+><slot />{external && (<>{NBSP}<span class="xa" aria-hidden="true">{EXTERNAL_ARROW}</span><span class="sr-only">{OPENS_IN_NEW_TAB}</span></>)}</a>

@@ -87,7 +87,7 @@ describe('LinksTxt', () => {
 
   it('github is an external Link showing host and path, mail is a mailto link', async () => {
     const [github, mail] = rows(await render(LinksTxt, { links: model.whoami?.links }));
-    expect(github?.[1]).toMatch(/<a href="https:\/\/github.com\/example" target="_blank" rel="noopener noreferrer">github.com\/example /);
+    expect(github?.[1]).toMatch(/<a href="https:\/\/github.com\/example" target="_blank" rel="noopener noreferrer">github.com\/example\u00a0/);
     expect(mail?.[1]).toBe('<a href="mailto:hello@nessynet.io">hello@nessynet.io</a>');
   });
 

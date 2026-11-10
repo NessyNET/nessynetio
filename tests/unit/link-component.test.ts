@@ -20,7 +20,7 @@ describe('Link.astro', () => {
     expect(html).toContain('rel="noopener noreferrer"');
     expect(html).toContain('<span class="xa" aria-hidden="true">↗</span>');
     expect(html).toContain('<span class="sr-only"> (opens in new tab)</span>');
-    expect(html).toMatch(/>\s*Gear\s*<span class="xa"/);
+    expect(html).toMatch(/>\s*Gear\u00a0<span class="xa"/);
   });
 
   it('internal absolute (own host): no target, rel or arrow', async () => {
