@@ -13,7 +13,7 @@ export interface Fit {
 
 /**
  * Which chips stay in the row. `widths` include the gap after each chip; `available` is the row's content width plus
- * one gap, measured with the toggle shown; `toggleWidth` is the toggle plus its gap. Pinned chips always stay. When
+ * one gap, measured with the toggle shown; `toggleWidth` is the toggle plus its gap. Pinned chips always stay; the rest fill in order and stop at the first misfit. When
  * everything fits without the toggle, nothing moves. With `pinnedOnly` (phone widths) only pinned chips stay.
  */
 export function fitChips(widths: readonly number[], available: number, toggleWidth: number, pinned: ReadonlySet<number>, pinnedOnly = false): Fit {
@@ -23,11 +23,13 @@ export function fitChips(widths: readonly number[], available: number, toggleWid
     widths.forEach((_, i) => keep.add(i));
   } else if (!pinnedOnly) {
     let used = [...pinned].reduce((sum, i) => sum + (widths[i] ?? 0), 0);
-    widths.forEach((w, i) => {
-      if (keep.has(i) || used + w > available) return;
+    // Contiguous fill: stop at the first chip that does not fit rather than skipping to a smaller one.
+    for (const [i, w] of widths.entries()) {
+      if (keep.has(i)) continue;
+      if (used + w > available) break;
       keep.add(i);
       used += w;
-    });
+    }
   }
   const indices = widths.map((_, i) => i);
   return { row: indices.filter((i) => keep.has(i)), panel: indices.filter((i) => !keep.has(i)) };

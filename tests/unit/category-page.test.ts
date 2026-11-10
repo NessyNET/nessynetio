@@ -1,12 +1,18 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import ProjectRow from '../../src/components/category/ProjectRow.astro';
+import ProjectPage from '../../src/pages/[category]/[slug]/index.astro';
 import CategoryPage, { getStaticPaths } from '../../src/pages/[category]/index.astro';
 import { clearSiteMemo, loadSite } from '../../src/lib/content/index.ts';
 import type { Project, SiteModel } from '../../src/lib/content/model.ts';
 import { SECTIONS } from '../helpers/hooks.ts';
+
+// Project pages import optimised screenshots through a glob fixed to `content/`; stand in for it (see project-page.test.ts).
+vi.mock('../../src/lib/images.ts', () => ({
+  resolveScreenshot: () => ({ src: '/stub.png', width: 1600, height: 900, format: 'png' }),
+}));
 
 const E2E_DIR = fileURLToPath(new URL('../fixtures/site-e2e', import.meta.url));
 const STRESS_DIR = fileURLToPath(new URL('../fixtures/site-stress', import.meta.url));
@@ -165,6 +171,28 @@ describe('ffxiv page (repo_url set)', () => {
     const visibleButtons = [...outside.matchAll(/<(button|select)\b[^>]*>/g)].map((m) => m[0]).filter((b) => !/class="copy"|data-clear/.test(b));
     expect(visibleButtons).toEqual([]);
     expect(outside).toMatch(/<div class="empty" data-empty hidden>/);
+  });
+});
+
+describe('row install links (C1)', () => {
+  it('every #install href on a category page points at a project page that has an install section', async () => {
+    const projectHtml = async (categoryId: string, slug: string) => {
+      process.env['NESSY_CONTENT_DIR'] = E2E_DIR;
+      process.env['NESSY_STRICT'] = '1';
+      clearSiteMemo();
+      return container.renderToString(ProjectPage as unknown as Parameters<typeof container.renderToString>[0], { params: { category: categoryId, slug } });
+    };
+    let checked = 0;
+    for (const cat of model.categories) {
+      const hrefs = [...(await page(E2E_DIR, cat.id)).matchAll(/href="([^"]*#install)"/g)].map((m) => m[1] ?? '');
+      for (const href of hrefs) {
+        const m = /^\/([^/]+)\/([^/]+)\/#install$/.exec(href);
+        expect(m, href).not.toBeNull();
+        expect(await projectHtml(m?.[1] ?? '', m?.[2] ?? ''), href).toContain('id="install"');
+        checked++;
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 });
 

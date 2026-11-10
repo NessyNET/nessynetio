@@ -346,7 +346,7 @@ describe('see also', () => {
     expect(withBookmarks.seeAlso.elsewhere.length).toBeGreaterThan(0);
     const see = slice(await renderPage('ffxiv', 'loch-lantern'), `id="${SECTIONS.see}"`, '</section>');
     expect(see).toContain('elsewhere (not mine)');
-    expect([...see.matchAll(/<li><span class="lnk"/g)]).toHaveLength(withBookmarks.seeAlso.elsewhere.length);
+    expect([...see.matchAll(/<li><span class="nm"><span class="lnk"/g)]).toHaveLength(withBookmarks.seeAlso.elsewhere.length);
     expect(see).toContain('href="/bookmarks/#bm-ffxiv"');
     const without = allProjects().find((p) => p.seeAlso.elsewhere.length === 0);
     expect(without).toBeDefined();

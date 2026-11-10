@@ -40,7 +40,7 @@ const knownPaths = JSON.stringify(model.paths);
   <p class="sub">{OR_TRY}</p>
   <ul class="plain tree404">
     {model.categories.map((c) => <li class={`accent-${c.accent}`}><Link class="dir" href={routes.category(c.id)}>{groupTitle(c.id)}</Link> <span class="m">{projectCount(c.projects.length)}</span></li>)}
-    <li><Link class="dir" href={routes.bookmarks()}>{groupTitle(BOOKMARKS_ROW_NAME)}</Link> <span class="m">{OR_TRY_BOOKMARKS_NOTE}</span></li>
+    <li class="accent-cyan"><Link class="dir" href={routes.bookmarks()}>{groupTitle(BOOKMARKS_ROW_NAME)}</Link> <span class="m">{OR_TRY_BOOKMARKS_NOTE}</span></li>
   </ul>
   <p class="out home404"><Link href={routes.home()}>{GO_HOME}</Link></p>
 </Window>

@@ -8,9 +8,11 @@ import { GET_BAR_PREFIX, INSTALL_ON_CARD } from '../lib/strings.ts';
 interface Props {
   value: GetSlot;
   context: 'bar' | 'row';
+  /** Where `install` entries point when `#install` is not on the current page (category rows). */
+  installHref?: string;
 }
 
-const { value, context } = Astro.props;
+const { value, context, installHref } = Astro.props;
 const entries = value.kind === 'links' ? value.links : [];
 ---
 <span class="slot-get">
@@ -18,7 +20,7 @@ const entries = value.kind === 'links' ? value.links : [];
   {value.kind === 'text'
     ? <span class="na">{value.text}</span>
     : <span class="getlinks">{entries.map((entry, i) => (
-        <>{i > 0 && ' '}<Link href={entry.href ?? ''}>{context === 'row' && entry.kind === 'install' ? INSTALL_ON_CARD : entry.label}</Link></>
+        <>{i > 0 && ' '}<Link href={(entry.kind === 'install' ? installHref : undefined) ?? entry.href ?? ''}>{context === 'row' && entry.kind === 'install' ? INSTALL_ON_CARD : entry.label}</Link></>
       ))}</span>}
 </span>
 <style>

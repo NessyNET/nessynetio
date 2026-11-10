@@ -74,6 +74,7 @@ describe('404 page', () => {
     const links = [...tree.matchAll(/<a [^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/g)].map((m) => [m[1], m[2]]);
     expect(links).toEqual([...model.categories.map((c) => [`/${c.id}/`, `${c.id}/`]), ['/bookmarks/', 'bookmarks/']]);
     expect(links).toHaveLength(5);
+    expect(tree).toMatch(/<li class="accent-cyan"><a [^>]*href="\/bookmarks\/"/);
     expect(tree).toContain('8 projects');
     expect(text(tree)).toContain('bookmarks/ external links');
     expect(win()).toMatch(/<p class="out home404"><a href="\/">Go to the home page<\/a><\/p>/);

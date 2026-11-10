@@ -116,6 +116,11 @@ pre {
   overflow-wrap: anywhere;
 }
 
+/* Command text is yellow (ux 7.1); components that need another colour (CopyField) set it in their scoped styles. */
+code {
+  color: var(--yellow);
+}
+
 /* Prose caps (ux 7.2). */
 .out,
 .prose {

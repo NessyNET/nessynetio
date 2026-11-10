@@ -1,4 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import BookmarkMini from '../../src/components/bookmarks/BookmarkMini.astro';
 import CopyField from '../../src/components/CopyField.astro';
@@ -181,6 +183,14 @@ describe('GetLinks', () => {
     expect(html).not.toContain(S.GET_BAR_PREFIX);
   });
 
+  it('installHref redirects install entries only', async () => {
+    const slot = links(link(S.SEE_INSTALL, '#install', 'install', false), link('Modrinth', 'https://modrinth.com/x', 'external', true));
+    const html = await render(GetLinks, { value: slot, context: 'row', installHref: '/linux/lochctl/#install' });
+    expect(html).toContain('href="/linux/lochctl/#install"');
+    expect(html).not.toContain('href="#install"');
+    expect(html).toContain('href="https://modrinth.com/x"');
+  });
+
   it('row: other entries keep their label', async () => {
     const html = await render(GetLinks, { value: links(link(S.downloadLabel('1.2.0'), 'https://x.test/a.jar', 'download', true)), context: 'row' });
     expect(text(html)).toContain('download v1.2.0');
@@ -251,6 +261,11 @@ describe('BookmarkMini', () => {
     expect(text(html)).toContain(`-&gt; Name1 ${S.EXTERNAL_ARROW} (opens in new tab) uses host1.example/path`);
   });
 
+  it('keeps the arrow and name together so the arrow is never orphaned', async () => {
+    const html = await render(BookmarkMini, { bookmarks: [bm(1)], groupId: 'ffxiv' });
+    expect(html).toMatch(/<span class="nm"><span class="lnk" aria-hidden="true">-&gt;<\/span> <a [^>]*class="ext"[^>]*>Name1/);
+  });
+
   it('omits the relation badge when there is none', async () => {
     expect(await render(BookmarkMini, { bookmarks: [bm(1)], groupId: 'ffxiv' })).not.toContain('class="rel"');
   });
@@ -267,5 +282,14 @@ describe('BookmarkMini', () => {
     const html = await render(BookmarkMini, { bookmarks: [1, 2, 3].map((n) => bm(n)), groupId: 'linux', max: 2 });
     expect([...html.matchAll(/class="ext"/g)]).toHaveLength(2);
     expect(html).toContain('href="/bookmarks/#bm-linux"');
+  });
+});
+
+describe('global code colour', () => {
+  const src = (rel: string) => readFile(fileURLToPath(new URL(`../../src/${rel}`, import.meta.url)), 'utf8');
+
+  it('base.css colours code yellow; CopyField sets its own colour in a scoped rule that outranks it', async () => {
+    expect(await src('styles/base.css')).toMatch(/^code \{\n {2}color: var\(--yellow\);\n\}/m);
+    expect(await src('components/CopyField.astro')).toMatch(/\bcode \{[^}]*color: var\(--fg-bright\)/);
   });
 });

@@ -7,6 +7,7 @@ import Link from '../Link.astro';
 import SourceLink from '../SourceLink.astro';
 import StatusWord from '../StatusWord.astro';
 import type { Project } from '../../lib/content/model.ts';
+import * as routes from '../../lib/routes.ts';
 import { AVAILABILITY_LABEL, TAG_HASH, tagsFor, UPDATED_PREFIX, versionLabel } from '../../lib/strings.ts';
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
 
 const { project: p } = Astro.props;
 ---
-<li class={`row r-${p.status}`} data-tags={p.tags.map((t) => t.id).join(' ')} data-name={p.slug} data-updated={p.updated} data-priority={p.priority} data-status={p.status}><StatusWord status={p.status} /><div class="main"><h3><Link href={p.path}>{p.slug}</Link>{p.typeTag !== null && <> <span class="k">{p.typeTag.label}</span></>}{p.version !== undefined && <> <span class="ver">{versionLabel(p.version)}</span></>}</h3><p>{p.summary}</p><div class="rmeta"><div class="tags" role="group" aria-label={tagsFor(p.slug)}>{p.tags.map((t) => <span class="tag rt" data-tag={t.id}><span class="h" aria-hidden="true">{TAG_HASH}</span>{t.id}</span>)}</div><span class="upd">{UPDATED_PREFIX}<time datetime={p.updated}>{p.updated}</time></span></div></div><ul class="acts" aria-label={AVAILABILITY_LABEL}><li><GetLinks value={p.getSlot} context="row" /></li><li><SourceLink value={p.sourceSlot} context="row" /></li></ul></li>
+<li class={`row r-${p.status}`} data-tags={p.tags.map((t) => t.id).join(' ')} data-name={p.slug} data-updated={p.updated} data-priority={p.priority} data-status={p.status}><StatusWord status={p.status} /><div class="main"><h3><Link href={p.path}>{p.slug}</Link>{p.typeTag !== null && <> <span class="k">{p.typeTag.label}</span></>}{p.version !== undefined && <> <span class="ver">{versionLabel(p.version)}</span></>}</h3><p>{p.summary}</p><div class="rmeta"><div class="tags" role="group" aria-label={tagsFor(p.slug)}>{p.tags.map((t) => <span class="tag rt" data-tag={t.id}><span class="h" aria-hidden="true">{TAG_HASH}</span>{t.id}</span>)}</div><span class="upd">{UPDATED_PREFIX}<time datetime={p.updated}>{p.updated}</time></span></div></div><ul class="acts" aria-label={AVAILABILITY_LABEL}><li><GetLinks value={p.getSlot} context="row" installHref={routes.install(p.categoryId, p.slug)} /></li><li><SourceLink value={p.sourceSlot} context="row" /></li></ul></li>
 <style>
   .row {
     display: grid;

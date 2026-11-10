@@ -45,8 +45,12 @@ describe('fitChips', () => {
     expect(r.row.reduce((n, i) => n + (widths[i] ?? 0), 0)).toBeLessThanOrEqual(1300);
   });
 
-  it('fills greedily in order: a chip that does not fit stops nothing, a later narrower one may still fit', () => {
-    expect(fitChips([100, 250, 50], 200, 60, new Set([0]))).toEqual({ row: [0, 2], panel: [1] });
+  it('fills contiguously: stops at the first chip that does not fit, even if a later one is narrower', () => {
+    expect(fitChips([100, 250, 50], 200, 60, new Set([0]))).toEqual({ row: [0], panel: [1, 2] });
+  });
+
+  it('pinned chips stay even after the fill has stopped', () => {
+    expect(fitChips([100, 250, 50, 40], 200, 60, new Set([0, 3]))).toEqual({ row: [0, 3], panel: [1, 2] });
   });
 
   it('an empty list gives empty row and panel', () => {
