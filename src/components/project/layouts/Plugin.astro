@@ -1,0 +1,53 @@
+---
+// Plugin layout (ux 4.3 FFXIV plugin, 5.11): Dalamud custom-repo INSTALL with the repo URL copy field and the `warn:`
+// caution, and a `requires` stat row. A plugin without an `install` get entry has no INSTALL (ProjectRegion's `regions`
+// rule), which is also the R28 fallback: the rules drop `install` when the category has no `repo_url`.
+import CopyField from '../../CopyField.astro';
+import Notice from '../../Notice.astro';
+import Window from '../../window/Window.astro';
+import type { Project } from '../../../lib/content/model.ts';
+import type { CategoryAccent } from '../../../lib/palette.ts';
+import { DALAMUD_STEPS, INSTALL_CMD, INSTALL_TITLE, REPO_URL_COPY_NAME, REQUIRES_LABEL } from '../../../lib/strings.ts';
+
+interface Props {
+  project: Project;
+  region: 'install' | 'windows' | 'stat';
+  accent?: CategoryAccent | 'primary' | undefined;
+  /** The category `repo_url`; the copy field shows it. */
+  repoUrl?: string | undefined;
+}
+
+const { project, region, accent, repoUrl } = Astro.props;
+const requires = project.layout === 'plugin' ? project.details.requires : undefined;
+const accentProp = accent === undefined ? {} : { accent };
+---
+{region === 'install' && repoUrl !== undefined && (
+  <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
+    <ol class="steps">
+      {DALAMUD_STEPS.map((step) => (
+        <li>{step.parts.map((part) =>
+          part.kind === 'projectName' ? <strong>{project.name}</strong>
+          : part.kind === 'code' ? <code>{part.text}</code>
+          : part.kind === 'strong' ? <strong>{part.text}</strong>
+          : part.text)}{step.repoUrlCopy === true && <CopyField value={repoUrl} what={REPO_URL_COPY_NAME} />}</li>
+      ))}
+    </ol>
+    {project.caution !== undefined && <Notice kind="warn" text={project.caution} />}
+  </Window>
+)}
+{region === 'stat' && requires !== undefined && <tr><th scope="row">{REQUIRES_LABEL}</th><td>{requires}</td></tr>}
+<style>
+  .steps {
+    margin: 0;
+    padding-left: 3ch;
+  }
+  .steps li {
+    padding: 3px 0;
+  }
+  .steps li::marker {
+    color: var(--text-dim);
+  }
+  strong {
+    font-weight: 700;
+  }
+</style>

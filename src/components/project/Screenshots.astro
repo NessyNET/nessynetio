@@ -1,0 +1,63 @@
+---
+// Screenshots (ux 4.3 item 4, 5.5, R18): each image is optimised to AVIF/WebP at 480/960/1440 with intrinsic
+// dimensions, lazy-loaded, alt = caption. `grid`: the `screenshots/` window, omitted when there are none. `single`:
+// only the first image as a bare figure (the web preview); the slot, when given, replaces the visible caption.
+import { Picture } from 'astro:assets';
+import Window from '../window/Window.astro';
+import type { Project } from '../../lib/content/model.ts';
+import { resolveScreenshot } from '../../lib/images.ts';
+import { SCREENSHOTS_CMD, SCREENSHOTS_TITLE } from '../../lib/strings.ts';
+
+interface Props {
+  project: Project;
+  mode?: 'grid' | 'single';
+}
+
+const { project, mode = 'grid' } = Astro.props;
+const shots = (mode === 'single' ? project.screenshots.slice(0, 1) : project.screenshots).map((shot) => ({
+  caption: shot.caption,
+  image: resolveScreenshot(shot.file),
+}));
+const SIZES = '(max-width: 900px) 100vw, 640px';
+const hasCaption = Astro.slots.has('default');
+---
+{shots.length > 0 && mode === 'grid' && (
+  <Window id="shots" title={SCREENSHOTS_TITLE} cmd={SCREENSHOTS_CMD}>
+    <div class="shots">
+      {shots.map((shot) => (
+        <figure>
+          <Picture src={shot.image} formats={['avif', 'webp']} widths={[480, 960, 1440]} sizes={SIZES} alt={shot.caption} loading="lazy" decoding="async" />
+          <figcaption>{shot.caption}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </Window>
+)}
+{shots.length > 0 && mode === 'single' && shots.map((shot) => (
+  <figure>
+    <Picture src={shot.image} formats={['avif', 'webp']} widths={[480, 960, 1440]} sizes={SIZES} alt={shot.caption} loading="lazy" decoding="async" />
+    <figcaption>{hasCaption ? <slot /> : shot.caption}</figcaption>
+  </figure>
+))}
+<style>
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 16px;
+  }
+  figure {
+    margin: 0;
+  }
+  figure :global(img) {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-dark);
+  }
+  figcaption {
+    margin-top: 6px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+</style>

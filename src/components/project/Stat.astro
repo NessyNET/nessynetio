@@ -44,7 +44,7 @@ const { typeTag, getSlot, sourceSlot, issues, licence, version } = project;
     width: 100%;
     border-collapse: collapse;
   }
-  th {
+  table :global(th) {
     font-weight: 400;
     color: var(--text-dim);
     text-align: left;
@@ -52,12 +52,12 @@ const { typeTag, getSlot, sourceSlot, issues, licence, version } = project;
     padding: 2px 12px 2px 0;
     width: 9ch;
   }
-  td {
+  table :global(td) {
     color: var(--fg-bright);
     padding: 2px 0;
     overflow-wrap: anywhere;
   }
-  td :global(a) {
+  table :global(td a) {
     display: inline-block;
     padding: 2px 0;
   }

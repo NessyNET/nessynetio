@@ -1,0 +1,74 @@
+---
+// Web tool layout (ux 4.3 FFXIV web tool, 5.6): no INSTALL; `what it does` (the description, ending with the primary
+// Open tool button), a static `preview` (the first screenshot, only when there is one), and host / runs in / account / data stat
+// rows. The page omits the generic description window for this layout, because `what it does` carries it.
+import Link from '../../Link.astro';
+import Window from '../../window/Window.astro';
+import { hostOf } from '../../../lib/links.ts';
+import type { Project } from '../../../lib/content/model.ts';
+import type { CategoryAccent } from '../../../lib/palette.ts';
+import Screenshots from '../Screenshots.astro';
+import { OPEN_TOOL_BUTTON, PREVIEW_CMD, PREVIEW_TITLE, STAT_ACCOUNT, STAT_DATA, STAT_HOST, STAT_RUNS_IN, WEB_PREVIEW_CAPTION, WHAT_TITLE, whatCmd } from '../../../lib/strings.ts';
+
+interface Props {
+  project: Project;
+  region: 'install' | 'windows' | 'stat';
+  accent?: CategoryAccent | 'primary' | undefined;
+  repoUrl?: string | undefined;
+}
+
+const { project, region, accent } = Astro.props;
+const details = project.layout === 'web' ? project.details : undefined;
+const toolUrl = project.get.find((entry) => entry.kind === 'external')?.href;
+const host = toolUrl === undefined ? undefined : (hostOf(toolUrl) ?? undefined);
+const accentProp = accent === undefined ? {} : { accent };
+---
+{region === 'windows' && (
+  <>
+    <Window id="what" title={WHAT_TITLE} cmd={whatCmd(project.slug)} {...accentProp}>
+      {project.description.map((paragraph) => <p class="out">{paragraph}</p>)}
+      {toolUrl !== undefined && host !== undefined && (
+        <p class="openbtn"><Link class="btn-open" href={toolUrl}>{OPEN_TOOL_BUTTON}{' '}<span class="host">{host}</span></Link></p>
+      )}
+    </Window>
+    {project.screenshots.length > 0 && (
+      <Window id="prev" title={PREVIEW_TITLE} cmd={PREVIEW_CMD}>
+        <Screenshots project={project} mode="single">{WEB_PREVIEW_CAPTION}</Screenshots>
+      </Window>
+    )}
+  </>
+)}
+{region === 'stat' && (
+  <>
+    {host !== undefined && <tr><th scope="row">{STAT_HOST}</th><td>{host}</td></tr>}
+    {details !== undefined && (
+      <>
+        <tr><th scope="row">{STAT_RUNS_IN}</th><td>{details.runsIn}</td></tr>
+        <tr><th scope="row">{STAT_ACCOUNT}</th><td>{details.account}</td></tr>
+        <tr><th scope="row">{STAT_DATA}</th><td>{details.data}</td></tr>
+      </>
+    )}
+  </>
+)}
+<style>
+  .openbtn {
+    margin: 12px 0 0;
+  }
+  .openbtn :global(.btn-open) {
+    display: inline-block;
+    padding: 8px 16px;
+    min-height: 40px;
+    background: var(--primary);
+    color: var(--bg-dark);
+    border-radius: 4px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .openbtn :global(.btn-open:hover) {
+    background: var(--primary);
+    filter: brightness(1.1);
+  }
+  .openbtn :global(.host) {
+    font-weight: 400;
+  }
+</style>

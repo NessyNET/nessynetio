@@ -163,6 +163,24 @@ export const CHANGELOG_TITLE = 'CHANGELOG';
 export const CHANGELOG_CMD = 'git log --tags';
 export const FULL_HISTORY = 'full history';
 export const PROJECT_DETAILS_LABEL = 'Project details';
+export const INSTALL_TITLE = 'INSTALL.md';
+export const INSTALL_CMD = 'cat INSTALL.md';
+export const REQUIRES_LABEL = 'requires';
+export const REPO_URL_COPY_NAME = 'repository URL';
+/** Offline layout: one step per download get entry, then the requirement. */
+export const GET_THE_FILE = 'Get the file:';
+export const NEEDS = 'Needs';
+export const WHAT_TITLE = 'what it does';
+export const whatCmd = (slug: string): string => `${slug} --help`;
+export const PREVIEW_TITLE = 'preview';
+export const PREVIEW_CMD = 'ls screenshots/';
+export const OPEN_TOOL_BUTTON = 'Open tool';
+export const STAT_HOST = 'host';
+export const STAT_RUNS_IN = 'runs in';
+export const STAT_ACCOUNT = 'account';
+export const STAT_DATA = 'data';
+export const SCREENSHOTS_TITLE = 'screenshots/';
+export const SCREENSHOTS_CMD = 'ls screenshots/';
 export const WEB_PREVIEW_CAPTION = 'A screenshot, not a live embed. Use "Open tool" for the real thing.';
 
 /** A run of text inside a step; `projectName` is replaced by the project's name. */

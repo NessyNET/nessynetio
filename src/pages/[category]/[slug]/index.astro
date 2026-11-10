@@ -7,6 +7,7 @@ import Description from '../../../components/project/Description.astro';
 import ProjectRegion from '../../../components/project/ProjectRegion.astro';
 import Readme from '../../../components/project/Readme.astro';
 import SeeAlso from '../../../components/project/SeeAlso.astro';
+import Screenshots from '../../../components/project/Screenshots.astro';
 import Stat from '../../../components/project/Stat.astro';
 import Base from '../../../layouts/Base.astro';
 import { getSiteModel } from '../../../lib/content/index.ts';
@@ -46,9 +47,10 @@ const accent = isCategoryAccent(category.accent) ? category.accent : 'primary';
   <div class="cols">
     <div>
       <Readme project={project} accent={accent} />
-      <ProjectRegion project={project} region="install" accent={accent} />
-      <ProjectRegion project={project} region="windows" accent={accent} />
-      {/* The screenshots window (task 022) goes here, and only when the project has screenshots. */}
+      <ProjectRegion project={project} region="install" accent={accent} repoUrl={category.repoUrl} />
+      <ProjectRegion project={project} region="windows" accent={accent} repoUrl={category.repoUrl} />
+      {/* A web tool shows its first screenshot in the layout's preview window instead. */}
+      {project.layout !== 'web' && <Screenshots project={project} />}
       <Description project={project} />
       <Changelog project={project} />
     </div>

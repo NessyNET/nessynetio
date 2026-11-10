@@ -1,0 +1,46 @@
+---
+// Offline layout (ux 4.3 FFXIV offline): download steps generated from the `download` get entries (none: no INSTALL),
+// and a `requires` stat row when the project names one.
+import Link from '../../Link.astro';
+import Window from '../../window/Window.astro';
+import type { Project } from '../../../lib/content/model.ts';
+import type { CategoryAccent } from '../../../lib/palette.ts';
+import { GET_THE_FILE, INSTALL_CMD, INSTALL_TITLE, NEEDS, REQUIRES_LABEL } from '../../../lib/strings.ts';
+
+interface Props {
+  project: Project;
+  region: 'install' | 'windows' | 'stat';
+  accent?: CategoryAccent | 'primary' | undefined;
+  repoUrl?: string | undefined;
+}
+
+const { project, region, accent } = Astro.props;
+const requires = project.layout === 'offline' ? project.details.requires : undefined;
+const downloads = project.get.filter((entry) => entry.kind === 'download');
+const accentProp = accent === undefined ? {} : { accent };
+---
+{region === 'install' && downloads.length > 0 && (
+  <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
+    <ol class="steps">
+      {downloads.map((entry) => <li>{GET_THE_FILE} <Link href={entry.href ?? ''}>{entry.label}</Link></li>)}
+      {requires !== undefined && <li>{NEEDS} {requires}.</li>}
+    </ol>
+  </Window>
+)}
+{region === 'stat' && requires !== undefined && <tr><th scope="row">{REQUIRES_LABEL}</th><td>{requires}</td></tr>}
+<style>
+  .steps {
+    margin: 0;
+    padding-left: 3ch;
+  }
+  .steps li {
+    padding: 3px 0;
+  }
+  .steps li::marker {
+    color: var(--text-dim);
+  }
+  .steps :global(a) {
+    display: inline-block;
+    padding: 2px 0;
+  }
+</style>

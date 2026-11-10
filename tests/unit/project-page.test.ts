@@ -2,7 +2,7 @@
 // frozen site-e2e content, plus component-level renders for states the content does not contain.
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { fileURLToPath } from 'node:url';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import Changelog from '../../src/components/project/Changelog.astro';
 import ProjectRegion from '../../src/components/project/ProjectRegion.astro';
 import { clearSiteMemo, loadSite } from '../../src/lib/content/index.ts';
@@ -10,6 +10,12 @@ import type { Project, SiteModel } from '../../src/lib/content/model.ts';
 import Page, { getStaticPaths } from '../../src/pages/[category]/[slug]/index.astro';
 import { withFixture } from '../helpers/content-fixture.ts';
 import { SECTIONS, TITLES } from '../helpers/hooks.ts';
+
+// The glob in images.ts follows the `@content` alias fixed when the config loads (`content/`), not the fixture under
+// test, so the page tests stand in for the optimised image; the real pipeline is covered by screenshots.test.ts.
+vi.mock('../../src/lib/images.ts', () => ({
+  resolveScreenshot: () => ({ src: '/stub.png', width: 1600, height: 900, format: 'png' }),
+}));
 
 const E2E_DIR = fileURLToPath(new URL('../fixtures/site-e2e/', import.meta.url));
 
@@ -146,7 +152,8 @@ describe('main column', () => {
       const ids = windowIds(mainColumn(await renderPage(p.categoryId, p.slug))).filter((id) => RANK.includes(id ?? ''));
       const ranks = ids.map((id) => RANK.indexOf(id ?? ''));
       expect(ranks, p.slug).toEqual([...ranks].sort((x, y) => x - y));
-      expect(ids.includes('readme') && ids.includes('desc'), p.slug).toBe(true);
+      expect(ids.includes('readme'), p.slug).toBe(true);
+      expect(ids.includes('desc'), p.slug).toBe(p.layout !== 'web');
       expect(ids.includes('log'), p.slug).toBe(p.changelog.length > 0);
     }
   });
@@ -165,9 +172,10 @@ describe('main column', () => {
     expect(main(html)).toMatch(/<div class="cols">\s*<div>[\s\S]*<\/div>\s*<aside aria-label="Project details">/);
   });
 
-  it('renders no #install wrapper, no empty wrapper and no screenshots window while no layout adds them', async () => {
-    const html = await renderPage('ffxiv', 'heather-hotbar');
-    expect(project('heather-hotbar').screenshots).toHaveLength(0);
+  it('renders no #install wrapper, no empty wrapper and no screenshots window for a generic project without either', async () => {
+    const html = await renderPage('other', 'loch-depth');
+    expect(project('loch-depth').layout).toBe('generic');
+    expect(project('loch-depth').screenshots).toHaveLength(0);
     expect(html).not.toContain('id="install"');
     expect(html).not.toContain(SECTIONS.shots);
   });
@@ -392,8 +400,8 @@ describe('changelog window', () => {
 });
 
 describe('ProjectRegion', () => {
-  it('renders nothing for any region of the generic layout, and of a layout that is not registered yet', async () => {
-    for (const slug of ['urquhart-dice', 'loch-lantern', 'ripple-bot']) {
+  it('renders nothing for any region of the generic layout', async () => {
+    for (const slug of ['urquhart-dice', 'loch-depth']) {
       for (const region of ['install', 'windows', 'stat']) {
         const html = await render(ProjectRegion, { project: project(slug), region });
         expect(html.trim(), `${slug} ${region}`).toBe('');

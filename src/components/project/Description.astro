@@ -1,5 +1,5 @@
 ---
-// description window (ux 4.3 item 5): the longer prose, one paragraph per entry. Titled `description`, never `about`.
+// description window (ux 4.3 item 5; the web layout shows its prose in `what it does` instead): the longer prose, one paragraph per entry. Titled `description`, never `about`.
 import Window from '../window/Window.astro';
 import { DESCRIPTION_CMD, DESCRIPTION_TITLE } from '../../lib/strings.ts';
 import type { Project } from '../../lib/content/model.ts';
@@ -10,7 +10,7 @@ interface Props {
 
 const { project } = Astro.props;
 ---
-{project.description.length > 0 && (
+{project.layout !== 'web' && project.description.length > 0 && (
   <Window id="desc" title={DESCRIPTION_TITLE} cmd={DESCRIPTION_CMD}>
     {project.description.map((paragraph) => <p class="out">{paragraph}</p>)}
   </Window>
