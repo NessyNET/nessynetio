@@ -15,7 +15,7 @@ export function parseBuildArgs(argv) {
     else if (arg === '--allow-samples') args.allowSamples = true;
     else if (arg === '--content') {
       const value = argv[++i];
-      if (value === undefined) throw new Error('--content requires a directory');
+      if (value === undefined || value.startsWith('--')) throw new Error('--content requires a directory');
       args.contentDir = resolve(value);
     } else throw new Error(`Unknown argument: ${arg}`);
   }

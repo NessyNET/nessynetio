@@ -1,9 +1,10 @@
-import { readFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { formatDiagnostic, type Diagnostic } from '../../src/lib/content/diagnostics.ts';
-import { RULES } from '../../src/lib/content/rules.ts';
-import { fixtureNames, validateFixture, VALIDATION_DIR, type FixtureExpectation } from '../helpers/content-fixture.ts';
+import { loadContent } from '../../src/lib/content/load.ts';
+import { applyRules, RULES } from '../../src/lib/content/rules.ts';
+import { fixtureNames, SITE_HOST, validateFixture, VALIDATION_DIR, withFixture, type FixtureExpectation } from '../helpers/content-fixture.ts';
 
 const expectation = async (name: string): Promise<FixtureExpectation> =>
   JSON.parse(await readFile(join(VALIDATION_DIR, name, 'expect.json'), 'utf8')) as FixtureExpectation;
@@ -120,5 +121,40 @@ describe('design 3.3 sample exemption rows (S16)', () => {
     expect(samplePresent((await run('sample__present', false)).diagnostics).map((d) => d.level)).toEqual(['note']);
     expect(samplePresent((await run('sample__present', true, true)).diagnostics).map((d) => d.level)).toEqual(['warning']);
     expect(samplePresent((await run('sample__present', true, false)).diagnostics).map((d) => d.level)).toEqual(['error']);
+  });
+});
+
+describe('mutation-resistance cases carried from the 008 review', () => {
+  const codes = (ds: Diagnostic[], code: string): Diagnostic[] => ds.filter((d) => d.code === code);
+
+  const validateDir = async (dir: string) => {
+    const loaded = await loadContent(dir);
+    const result = await applyRules(loaded.parsed, { strict: false, allowSamples: false, siteHost: SITE_HOST, contentDir: dir });
+    return [...loaded.diagnostics, ...result.diagnostics];
+  };
+
+  it('a category with show_empty = true and no projects gets no category/empty note', async () => {
+    await withFixture('category__empty', async (dir) => {
+      const file = join(dir, 'categories.toml');
+      const text = await readFile(file, 'utf8');
+      await writeFile(file, text.replace('accent = "pink"', 'accent = "pink"\nshow_empty = true'));
+      const ds = await validateDir(dir);
+      expect(codes(ds, 'category/empty'), JSON.stringify(ds)).toEqual([]);
+    });
+  });
+
+  it('a screenshot path that escapes the project folder is an error even when the target exists', async () => {
+    await withFixture('_base', async (dir) => {
+      await mkdir(join(dir, 'projects', 'ffxiv', 'other'), { recursive: true });
+      await copyFile(join(dir, 'projects', 'ffxiv', 'gear-tweaks', '01.png'), join(dir, 'projects', 'ffxiv', 'other', '01.png'));
+      const file = join(dir, 'projects', 'ffxiv', 'gear-tweaks.toml');
+      const text = await readFile(file, 'utf8');
+      expect(text).toContain('file = "01.png"');
+      await writeFile(file, text.replace('file = "01.png"', 'file = "../other/01.png"'));
+      const found = codes(await validateDir(dir), 'project/screenshot-file');
+      expect(found).toHaveLength(1);
+      expect(found[0]).toMatchObject({ level: 'error', field: 'screenshots[0].file' });
+      expect(found[0]!.message).toContain('must be inside');
+    });
   });
 });

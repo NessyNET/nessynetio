@@ -1,8 +1,10 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'astro/config';
+import { contentGate } from './src/integrations/content-gate.ts';
 
 export default defineConfig({
   output: 'static',
+  integrations: [contentGate()],
   trailingSlash: 'always',
   compressHTML: 'jsx', // S2: default jsx rules keep multi-space commands byte-exact
   build: { format: 'directory', inlineStylesheets: 'never' },

@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "error",
+    "file": "projects/ffxiv/Bad_Slug.toml",
+    "entry": "Bad_Slug",
+    "field": "slug"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/ffxiv/Bad_Slug.toml",
+    "entry": "Bad_Slug",
+    "field": "slug"
+  }
+}

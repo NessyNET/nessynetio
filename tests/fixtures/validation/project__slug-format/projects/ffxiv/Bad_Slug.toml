@@ -1,0 +1,26 @@
+slug = "Bad_Slug"
+name = "Bad Slug"
+category = "ffxiv"
+status = "active"
+summary = "Tweaks the gear window."
+priority = 1
+updated = 2026-02-01
+description = "Prose."
+tags = ["plugin", "ui"]
+version = "1.2.0"
+
+[[get]]
+kind = "install"
+
+[ffxiv]
+requires = "Dalamud 12"
+
+[[changelog]]
+version = "1.2.0"
+date = 2026-02-01
+items = ["Newer."]
+
+[[changelog]]
+version = "1.1.0"
+date = 2026-01-01
+items = ["Older."]

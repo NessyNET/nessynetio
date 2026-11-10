@@ -48,6 +48,7 @@ export const RULES: readonly Rule[] = [
   { code: 'tag/duplicate', local: 'error', strict: 'error', uxRow: 'tag/duplicate: the same tag id twice within one category', message: (c) => `tag '${c['id']}' is listed twice in category '${c['category']}'` },
   { code: 'project/location', local: 'error', strict: 'error', uxRow: 'Folder or filename does not match category / slug (rev 4)', message: (c) => c['detail'] ?? '' },
   { code: 'project/unknown-category', local: 'error', strict: 'error', uxRow: 'project/unknown-category', message: (c) => `category '${c['category']}' is not defined in categories.toml` },
+  { code: 'project/slug-format', local: 'error', strict: 'error', uxRow: 'slug: ^[a-z0-9]+(-[a-z0-9]+)*$ (design 3.3; slugs become URL segments)', message: (c) => `slug '${c['slug']}' must be lowercase ASCII letters and digits separated by single '-'` },
   { code: 'project/duplicate-slug', local: 'error', strict: 'error', uxRow: 'Slug not unique across the site (rev 4)', message: (c) => `slug '${c['slug']}' is already used by ${c['first']}` },
   { code: 'project/unknown-tag', local: 'warning', strict: 'error', uxRow: "Project tag not in its category's config: warning; tag not rendered", message: (c) => `tag '${c['tag']}' is not defined in category '${c['category']}'; it is not rendered` },
   { code: 'project/type-tag-count', local: 'warning', strict: 'error', uxRow: 'project/type-tag-count, zero or several type tags: still rendered (generic layout / first in config order is the type)', message: (c) => c['detail'] ?? '' },
@@ -369,6 +370,7 @@ async function checkProjects(report: Report, projects: readonly ParsedProject[],
     if (project.fileSlug !== data.slug) {
       report.add('project/location', { ...where, field: 'slug' }, { detail: `slug '${data.slug}' does not match the filename '${project.fileSlug}.toml'` });
     }
+    if (!ID_FORMAT.test(data.slug)) report.add('project/slug-format', { ...where, field: 'slug' }, { slug: data.slug });
     const first = firstBySlug.get(data.slug);
     if (first === undefined) firstBySlug.set(data.slug, file);
     else report.add('project/duplicate-slug', { ...where, field: 'slug' }, { slug: data.slug, first });

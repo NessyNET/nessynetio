@@ -27,4 +27,8 @@ describe('parseBuildArgs', () => {
   it('throws when --content has no value', () => {
     expect(() => parseBuildArgs(['--content'])).toThrow(/--content/);
   });
+
+  it('throws when --content is followed by another flag instead of a directory', () => {
+    expect(() => parseBuildArgs(['--content', '--strict'])).toThrow(/--content/);
+  });
 });
