@@ -1,0 +1,34 @@
+#:schema ../../schema/project.json
+sample = true
+slug = "heather-hotbar"
+name = "Heather Hotbar"
+category = "ffxiv"
+status = "active"
+summary = "Hotbar profiles that swap by job, zone, and duty. [sample]"
+priority = 3
+updated = 2026-08-15
+version = "1.6.0"
+licence = "MIT"
+tags = ["plugin", "dalamud", "api12"]
+caution = "Custom repositories are not reviewed by the Dalamud team. Only add ones you trust. [sample]"
+description = """
+Keeps one hotbar layout per job, zone type and duty, and swaps them for you. Set it up once with /hotbar; after that there is nothing to look at, so this page has no screenshots. [sample]
+
+Profiles live in the plugin config folder and can be exported as text. [sample]
+"""
+
+[ffxiv]
+requires = "Dalamud API 12"
+
+[[get]]
+kind = "install"
+
+[[changelog]]
+version = "1.6.0"
+date = 2026-08-15
+items = ["Profiles per duty type.", "Export and import as text."]
+
+[[changelog]]
+version = "1.5.0"
+date = 2026-05-02
+items = ["API 12 support."]

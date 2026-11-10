@@ -1,0 +1,169 @@
+#:schema ./schema/bookmarks.json
+
+[[relation]]
+id = "uses"
+description = "a dependency or platform a project of mine runs on"
+
+[[relation]]
+id = "learned-from"
+description = "docs or code I learned from"
+
+[[relation]]
+id = "inspired-by"
+description = "work whose ideas I borrowed"
+
+[[relation]]
+id = "tool"
+description = "something I use every day"
+
+[[group]]
+id = "reading"
+label = "Reading"
+
+[[group]]
+id = "inspiration"
+label = "Inspiration"
+
+[[bookmark]]
+sample = true
+name = "Dalamud"
+url = "https://github.com/goatcorp/Dalamud"
+note = "The plugin framework every FFXIV plugin here is built on. [sample]"
+relation = "uses"
+category = "ffxiv"
+author = "goatcorp"
+projects = ["loch-lantern", "heather-hotbar"]
+
+[[bookmark]]
+sample = true
+name = "SamplePlugin"
+url = "https://github.com/goatcorp/SamplePlugin"
+note = "The template Loch Lantern started from. [sample]"
+relation = "learned-from"
+category = "ffxiv"
+author = "goatcorp"
+projects = ["loch-lantern"]
+
+[[bookmark]]
+sample = true
+name = "XIVAPI"
+url = "https://xivapi.com/"
+note = "Game data behind the gear planner. [sample]"
+relation = "uses"
+category = "ffxiv"
+projects = ["gorse-gearplanner"]
+
+[[bookmark]]
+sample = true
+name = "Fabric"
+url = "https://fabricmc.net/"
+note = "Mod loader for Peatmoss and the Highland Pack. [sample]"
+relation = "uses"
+category = "minecraft"
+projects = ["peatmoss", "highland-pack"]
+
+[[bookmark]]
+sample = true
+name = "NeoForged docs"
+url = "https://docs.neoforged.net/"
+note = "How I learned NeoForge worldgen for Bracken Biomes. [sample]"
+relation = "learned-from"
+category = "minecraft"
+projects = ["bracken-biomes"]
+
+[[bookmark]]
+sample = true
+name = "Prism Launcher"
+url = "https://prismlauncher.org/"
+note = "The launcher the Highland Pack install steps assume. [sample]"
+relation = "tool"
+category = "minecraft"
+projects = ["highland-pack"]
+
+[[bookmark]]
+sample = true
+name = "ArchWiki"
+url = "https://wiki.archlinux.org/"
+note = "Most of what I know about Linux came from here. [sample]"
+relation = "learned-from"
+category = "linux"
+projects = ["lochctl"]
+
+[[bookmark]]
+sample = true
+name = "Command Line Interface Guidelines"
+url = "https://clig.dev/"
+note = "Shaped lochctl's flags, help text and errors. [sample]"
+relation = "inspired-by"
+category = "linux"
+projects = ["lochctl"]
+
+[[bookmark]]
+sample = true
+name = "kitty"
+url = "https://sw.kovidgoyal.net/kitty/"
+note = "My terminal; the Nessy theme ships a kitty config. [sample]"
+relation = "tool"
+category = "linux"
+author = "Kovid Goyal"
+projects = ["nessy-theme"]
+
+[[bookmark]]
+sample = true
+name = "Crafting Interpreters"
+url = "https://craftinginterpreters.com/"
+note = "The book that made parsers click for me. [sample]"
+relation = "learned-from"
+group = "reading"
+author = "Robert Nystrom"
+
+[[bookmark]]
+sample = true
+name = "Julia Evans' zines"
+url = "https://wizardzines.com/"
+note = "Linux internals explained in a way I can share. [sample]"
+relation = "learned-from"
+group = "reading"
+author = "Julia Evans"
+
+[[bookmark]]
+sample = true
+name = "Dan Luu"
+url = "https://danluu.com/"
+note = "Plain-text essays on performance and how software really gets built. [sample]"
+relation = "learned-from"
+group = "reading"
+author = "Dan Luu"
+
+[[bookmark]]
+sample = true
+name = "Bartosz Ciechanowski"
+url = "https://ciechanow.ski/"
+note = "Interactive explainers; the bar for 'show, don't tell'. [sample]"
+relation = "inspired-by"
+group = "inspiration"
+author = "Bartosz Ciechanowski"
+
+[[bookmark]]
+sample = true
+name = "Hundred Rabbits"
+url = "https://100r.co/"
+note = "Small, durable tools built to last offline. [sample]"
+relation = "inspired-by"
+group = "inspiration"
+author = "Hundred Rabbits"
+
+[[bookmark]]
+sample = true
+name = "The Missing Semester"
+url = "https://missing.csail.mit.edu/"
+note = "Shell, editors and git, taught properly. I send it to everyone. [sample]"
+relation = "learned-from"
+author = "MIT"
+
+[[bookmark]]
+sample = true
+name = "Handmade Network"
+url = "https://handmade.network/"
+note = "A community that cares how software is made. [sample]"
+relation = "inspired-by"

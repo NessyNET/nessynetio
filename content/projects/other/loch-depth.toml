@@ -1,0 +1,20 @@
+#:schema ../../schema/project.json
+sample = true
+slug = "loch-depth"
+name = "loch-depth"
+category = "other"
+status = "active"
+summary = "A sonar-style depth map renderer, just for fun. [sample]"
+priority = 2
+updated = 2026-04-04
+version = "0.1.0"
+licence = "MIT"
+tags = ["experiment"]
+source = { host = "GitHub", url = "https://example.com/loch-depth" }
+description = """
+Turns a height map into a sonar-style depth picture. It started as a test for a palette and never grew up. [sample]
+"""
+
+[[get]]
+kind = "download"
+url = "https://example.com/downloads/loch-depth-0.1.0.zip"

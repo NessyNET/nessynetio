@@ -1,0 +1,34 @@
+#:schema ../../schema/project.json
+sample = true
+slug = "mist-macro-editor"
+name = "Mist Macro Editor"
+category = "ffxiv"
+status = "active"
+summary = "Desktop macro editor with syntax checks and wait-time hints. [sample]"
+priority = 4
+updated = 2026-06-30
+version = "1.2.0"
+licence = "MIT"
+tags = ["offline", "windows", "linux"]
+description = """
+Write and test crafting and gathering macros outside the game. It flags unknown commands and shows how long each macro takes to run. [sample]
+
+Download the archive, unpack it anywhere and run it; nothing is installed. [sample]
+"""
+
+[ffxiv]
+requires = "Windows 10 or Linux"
+
+[[get]]
+kind = "download"
+url = "https://example.com/downloads/mist-macro-editor-1.2.0.zip"
+
+[[changelog]]
+version = "1.2.0"
+date = 2026-06-30
+items = ["Wait-time hints per macro line."]
+
+[[changelog]]
+version = "1.1.0"
+date = 2026-03-18
+items = ["Syntax checks for crafting actions."]

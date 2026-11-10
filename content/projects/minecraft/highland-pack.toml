@@ -1,0 +1,59 @@
+#:schema ../../schema/project.json
+sample = true
+slug = "highland-pack"
+name = "Highland Pack"
+category = "minecraft"
+status = "active"
+summary = "A calm survival pack built around Peatmoss and Bracken Biomes. [sample]"
+priority = 3
+updated = 2026-10-20
+version = "1.4.0"
+licence = "MIT"
+tags = ["modpack", "fabric", "mc121"]
+description = """
+A slow, calm survival pack: no tech mods, no quests, just weather, moors and building. [sample]
+"""
+
+[minecraft]
+loader = "Fabric 0.16"
+game_versions = ["1.21.1"]
+import_url = "https://example.com/modrinth/highland-pack"
+launcher = "Prism Launcher"
+memory_gb = 6
+mods_total = 42
+mods_url = "https://example.com/highland-pack/mods.txt"
+mods = [
+  { name = "Peatmoss", version = "0.6.0", mine = true },
+  { name = "Bracken Biomes", version = "1.2.0", mine = true },
+  { name = "Sodium", version = "0.6.x", url = "https://example.com/sodium", mine = false },
+  { name = "Lithium", version = "0.14.x", url = "https://example.com/lithium", mine = false },
+  { name = "Mod Menu", version = "11.x", url = "https://example.com/mod-menu", mine = false },
+]
+
+[[get]]
+kind = "external"
+label = "Modrinth"
+url = "https://example.com/modrinth/highland-pack"
+
+[[get]]
+kind = "download"
+label = "download .mrpack"
+url = "https://example.com/downloads/highland-pack-1.4.0.mrpack"
+
+[[screenshots]]
+file = "01.sample.png"
+caption = "Spawn on a misty moor"
+
+[[screenshots]]
+file = "02.sample.png"
+caption = "A peat-fired homestead"
+
+[[changelog]]
+version = "1.4.0"
+date = 2026-10-20
+items = ["Updated to 1.21.1.", "Added Peatmoss 0.6.0."]
+
+[[changelog]]
+version = "1.3.0"
+date = 2026-07-01
+items = ["Swapped shader pack for performance."]

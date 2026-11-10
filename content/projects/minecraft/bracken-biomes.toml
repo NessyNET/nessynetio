@@ -1,0 +1,32 @@
+#:schema ../../schema/project.json
+sample = true
+slug = "bracken-biomes"
+name = "Bracken Biomes"
+category = "minecraft"
+status = "active"
+summary = "Highland moors and bracken slopes for the overworld. [sample]"
+priority = 2
+updated = 2026-08-21
+version = "1.2.0"
+licence = "MIT"
+tags = ["mod", "neoforge", "mc121", "worldgen"]
+description = """
+Adds high moors, bracken slopes and heather ridges to the overworld without touching the vanilla biomes. [sample]
+
+The source is not public; the mod is available as a download only. [sample]
+"""
+
+[minecraft]
+loader = "NeoForge"
+game_versions = ["1.21.1"]
+side = "both"
+
+[[get]]
+kind = "external"
+label = "Modrinth"
+url = "https://example.com/modrinth/bracken-biomes"
+
+[[changelog]]
+version = "1.2.0"
+date = 2026-08-21
+items = ["Heather ridges.", "Fewer bracken patches in dark forests."]

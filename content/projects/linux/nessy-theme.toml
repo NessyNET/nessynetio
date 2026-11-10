@@ -1,0 +1,28 @@
+#:schema ../../schema/project.json
+sample = true
+slug = "nessy-theme"
+name = "nessy-theme"
+category = "linux"
+status = "active"
+summary = "The colour theme this site uses, for terminals and editors. [sample]"
+priority = 2
+updated = 2026-11-01
+version = "1.0.0"
+licence = "MIT"
+tags = ["theme"]
+source = { host = "GitHub", url = "https://example.com/nessy-theme" }
+description = """
+One palette, shipped as config files for kitty, a few editors and the shell prompt. [sample]
+"""
+
+[linux]
+language = "TOML"
+needs = []
+
+[linux.usage]
+synopsis = "cp kitty/nessy.conf ~/.config/kitty/themes/"
+example = "kitty +kitten themes --reload-in=all Nessy"
+
+[[get]]
+kind = "download"
+url = "https://example.com/downloads/nessy-theme-1.0.0.tar.gz"

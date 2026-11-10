@@ -1,0 +1,26 @@
+#:schema ../../schema/project.json
+sample = true
+slug = "retainer-ledger"
+name = "Retainer Ledger"
+category = "ffxiv"
+status = "active"
+summary = "Track retainer ventures and market listings across worlds. [sample]"
+priority = 6
+updated = 2026-05-11
+tags = ["web"]
+description = """
+One page for every retainer: what they are out on, when they are back, and what is listed on the market board. [sample]
+"""
+
+[webtool]
+runs_in = "any modern browser"
+account = "none"
+data = "stays in your browser"
+
+[[get]]
+kind = "external"
+url = "https://ledger.nessynet.io"
+
+[notice]
+kind = "separate"
+text = "Retainer Ledger runs on ledger.nessynet.io and opens in a new tab. Nothing to install, no account; your data stays in your browser. [sample]"

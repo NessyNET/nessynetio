@@ -1,0 +1,62 @@
+#:schema ../../schema/project.json
+sample = true
+slug = "peatmoss"
+name = "Peatmoss"
+category = "minecraft"
+status = "active"
+summary = "Bog blocks, peat cutting and a slow-burning fuel. [sample]"
+priority = 1
+updated = 2026-10-05
+version = "0.6.0"
+licence = "MIT"
+tags = ["mod", "fabric", "mc121"]
+issues = "https://example.com/peatmoss/issues"
+source = { host = "GitHub", url = "https://example.com/peatmoss" }
+description = """
+Adds peat bogs to swamps and moors. Cut peat, dry it, and burn it as a slow fuel. Plays well with Bracken Biomes. [sample]
+"""
+
+[minecraft]
+loader = "Fabric"
+game_versions = ["1.21", "1.21.1"]
+side = "both"
+files = [
+  { game = "1.21.1", loader = "fabric 0.16+", file = "peatmoss-0.6.0+1.21.1.jar", date = 2026-10-05 },
+  { game = "1.21.0", loader = "fabric 0.15+", file = "peatmoss-0.5.2+1.21.jar", date = 2026-06-12 },
+]
+dependencies = [
+  { name = "Fabric API", url = "https://example.com/fabric-api", need = "required", why = "core hooks" },
+  { name = "Mod Menu", url = "https://example.com/mod-menu", need = "optional", why = "in-game config screen" },
+]
+
+[[get]]
+kind = "external"
+label = "Modrinth"
+url = "https://example.com/modrinth/peatmoss"
+
+[[get]]
+kind = "external"
+label = "CurseForge"
+url = "https://example.com/curseforge/peatmoss"
+
+[[screenshots]]
+file = "01.sample.png"
+caption = "A peat bog biome edge"
+
+[[screenshots]]
+file = "02.sample.png"
+caption = "Peat cutting with a slane"
+
+[[screenshots]]
+file = "03.sample.png"
+caption = "Peat burning in a furnace"
+
+[[changelog]]
+version = "0.6.0"
+date = 2026-10-05
+items = ["1.21.1 support.", "Peat now dries faster in the sun."]
+
+[[changelog]]
+version = "0.5.2"
+date = 2026-06-12
+items = ["Fix server crash with bog spawning."]

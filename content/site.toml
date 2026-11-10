@@ -1,0 +1,15 @@
+#:schema ./schema/site.json
+
+[site]
+url = "https://nessynet.io"
+description = "Plugins, mods and small tools for FFXIV, Minecraft and Linux, with the bookmarks behind them. [sample]"
+
+[whoami]
+sample = true
+name = "Nessy"
+tagline = "I make *plugins*{green}, *mods*{yellow} and *small tools*{cyan}. [sample]"
+bio = "FFXIV plugins and web tools, Minecraft mods and a modpack, and Linux utilities. Free to use. Some are open source; some live on private Git or only on my machine. [sample]"
+
+[whoami.links]
+github = "https://github.com/example"
+mail = "hello@nessynet.io"
