@@ -8,6 +8,12 @@ import * as routes from '../lib/routes.ts';
 import { TITLE_BOOKMARKS } from '../lib/strings.ts';
 import type { OgCardInput } from './types.ts';
 
+/**
+ * Bump when `card.ts` or the vendored fonts change in a way that alters the picture: it is part of every card's hash,
+ * so chat apps (which cache by URL) fetch the new image. 1 = the 028 interim card; 2 = the 041 polish (larger text).
+ */
+export const CARD_TEMPLATE_VERSION = 2;
+
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
@@ -82,9 +88,9 @@ export function readScreenshot(input: OgCardInput, contentDir: string): Uint8Arr
   return input.screenshot === undefined ? undefined : readFileSync(join(contentDir, input.screenshot.file));
 }
 
-/** Hashed card URL: changes whenever the card text, accent or screenshot bytes change, so scrapers refetch. */
-export function ogPathFor(pagePath: string, input: OgCardInput, contentDir: string): string {
-  const hash = createHash('sha256').update(JSON.stringify(input));
+/** Hashed card URL: changes whenever the card text, accent, screenshot bytes or template version change, so scrapers refetch. */
+export function ogPathFor(pagePath: string, input: OgCardInput, contentDir: string, templateVersion = CARD_TEMPLATE_VERSION): string {
+  const hash = createHash('sha256').update(`template:${templateVersion}\n${JSON.stringify(input)}`);
   const shot = readScreenshot(input, contentDir);
   if (shot !== undefined) hash.update(createHash('sha256').update(shot).digest());
   // The 404 page path carries an extension; the card name is `404-<hash>.png`.

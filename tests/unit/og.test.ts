@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { loadSite } from '../../src/lib/content/index.ts';
 import type { SiteModel } from '../../src/lib/content/model.ts';
 import { renderCard } from '../../src/og/card.ts';
-import { ogInputsFor, ogPathFor } from '../../src/og/inputs.ts';
+import { CARD_TEMPLATE_VERSION, ogInputsFor, ogPathFor } from '../../src/og/inputs.ts';
 import type { OgCardInput } from '../../src/og/types.ts';
 import { buildInScratch } from '../helpers/scratch-build.ts';
 
@@ -41,6 +41,19 @@ describe('ogPathFor', () => {
     expect(ogPathFor('/linux/lochctl/', shot('projects/linux/lochctl/01.png'), E2E_DIR)).toBe(one);
     expect(ogPathFor('/linux/lochctl/', shot('projects/linux/lochctl/02.png'), E2E_DIR)).not.toBe(one);
     expect(one).not.toBe(ogPathFor('/linux/lochctl/', input(), E2E_DIR));
+  });
+});
+
+describe('ogPathFor, template version', () => {
+  it('changing the template version changes the URL of every card', async () => {
+    const loaded = await loadSite({ dir: E2E_DIR, strict: true, allowSamples: false });
+    if (loaded.model === null) throw new Error('site-e2e does not load');
+    const inputs = [...ogInputsFor(loaded.model)];
+    expect(inputs.length).toBeGreaterThan(10);
+    for (const [path, card] of inputs) {
+      expect(ogPathFor(path, card, E2E_DIR, CARD_TEMPLATE_VERSION + 1), path).not.toBe(ogPathFor(path, card, E2E_DIR));
+      expect(ogPathFor(path, card, E2E_DIR, CARD_TEMPLATE_VERSION), path).toBe(ogPathFor(path, card, E2E_DIR));
+    }
   });
 });
 
