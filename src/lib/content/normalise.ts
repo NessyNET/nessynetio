@@ -11,6 +11,7 @@ import {
   NO_LONGER_DISTRIBUTED,
   SEE_INSTALL,
   SOURCE_NOT_AVAILABLE,
+  downloadLabel,
   noticeLabel,
   notDistributedPrivate,
   openTool,
@@ -44,9 +45,6 @@ const FREE_GROUP_ACCENT = 'teal';
 /** `{ [key]: value }`, or `{}` when the value is absent, so optional model fields are never `undefined`-valued. */
 const maybe = <K extends string, V>(key: K, value: V | undefined): { [P in K]?: V } =>
   (value === undefined ? {} : { [key]: value }) as { [P in K]?: V };
-
-// The one piece of get wording not yet in strings.ts (ux 6.2 lists `download v{version}` only in prose).
-const downloadLabel = (version: string | undefined): string => (version === undefined ? 'download' : `download v${version}`);
 
 /** Everything up to and including the first `.`, `!` or `?` followed by whitespace or the end. */
 function firstSentence(text: string): string {

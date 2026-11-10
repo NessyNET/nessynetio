@@ -1,0 +1,43 @@
+---
+// The frame every page shares (ux 4): skip link, tab bar, `main`, pinned status line, one live region.
+import '../styles/tokens.css';
+import '../styles/base.css';
+import latinFont from '../../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+import nojsHref from '../styles/nojs.css?url';
+import Link from '../components/Link.astro';
+import Meta from '../components/chrome/Meta.astro';
+import StatusLine from '../components/chrome/StatusLine.astro';
+import TabBar from '../components/chrome/TabBar.astro';
+import type { StatusLineProps } from '../components/chrome/status-line.ts';
+import type { SiteModel } from '../lib/content/model.ts';
+import type { PageMeta } from '../lib/meta.ts';
+import { SKIP_LINK } from '../lib/strings.ts';
+
+interface Props {
+  model: SiteModel;
+  meta: PageMeta;
+  current: { kind: 'home' | 'category' | 'project' | 'bookmarks' | 'notfound'; categoryId?: string };
+  status: StatusLineProps;
+}
+
+const { model, meta, current, status } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <Meta meta={meta} siteUrl={model.site.url} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" as="font" type="font/woff2" href={latinFont} crossorigin />
+    <noscript><link rel="stylesheet" href={nojsHref} /></noscript>
+  </head>
+  <body>
+    <Link href="#main" class="skip" siteHost={model.site.host}>{SKIP_LINK}</Link>
+    <TabBar model={model} current={current} />
+    <main id="main" class="screen"><slot /></main>
+    <StatusLine status={status} links={model.whoami?.links ?? {}} siteHost={model.site.host} />
+    <div id="live" class="sr-only" aria-live="polite"></div>
+  </body>
+</html>

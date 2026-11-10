@@ -1,0 +1,15 @@
+---
+// <title>, description and canonical (R19). 027 adds the social-card tags here.
+import * as routes from '../../lib/routes.ts';
+import type { PageMeta } from '../../lib/meta.ts';
+
+interface Props {
+  meta: PageMeta;
+  siteUrl: string;
+}
+
+const { meta, siteUrl } = Astro.props;
+---
+<title>{meta.title}</title>
+<meta name="description" content={meta.description} />
+<link rel="canonical" href={routes.canonical(siteUrl, meta.canonicalPath)} />

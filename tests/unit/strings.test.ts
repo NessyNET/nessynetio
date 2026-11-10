@@ -13,6 +13,8 @@ describe('ux 6.2 fixed strings (verbatim)', () => {
     ['get slot, plugin without repo_url (dev-only)', s.NOT_DISTRIBUTED_YET, 'Not distributed yet'],
     ['get link on its own page', s.SEE_INSTALL, 'see install'],
     ['get link on cards', s.INSTALL_ON_CARD, 'install'],
+    ['get link, download with a version', s.downloadLabel('1.2.0'), 'download v1.2.0'],
+    ['get link, download without a version', s.downloadLabel(), 'download'],
     ['get link, web tool', s.openTool('gear.nessynet.io'), 'Open tool: gear.nessynet.io'],
     ['external arrow', s.EXTERNAL_ARROW, '↗'],
     ['copy button', s.COPY_LABEL, 'copy'],

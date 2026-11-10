@@ -144,7 +144,7 @@ export interface Notice {
 }
 
 export interface Screenshot {
-  /** Path relative to `projects/<category>/<slug>/`; `src/lib/images.ts` (022) resolves it. */
+  /** Content-relative path `projects/<folder>/<fileSlug>/<file>` (as `normalise` produces it); `src/lib/images.ts` (022) resolves it. */
   readonly file: string;
   /** Also the alt text. */
   readonly caption: string;

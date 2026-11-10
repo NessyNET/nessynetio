@@ -20,6 +20,8 @@ export const SEE_INSTALL = 'see install';
 export const INSTALL_ON_CARD = 'install';
 
 export const notDistributedPrivate = (kind?: string): string => `Not distributed (${privateLabel(kind)})`;
+/** `download v{version}`, or bare `download` when the project has no version (ux 6.2, design 3.3 `[[get]]` table). */
+export const downloadLabel = (version?: string): string => (version === undefined ? 'download' : `download v${version}`);
 export const openTool = (host: string): string => `Open tool: ${host}`;
 
 // --- Notices (ux 6.3, 7.11; R24)

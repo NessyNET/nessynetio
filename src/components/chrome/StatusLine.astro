@@ -1,0 +1,78 @@
+---
+// Pinned status line (ux 7.5). A labelled footer, not a landmark of its own; its live values are not announced.
+import Link from '../Link.astro';
+import { NOT_FOUND_PATH_FALLBACK } from '../../lib/strings.ts';
+import { statusCells } from './status-line.ts';
+import type { StatusLineProps } from './status-line.ts';
+
+interface Props {
+  status: StatusLineProps;
+  /** Absent keys omit their cell. `mail` is a bare address. */
+  links: { github?: string; mail?: string };
+  siteHost: string;
+}
+
+const { status, links, siteHost } = Astro.props;
+const { path, mid, right } = statusCells(status);
+---
+<footer class="statusline" aria-label="Status line"><div class="in"><span class="mode">NESSY</span><span class="pth">{path ?? <span data-badpath>{NOT_FOUND_PATH_FALLBACK}</span>}</span>{status.kind === 'category' ? <span class="mid">tag:<span data-tag-name>all</span> sort:<span data-sort-name>default</span></span> : <span class="mid">{mid}</span>}<span class="sp"></span><span class="rt">{status.kind === 'category' ? <span data-count>{right}</span> : right}</span>{links.github !== undefined && <Link href={links.github} siteHost={siteHost}>github</Link>}{links.mail !== undefined && <Link href={`mailto:${links.mail}`} siteHost={siteHost}>mail</Link>}</div></footer>
+
+<style>
+  .statusline {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    height: var(--sl-h);
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--fg);
+  }
+  .in {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .in > :global(*) {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+  .mode {
+    background: var(--primary);
+    color: var(--bg-dark);
+    font-weight: 800;
+  }
+  .pth {
+    background: var(--selection);
+    color: var(--fg-bright);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    line-height: var(--sl-h);
+  }
+  /* A block, so the spaces between "tag:" and "sort:" survive. */
+  .mid {
+    display: block;
+    line-height: var(--sl-h);
+  }
+  .sp {
+    flex: 1;
+    padding: 0;
+  }
+  .in > :global(a) {
+    color: var(--primary);
+    min-height: 24px;
+  }
+  @media (max-width: 760px) {
+    .mid,
+    .rt {
+      display: none;
+    }
+  }
+</style>

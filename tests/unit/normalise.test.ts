@@ -321,6 +321,15 @@ describe('get, source and notice strings (ux 5.2, 6.2)', () => {
     expect(p.get[0]).toMatchObject({ external: false });
   });
 
+  it('a download without an explicit label and without a project version is the bare "download"', () => {
+    const p = one('nover', {
+      ...ffxiv,
+      version: undefined,
+      get: [{ kind: 'download', url: 'https://example.org/nover.zip' }],
+    });
+    expect(p.get[0]).toMatchObject({ kind: 'download', label: 'download' });
+  });
+
   it('download only, private source: download link and Source not available', () => {
     const p = one('dl', { ...ffxiv });
     expect(p.getSlot).toMatchObject({ kind: 'links' });

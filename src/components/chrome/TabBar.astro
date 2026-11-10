@@ -1,0 +1,100 @@
+---
+// Tab bar (ux 3.3, 7.5): `0:home`, one tab per published category in config order, then `bookmarks`.
+import Link from '../Link.astro';
+import * as routes from '../../lib/routes.ts';
+import type { SiteModel } from '../../lib/content/model.ts';
+
+interface Props {
+  model: SiteModel;
+  current: { kind: 'home' | 'category' | 'project' | 'bookmarks' | 'notfound'; categoryId?: string };
+}
+
+const { model, current } = Astro.props;
+
+interface Tab {
+  /** Matches `current.kind` (and `categoryId` for categories). */
+  key: string;
+  name: string;
+  href: string;
+  accent: string;
+}
+
+const tabs: Tab[] = [
+  { key: 'home', name: 'home', href: routes.home(), accent: 'primary' },
+  ...model.categories.map((c) => ({ key: `category:${c.id}`, name: c.id, href: routes.category(c.id), accent: c.accent })),
+  { key: 'bookmarks', name: 'bookmarks', href: routes.bookmarks(), accent: 'cyan' },
+];
+
+const currentKey =
+  current.kind === 'category' || current.kind === 'project'
+    ? `category:${current.categoryId}`
+    : current.kind === 'notfound'
+      ? undefined
+      : current.kind;
+// A project page marks its parent category as the current section, not as the page.
+const currentValue = current.kind === 'project' ? 'true' : 'page';
+---
+<header class="tmux"><div class="in"><Link href={routes.home()} class="brand" siteHost={model.site.host}>nessynet</Link><nav aria-label="Main"><ul>{tabs.map((tab, i) => (
+  <li class={`accent-${tab.accent}`}><Link href={tab.href} siteHost={model.site.host} {...(tab.key === currentKey ? { current: currentValue } : {})}><span class="n" aria-hidden="true">{i}:</span>{tab.name}{tab.key === currentKey && <span class="mark" aria-hidden="true">*</span>}</Link></li>
+))}</ul></nav></div></header>
+
+<style>
+  .tmux {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .tmux :global(.brand) {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    min-height: 44px;
+    background: var(--primary);
+    color: var(--bg-dark);
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .tmux :global(.brand:hover) {
+    background: var(--primary-hover);
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li :global(a) {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    color: var(--fg);
+    text-decoration: none;
+    border-top: 2px solid transparent;
+  }
+  li :global(a:hover) {
+    background: var(--bg-light);
+  }
+  .n {
+    color: var(--text-dim);
+    margin-right: 2px;
+  }
+  li :global(a[aria-current]) {
+    background: var(--bg-dark);
+    color: var(--fg-bright);
+    border-top-color: var(--accent);
+  }
+  .mark {
+    color: var(--text-dim);
+  }
+  @media (max-width: 760px) {
+    li :global(a) {
+      padding: 0 10px;
+    }
+  }
+</style>

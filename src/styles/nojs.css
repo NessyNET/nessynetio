@@ -1,0 +1,9 @@
+/* JS-off stylesheet (design 3.5.1): linked from a <noscript> in <head>, so nothing flashes and no inline script is needed.
+   Hides what only works with JavaScript; nothing else belongs here. */
+.controls,
+.copy,
+.more,
+[data-ls-arg],
+[data-js-only] {
+  display: none !important;
+}
