@@ -70,6 +70,26 @@ const { project: p } = Astro.props;
     line-height: 26px;
     color: var(--purple);
   }
+  /* The category script upgrades hashtags to filter buttons (ux 7.9). */
+  button.tag {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    font: inherit;
+    padding: 0 4px;
+  }
+  button.tag:hover {
+    border-color: var(--control-line);
+    background: var(--bg-light);
+  }
+  button.tag[aria-pressed='true'] {
+    background: var(--purple);
+    color: var(--bg-dark);
+    font-weight: 700;
+  }
+  button.tag[aria-pressed='true'] .h {
+    color: var(--bg-dark);
+  }
   .h,
   .upd {
     color: var(--text-dim);

@@ -1,6 +1,7 @@
 ---
 // Category page (ux 4.2): header with the repo or bookmarks window beside it (5.11), `projects`, and the bookmarks
 // window below `projects` when the repo window holds the header slot. Opt-in empty categories show the message instead.
+import CategoryScript from '../../components/category/CategoryScript.astro';
 import CategoryBookmarks from '../../components/category/CategoryBookmarks.astro';
 import CategoryHeader from '../../components/category/CategoryHeader.astro';
 import EmptyCategory from '../../components/category/EmptyCategory.astro';
@@ -37,4 +38,5 @@ const side = repoSlot ? 'repo' : category.bookmarks.length > 0 ? 'bookmarks' : n
     )}
   {category.projects.length === 0 ? <EmptyCategory category={category} /> : <ProjectsWindow category={category} />}
   {side === 'repo' && <CategoryBookmarks category={category} />}
+  {category.projects.length > 0 && <CategoryScript />}
 </Base>
