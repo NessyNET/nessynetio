@@ -204,7 +204,8 @@ code {
   grid-template-columns: minmax(0, 2.2fr) minmax(280px, 1fr);
   gap: var(--gap);
 }
-/* main column + side column; the side column is sticky until it stacks */
+/* main column + side column. The side column is never sticky (ux 7.3): a sticky column taller than the viewport hides its
+   lower links under the status line, and page scrolling cannot move it. */
 .cols {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 40ch);
@@ -217,18 +218,11 @@ code {
   gap: var(--gap);
   min-width: 0;
 }
-.cols > aside {
-  position: sticky;
-  top: 16px;
-}
 
 @media (max-width: 900px) {
   .pair,
   .cols {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .cols > aside {
-    position: static;
   }
 }
 

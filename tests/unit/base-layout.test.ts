@@ -1,5 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
+import CopyField from '../../src/components/CopyField.astro';
 import Base from '../../src/layouts/Base.astro';
 import { homeMeta } from '../../src/lib/meta.ts';
 import { siteModel } from '../helpers/chrome-model.ts';
@@ -79,5 +81,24 @@ describe('Base.astro', () => {
     expect(inline).toHaveLength(0);
     expect(html).not.toMatch(/<style\b/);
     expect(html).not.toMatch(/\sstyle\s*=/);
+  });
+});
+
+describe('behaviour scripts (025, 040)', () => {
+  const scriptSrcs = (markup: string) => [...markup.matchAll(/<script\b[^>]*\bsrc="([^"]*)"/g)].map((m) => m[1] ?? '');
+
+  it('every page built on Base loads the focus-nudge module, once', () => {
+    expect(scriptSrcs(html).filter((src) => src.includes('FocusNudge'))).toHaveLength(1);
+  });
+
+  it('a copy field loads the copy module', async () => {
+    const field = await container.renderToString(CopyField, { props: { value: 'yay -S x', what: 'command' } });
+    expect(scriptSrcs(field).filter((src) => src.includes('CopyScript'))).toHaveLength(1);
+  });
+});
+
+describe('side column stays in the flow (ux 7.3, SC 2.4.11)', () => {
+  it('base.css has no sticky positioning: a sticky column taller than the viewport hides focus under the status line', () => {
+    expect(readFileSync(new URL('../../src/styles/base.css', import.meta.url), 'utf8')).not.toMatch(/position:\s*sticky/);
   });
 });
