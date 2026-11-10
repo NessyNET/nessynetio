@@ -1,0 +1,12 @@
+---
+// 404 page (ux 4.5): emitted as `dist/404.html`, which nginx serves for unknown paths with status 404 (design 3.5.3).
+import NotFound from '../components/notfound/NotFound.astro';
+import Base from '../layouts/Base.astro';
+import { getSiteModel } from '../lib/content/index.ts';
+import { notFoundMeta } from '../lib/meta.ts';
+
+const model = await getSiteModel();
+---
+<Base model={model} meta={notFoundMeta(model)} current={{ kind: 'notfound' }} status={{ kind: 'notfound' }}>
+  <NotFound model={model} />
+</Base>

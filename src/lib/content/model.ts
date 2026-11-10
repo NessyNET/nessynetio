@@ -2,7 +2,7 @@
 // Field names are the contract; optional fields are absent (never `undefined`-valued) when not set.
 // Dates are `YYYY-MM-DD` strings. Accent tokens are plain strings: `src/lib/palette.ts` (004) owns the allow-list.
 
-import type { TaglineColour } from '../palette.ts';
+import type { CategoryAccent, TaglineColour } from '../palette.ts';
 
 export type Layout = 'plugin' | 'offline' | 'web' | 'mod' | 'modpack' | 'tool' | 'bot' | 'generic';
 export type Status = 'active' | 'retired';
@@ -176,7 +176,7 @@ export interface BookmarkGroup {
   readonly id: string;
   readonly label: string;
   readonly kind: 'category' | 'group' | 'general';
-  readonly accent: string;
+  readonly accent: CategoryAccent;
   readonly bookmarks: readonly Bookmark[];
 }
 
@@ -253,7 +253,7 @@ export interface Category {
   readonly shortLabel: string;
   readonly blurb: string;
   readonly blurbFirstSentence: string;
-  readonly accent: string;
+  readonly accent: CategoryAccent;
   readonly showEmpty: boolean;
   readonly repoUrl?: string;
   /** Used tags only, config order, with counts. */

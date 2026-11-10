@@ -1,18 +1,18 @@
 ---
 // `repo.json` window (ux 4.2, 5.11): rendered only for a category whose `repo_url` is set; a URL that is not set is never shown.
+import type { CategoryAccent } from '../../lib/palette.ts';
 import CopyField from '../CopyField.astro';
 import Window from '../window/Window.astro';
-import type { CategoryAccent } from '../../lib/palette.ts';
 import { REPO_COPY_WHAT, REPO_INTRO, REPO_TITLE } from '../../lib/strings.ts';
 
 interface Props {
   repoUrl: string;
-  accent: string;
+  accent: CategoryAccent;
 }
 
 const { repoUrl, accent } = Astro.props;
 ---
-<Window id="repo" title={REPO_TITLE} accent={accent as CategoryAccent}>
+<Window id="repo" title={REPO_TITLE} accent={accent}>
   <p class="out">{REPO_INTRO}</p>
   <CopyField value={repoUrl} what={REPO_COPY_WHAT} />
 </Window>

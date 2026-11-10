@@ -1,0 +1,74 @@
+---
+// The 404 window (ux 4.5): complete without JavaScript (generic text, categories, home); the notfound script (026)
+// fills the `[data-badpath]` cells and the `[data-suggest]` list. The known-path list is a JSON `data-known-paths`
+// attribute on `[data-suggest]`: `<script type="application/json">` would need raw-HTML injection (banned by lint L1),
+// because Astro does not interpolate text inside `is:inline` scripts. Pre-agreed fallback in the 018 brief.
+import Link from '../Link.astro';
+import Window from '../window/Window.astro';
+import type { SiteModel } from '../../lib/content/model.ts';
+import * as routes from '../../lib/routes.ts';
+import {
+  BOOKMARKS_ROW_NAME,
+  CD_PROMPT,
+  DID_YOU_MEAN,
+  GO_HOME,
+  groupTitle,
+  NOT_FOUND_AFTER_PATH,
+  NOT_FOUND_BEFORE_PATH,
+  NOT_FOUND_EXIT,
+  NOT_FOUND_HEADING,
+  NOT_FOUND_PATH_FALLBACK,
+  OR_TRY,
+  OR_TRY_BOOKMARKS_NOTE,
+  projectCount,
+  SHELL_NAME,
+} from '../../lib/strings.ts';
+
+interface Props {
+  model: SiteModel;
+}
+
+const { model } = Astro.props;
+// Only the path strings are serialised: the model itself is deep-frozen and cyclic.
+const knownPaths = JSON.stringify(model.paths);
+---
+<Window id="404" title={SHELL_NAME} titleTag="p" meta={NOT_FOUND_EXIT} accent="red">
+  <p class="cmdline"><span class="p" aria-hidden="true">$</span> <span aria-hidden="true">{CD_PROMPT}</span><span data-badpath>{NOT_FOUND_PATH_FALLBACK}</span></p>
+  <h1>{NOT_FOUND_HEADING}</h1>
+  <p class="out">{NOT_FOUND_BEFORE_PATH}<code data-badpath>{NOT_FOUND_PATH_FALLBACK}</code>{NOT_FOUND_AFTER_PATH}</p>
+  <div data-suggest data-known-paths={knownPaths} hidden><p class="sub">{DID_YOU_MEAN}</p><ul class="plain sugg" data-suggest-list></ul></div>
+  <p class="sub">{OR_TRY}</p>
+  <ul class="plain tree404">
+    {model.categories.map((c) => <li class={`accent-${c.accent}`}><Link class="dir" href={routes.category(c.id)}>{groupTitle(c.id)}</Link> <span class="m">{projectCount(c.projects.length)}</span></li>)}
+    <li><Link class="dir" href={routes.bookmarks()}>{groupTitle(BOOKMARKS_ROW_NAME)}</Link> <span class="m">{OR_TRY_BOOKMARKS_NOTE}</span></li>
+  </ul>
+  <p class="out home404"><Link href={routes.home()}>{GO_HOME}</Link></p>
+</Window>
+<style>
+  .sub {
+    margin: 14px 0 4px;
+    color: var(--text-dim);
+  }
+  .plain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .plain :global(a) {
+    display: inline-block;
+    padding: 3px 0;
+  }
+  .tree404 :global(.dir) {
+    color: var(--accent, var(--cyan));
+    font-weight: 700;
+  }
+  .m {
+    color: var(--text-dim);
+  }
+  .home404 {
+    margin-top: 14px;
+  }
+  code {
+    color: var(--fg-bright);
+  }
+</style>

@@ -3,6 +3,7 @@
 // no diagnostics (008 reports every content problem; this assumes a valid tree and stays defensive only where
 // a fallback can leave a gap).
 import { classifyHref, hostOf } from '../links.ts';
+import { isCategoryAccent, type CategoryAccent } from '../palette.ts';
 import * as routes from '../routes.ts';
 import { sortRows, compareSlug } from '../sort.ts';
 import {
@@ -40,7 +41,7 @@ import { parseDetails, resolveLayout, webHost } from './variants.ts';
 const UPDATES_LOG_SIZE = 4;
 const SEE_ALSO_MINE_MAX = 3;
 const GENERAL_GROUP = 'general';
-const FREE_GROUP_ACCENT = 'teal';
+const FREE_GROUP_ACCENT: CategoryAccent = 'teal';
 
 /** `{ [key]: value }`, or `{}` when the value is absent, so optional model fields are never `undefined`-valued. */
 const maybe = <K extends string, V>(key: K, value: V | undefined): { [P in K]?: V } =>
@@ -220,6 +221,13 @@ export function normalise(resolved: ParsedSite): SiteModel {
 
   const published = configs.filter((c) => (categoryProjects.get(c.id)?.length ?? 0) > 0 || c.show_empty === true);
   const publishedIds = new Set(published.map((c) => c.id));
+  // Validation reports a bad accent as an error, so a model is never built from one.
+  const accentOf = new Map(
+    published.map((c): [string, CategoryAccent] => {
+      if (!isCategoryAccent(c.accent)) throw new Error(`normalise: category "${c.id}" has unvalidated accent "${c.accent}"`);
+      return [c.id, c.accent];
+    }),
+  );
 
   for (const cfg of published) {
     const projects = categoryProjects.get(cfg.id) ?? [];
@@ -255,7 +263,7 @@ export function normalise(resolved: ParsedSite): SiteModel {
     shortLabel: cfg.short_label ?? cfg.label,
     blurb: cfg.blurb,
     blurbFirstSentence: firstSentence(cfg.blurb),
-    accent: cfg.accent,
+    accent: accentOf.get(cfg.id) as CategoryAccent,
     showEmpty: cfg.show_empty === true,
     ...maybe('repoUrl', cfg.repo_url),
     tags: categoryTags.get(cfg.id) ?? [],
@@ -268,7 +276,7 @@ export function normalise(resolved: ParsedSite): SiteModel {
       id: cfg.id,
       label: cfg.label,
       kind: 'category' as const,
-      accent: cfg.accent,
+      accent: accentOf.get(cfg.id) as CategoryAccent,
       bookmarks: bookmarksByGroup.get(cfg.id) ?? [],
     })),
     ...resolved.groups.map(({ data }) => ({

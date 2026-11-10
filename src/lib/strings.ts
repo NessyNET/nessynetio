@@ -102,7 +102,8 @@ export const BOOKMARKS_ROW_TARGET = '-> elsewhere';
 export const ALL_BOOKMARKS = 'all bookmarks';
 
 export const WHOAMI_TITLE = 'whoami';
-export const WHOAMI_META = 'zsh';
+/** The shell named in window titles and metas (landing `whoami`, the 404 window). */
+export const SHELL_NAME = 'zsh';
 export const LINKS_TITLE = 'links.txt';
 export const LINKS_CMD = 'cat links.txt';
 export const LINK_KEY_GITHUB = 'github';
@@ -215,6 +216,11 @@ export const DALAMUD_STEPS: readonly DalamudStep[] = [
 ];
 
 // --- 404 (ux 4.5)
+export const NOT_FOUND_EXIT = 'exit 1';
+/** Decorative prompt text before the visible bad path. */
+export const CD_PROMPT = 'cd ';
+/** Dim note after the `bookmarks/` entry of the "or try" list. */
+export const OR_TRY_BOOKMARKS_NOTE = 'external links';
 export const NOT_FOUND_HEADING = '404: no such file or directory';
 export const NOT_FOUND_BEFORE_PATH = 'Nothing lives at ';
 export const NOT_FOUND_AFTER_PATH = '. It may have moved or been renamed, or the link has a typo.';

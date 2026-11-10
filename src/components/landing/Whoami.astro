@@ -3,7 +3,7 @@
 // plain spans (no em/strong): colour is decoration, so the heading reads as plain text.
 import Window from '../window/Window.astro';
 import type { Whoami } from '../../lib/content/model.ts';
-import { WHOAMI_META, WHOAMI_TITLE } from '../../lib/strings.ts';
+import { SHELL_NAME, WHOAMI_TITLE } from '../../lib/strings.ts';
 
 interface Props {
   whoami: Whoami;
@@ -11,7 +11,7 @@ interface Props {
 
 const { whoami } = Astro.props;
 ---
-<Window id="who" title={WHOAMI_TITLE} titleTag="p" meta={WHOAMI_META}>
+<Window id="who" title={WHOAMI_TITLE} titleTag="p" meta={SHELL_NAME}>
   <h1>{whoami.name}.{whoami.tagline !== null && <> <span class="tagline">{whoami.tagline.map((segment) => (segment.accent === undefined ? segment.text : <span class={`acc-${segment.accent}`}>{segment.text}</span>))}</span></>}<span class="cursor" aria-hidden="true"></span></h1>
   <p class="out bio">{whoami.bio}</p>
 </Window>

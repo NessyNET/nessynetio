@@ -33,6 +33,7 @@ export const HOOKS = {
   badpath: '[data-badpath]', // the requested path (body code element and status line)
   suggest: '[data-suggest]', // "did you mean" block (hidden until there are matches)
   suggestList: '[data-suggest-list]', // its list
+  knownPaths: '[data-known-paths]', // 404.html: attribute on [data-suggest], JSON array of the published paths (no inline script)
 } as const;
 
 /** `section[aria-labelledby]` ids of windows (`sec-w-*`). The title element id is the same name without `sec-` (TITLES). */
@@ -100,7 +101,6 @@ export const IDS = {
   main: 'main', // every page: <main id="main"> (skip-link target)
   live: 'live', // every page: the aria-live region
   install: 'install', // project pages with INSTALL.md: wrapper (target of `#install`)
-  knownPaths: 'known-paths', // 404.html: <script type="application/json"> with the published paths
   moreTags: 'more-tags', // category pages: id of the overflow panel (aria-controls of the "+N more" button)
   sortField: 'sort-field', // category pages: the sort <select> (label target)
   flabel: 'flabel', // category pages: id of the tag row label (aria-labelledby of the chip group)

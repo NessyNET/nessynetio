@@ -2,7 +2,6 @@
 // One bookmarks-page window per non-empty group (ux 4.4): symlink rows (ux 7.13).
 import Window from '../window/Window.astro';
 import type { BookmarkGroup } from '../../lib/content/model.ts';
-import type { CategoryAccent } from '../../lib/palette.ts';
 import { groupMeta, groupTitle, lsBookmarksCmd } from '../../lib/strings.ts';
 import BookmarkRow from './BookmarkRow.astro';
 
@@ -13,7 +12,7 @@ interface Props {
 const { group } = Astro.props;
 const meta = groupMeta(group.bookmarks.length, group.kind === 'group');
 ---
-<Window id={group.id} idPrefix="bm" title={groupTitle(group.id)} meta={meta} cmd={lsBookmarksCmd(group.id)} accent={group.accent as CategoryAccent}>
+<Window id={group.id} idPrefix="bm" title={groupTitle(group.id)} meta={meta} cmd={lsBookmarksCmd(group.id)} accent={group.accent}>
   <ul class="bms">{group.bookmarks.map((bookmark) => <BookmarkRow bookmark={bookmark} />)}</ul>
 </Window>
 <style>

@@ -212,13 +212,19 @@ describe('chrome and landing wording', () => {
   });
 
   it('landing windows', () => {
-    expect([s.WHOAMI_TITLE, s.WHOAMI_META, s.LINKS_TITLE, s.LINKS_CMD]).toEqual(['whoami', 'zsh', 'links.txt', 'cat links.txt']);
+    expect([s.WHOAMI_TITLE, s.SHELL_NAME, s.LINKS_TITLE, s.LINKS_CMD]).toEqual(['whoami', 'zsh', 'links.txt', 'cat links.txt']);
     expect([s.LINK_KEY_GITHUB, s.LINK_KEY_MAIL]).toEqual(['github', 'mail']);
     expect([s.LS_TITLE, s.LS_CMD, s.LS_COLUMNS]).toEqual(['projects', 'ls -l ~', ['mode', 'name', 'items', 'contents']]);
     expect([s.LOG_TITLE, s.LOG_CMD]).toEqual(['updates.log', 'tail -n 4 updates.log']);
     expect(s.LS_CAPTION).toBe('Project categories, and the link to bookmarks');
     expect(s.lsMeta(19, 16)).toBe('19 projects · 16 links');
     expect([s.BOOKMARKS_ROW_NAME, s.BOOKMARKS_ROW_TARGET]).toEqual(['bookmarks', '-> elsewhere']);
+  });
+});
+
+describe('404 wording', () => {
+  it('fixed 404 window strings', () => {
+    expect([s.SHELL_NAME, s.NOT_FOUND_EXIT, s.CD_PROMPT, s.OR_TRY_BOOKMARKS_NOTE]).toEqual(['zsh', 'exit 1', 'cd ', 'external links']);
   });
 });
 

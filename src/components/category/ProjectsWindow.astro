@@ -5,7 +5,6 @@
 import Prompt from '../window/Prompt.astro';
 import Window from '../window/Window.astro';
 import type { Category } from '../../lib/content/model.ts';
-import type { CategoryAccent } from '../../lib/palette.ts';
 import {
   EMPTY_FILTER_TAGGED,
   emptyFilterTail,
@@ -25,7 +24,7 @@ interface Props {
 const { category } = Astro.props;
 const count = category.projects.length;
 ---
-<Window id="ls" title={LS_TITLE} accent={category.accent as CategoryAccent}>
+<Window id="ls" title={LS_TITLE} accent={category.accent}>
   <span slot="meta" data-count>{projectCount(count)}</span>
   <p class="cmdline lsline" aria-hidden="true"><Prompt cmd={lsCategoryCmd(category.id)} /><span class="arg" data-ls-arg></span></p>
   <div class="controls" data-js-only><TagRow tags={category.tags} total={count} /><SortRow count={count} /></div>
