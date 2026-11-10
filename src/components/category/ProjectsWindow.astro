@@ -1,0 +1,71 @@
+---
+// `projects` window (ux 4.2, 7.6 to 7.9): prompt, JS-only controls, the hidden empty-filter state and every row in
+// default order, so the page is complete without JavaScript. The frame is written out here (not `Window`) because
+// the title meta must hold the `[data-count]` hook the category script updates.
+import Prompt from '../window/Prompt.astro';
+import type { Category } from '../../lib/content/model.ts';
+import {
+  EMPTY_FILTER_TAGGED,
+  emptyFilterTail,
+  LS_TITLE,
+  lsCategoryCmd,
+  projectCount,
+  showAllProjects,
+} from '../../lib/strings.ts';
+import ProjectRow from './ProjectRow.astro';
+import SortRow from './SortRow.astro';
+import TagRow from './TagRow.astro';
+
+interface Props {
+  category: Category;
+}
+
+const { category } = Astro.props;
+const count = category.projects.length;
+---
+<section class={`win accent-${category.accent}`} id="sec-w-ls" aria-labelledby="w-ls">
+  <div class="tb">
+    <h2 id="w-ls" class="tt">{LS_TITLE}</h2>
+    <span class="tbm"><span data-count>{projectCount(count)}</span></span>
+  </div>
+  <div class="body">
+    <p class="cmdline lsline" aria-hidden="true"><Prompt cmd={lsCategoryCmd(category.id)} /><span class="arg" data-ls-arg></span></p>
+    <div class="controls" data-js-only><TagRow tags={category.tags} total={count} /><SortRow count={count} /></div>
+    <ul class="rows" data-filter-target>{category.projects.map((project) => <ProjectRow project={project} />)}</ul>
+    <div class="empty" data-empty hidden><p><span class="r">{projectCount(0)}</span>{EMPTY_FILTER_TAGGED}<span data-term></span>{emptyFilterTail(category.label)} <button type="button" class="linkbtn" data-clear>{showAllProjects(category.label)}</button></p></div>
+  </div>
+</section>
+<style>
+  .arg {
+    color: var(--yellow);
+  }
+  .controls {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+  .empty {
+    padding: 12px 4px;
+  }
+  .empty p {
+    margin: 0;
+  }
+  .r {
+    color: var(--red);
+  }
+  .linkbtn {
+    background: none;
+    border: 0;
+    padding: 2px 0;
+    font: inherit;
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

@@ -1,0 +1,40 @@
+---
+// Category page (ux 4.2): header with the repo or bookmarks window beside it (5.11), `projects`, and the bookmarks
+// window below `projects` when the repo window holds the header slot. Opt-in empty categories show the message instead.
+import CategoryBookmarks from '../../components/category/CategoryBookmarks.astro';
+import CategoryHeader from '../../components/category/CategoryHeader.astro';
+import EmptyCategory from '../../components/category/EmptyCategory.astro';
+import ProjectsWindow from '../../components/category/ProjectsWindow.astro';
+import RepoWindow from '../../components/category/RepoWindow.astro';
+import Base from '../../layouts/Base.astro';
+import { getSiteModel } from '../../lib/content/index.ts';
+import { categoryMeta } from '../../lib/meta.ts';
+
+export async function getStaticPaths() {
+  const model = await getSiteModel();
+  return model.categories.map((c) => ({ params: { category: c.id } }));
+}
+
+const model = await getSiteModel();
+const category = model.categories.find((c) => c.id === Astro.params.category);
+if (category === undefined) throw new Error(`Category "${Astro.params.category}" is not published.`);
+const repoSlot = category.repoUrl !== undefined;
+const side = repoSlot ? 'repo' : category.bookmarks.length > 0 ? 'bookmarks' : null;
+---
+<Base
+  model={model}
+  meta={categoryMeta(model, category)}
+  current={{ kind: 'category', categoryId: category.id }}
+  status={{ kind: 'category', categoryId: category.id, projects: category.projects.length }}
+>
+  {side === null
+    ? <CategoryHeader category={category} />
+    : (
+      <div class="pair">
+        <CategoryHeader category={category} />
+        {category.repoUrl !== undefined ? <RepoWindow repoUrl={category.repoUrl} accent={category.accent} /> : <CategoryBookmarks category={category} />}
+      </div>
+    )}
+  {category.projects.length === 0 ? <EmptyCategory category={category} /> : <ProjectsWindow category={category} />}
+  {side === 'repo' && <CategoryBookmarks category={category} />}
+</Base>

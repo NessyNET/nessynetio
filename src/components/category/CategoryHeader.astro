@@ -1,0 +1,16 @@
+---
+// Category header window `h` (ux 4.2): holds the page h1 (the label) and the blurb.
+import Window from '../window/Window.astro';
+import type { Category } from '../../lib/content/model.ts';
+import { categoryPath, cdCmd } from '../../lib/strings.ts';
+
+interface Props {
+  category: Category;
+}
+
+const { category } = Astro.props;
+---
+<Window id="h" title={categoryPath(category.id)} titleTag="p" cmd={cdCmd(category.id)} class={`accent-${category.accent}`}>
+  <h1>{category.label}</h1>
+  <p class="out">{category.blurb}</p>
+</Window>

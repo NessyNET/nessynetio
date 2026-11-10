@@ -1,0 +1,121 @@
+---
+// One project row (ux 7.9): status | name, type, version / summary / hashtags, updated | actions.
+// Hashtags are plain text here; the category script (023) upgrades them to filter buttons. The `.k` type label and
+// `.tag` colours come from the window's `--accent`.
+import GetLinks from '../GetLinks.astro';
+import Link from '../Link.astro';
+import SourceLink from '../SourceLink.astro';
+import StatusWord from '../StatusWord.astro';
+import type { Project } from '../../lib/content/model.ts';
+import { AVAILABILITY_LABEL, TAG_HASH, tagsFor, UPDATED_PREFIX, versionLabel } from '../../lib/strings.ts';
+
+interface Props {
+  project: Project;
+}
+
+const { project: p } = Astro.props;
+---
+<li class={`row r-${p.status}`} data-tags={p.tags.map((t) => t.id).join(' ')} data-name={p.slug} data-updated={p.updated} data-priority={p.priority} data-status={p.status}><StatusWord status={p.status} /><div class="main"><h3><Link href={p.path}>{p.slug}</Link>{p.typeTag !== null && <> <span class="k">{p.typeTag.label}</span></>}{p.version !== undefined && <> <span class="ver">{versionLabel(p.version)}</span></>}</h3><p>{p.summary}</p><div class="rmeta"><div class="tags" role="group" aria-label={tagsFor(p.slug)}>{p.tags.map((t) => <span class="tag rt" data-tag={t.id}><span class="h" aria-hidden="true">{TAG_HASH}</span>{t.id}</span>)}</div><span class="upd">{UPDATED_PREFIX}<time datetime={p.updated}>{p.updated}</time></span></div></div><ul class="acts" aria-label={AVAILABILITY_LABEL}><li><GetLinks value={p.getSlot} context="row" /></li><li><SourceLink value={p.sourceSlot} context="row" /></li></ul></li>
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 11ch minmax(0, 1fr) minmax(24ch, auto);
+    gap: 2px 3ch;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 400;
+  }
+  h3 :global(a) {
+    color: var(--fg-bright);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  h3 :global(a:hover) {
+    text-decoration: underline;
+    background: none;
+  }
+  .r-retired h3 :global(a) {
+    color: var(--fg);
+    font-weight: 400;
+  }
+  .k {
+    color: var(--accent, var(--blue));
+  }
+  .ver {
+    color: var(--text-dim);
+  }
+  p {
+    margin: 0;
+  }
+  .rmeta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 2ch;
+    margin-top: 2px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 4px;
+  }
+  .tag {
+    display: inline-block;
+    padding: 0 4px;
+    min-height: 26px;
+    line-height: 26px;
+    color: var(--purple);
+  }
+  .h,
+  .upd {
+    color: var(--text-dim);
+  }
+  .acts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    text-align: right;
+  }
+  .acts li {
+    white-space: nowrap;
+  }
+  .acts :global(a) {
+    padding: 2px 4px;
+    display: inline-block;
+  }
+  /* The primitives' text-only states (`.na`) are dim. */
+  .acts :global(.na) {
+    color: var(--text-dim);
+  }
+  @media (max-width: 1100px) {
+    .row {
+      grid-template-columns: 10ch minmax(0, 1fr) auto;
+    }
+  }
+  @media (max-width: 760px) {
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .acts {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px 2ch;
+      align-items: center;
+      text-align: left;
+    }
+    .acts li {
+      white-space: normal;
+    }
+    .acts :global(a) {
+      padding: 6px 0;
+    }
+  }
+</style>

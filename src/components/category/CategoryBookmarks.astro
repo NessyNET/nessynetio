@@ -1,0 +1,19 @@
+---
+// The category's `bookmarks` window (ux 4.2, 7.13): mini rows and a link to the group on the bookmarks page.
+// Placed beside the header, or below `projects` when the repo window takes the header slot. Omitted without bookmarks.
+import BookmarkMini from '../bookmarks/BookmarkMini.astro';
+import Window from '../window/Window.astro';
+import type { Category } from '../../lib/content/model.ts';
+import { CATEGORY_BOOKMARKS_TITLE, lsBookmarksCmd, STATUS_EXTERNAL } from '../../lib/strings.ts';
+
+interface Props {
+  category: Category;
+}
+
+const { category } = Astro.props;
+---
+{category.bookmarks.length > 0 && (
+  <Window id="bm" title={CATEGORY_BOOKMARKS_TITLE} meta={STATUS_EXTERNAL} cmd={lsBookmarksCmd(category.id)} class="accent-cyan">
+    <BookmarkMini bookmarks={category.bookmarks} groupId={category.id} />
+  </Window>
+)}

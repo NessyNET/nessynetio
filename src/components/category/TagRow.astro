@@ -1,0 +1,112 @@
+---
+// Tag filter row (ux 7.6): every chip is rendered in the row; the layout script (024) moves overflow into the panel.
+// Hidden without JavaScript with the rest of `.controls` (nojs.css).
+import type { Tag } from '../../lib/content/model.ts';
+import { moreToggle, MORE_TAGS_LABEL, TAG_HASH, TAG_INITIAL, TAG_LABEL } from '../../lib/strings.ts';
+
+const MORE_PANEL_ID = 'more-tags';
+
+interface Props {
+  /** Tags used in the category, config order, with counts. */
+  tags: readonly Tag[];
+  total: number;
+}
+
+const { tags, total } = Astro.props;
+---
+<div class="tagbar"><span class="flabel">{TAG_LABEL}</span><div class="chips" role="group" aria-label={TAG_LABEL} data-chiprow><button type="button" class="chip" data-tag={TAG_INITIAL} aria-pressed="true">{TAG_INITIAL} <span class="c">{total}</span></button>{tags.map((tag) => (
+  <button type="button" class="chip" data-tag={tag.id} aria-pressed="false"><span class="h" aria-hidden="true">{TAG_HASH}</span>{tag.id} <span class="c">{tag.count}</span>{tag.description !== undefined && <span class="desc"> {tag.description}</span>}</button>
+))}</div><button type="button" class="more" data-more aria-expanded="false" aria-controls={MORE_PANEL_ID} hidden>{moreToggle(0)}</button></div>
+<div class="morepanel" id={MORE_PANEL_ID} role="group" aria-label={MORE_TAGS_LABEL} data-morepanel hidden></div>
+<style>
+  .tagbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .flabel {
+    color: var(--fg);
+    flex: none;
+  }
+  /* Padding keeps focus rings unclipped. */
+  .chips {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow: hidden;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 3px;
+    margin: -3px;
+  }
+  .chip,
+  .more {
+    flex: none;
+    white-space: nowrap;
+    background: transparent;
+    border: 1px solid var(--control-line);
+    border-radius: 4px;
+    color: var(--fg);
+    padding: 0 10px;
+    min-height: 36px;
+  }
+  .h,
+  .c {
+    color: var(--text-dim);
+  }
+  .c {
+    margin-left: 2px;
+  }
+  .chip:hover,
+  .more:hover {
+    background: var(--bg-light);
+  }
+  .chip[aria-pressed='true'] {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--bg-dark);
+    font-weight: 700;
+  }
+  .chip[aria-pressed='true'] .h,
+  .chip[aria-pressed='true'] .c {
+    color: var(--bg-dark);
+  }
+  .more {
+    color: var(--primary);
+    border-style: dashed;
+  }
+  .more[aria-expanded='true'] {
+    background: var(--selection);
+    color: var(--fg-bright);
+  }
+  .desc {
+    display: none;
+  }
+  .morepanel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    border: 1px dashed var(--control-line);
+    border-radius: 4px;
+    background: var(--bg-dark);
+  }
+  .morepanel .chip {
+    white-space: normal;
+    text-align: left;
+  }
+  .morepanel .desc {
+    display: inline;
+    color: var(--text-dim);
+  }
+  .morepanel .chip[aria-pressed='true'] .desc {
+    color: var(--bg-dark);
+  }
+  @media (max-width: 760px) {
+    .chip,
+    .more {
+      min-height: 40px;
+    }
+  }
+</style>

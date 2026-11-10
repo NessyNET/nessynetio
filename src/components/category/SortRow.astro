@@ -1,0 +1,65 @@
+---
+// Sort control (ux 7.7): native select, direction button and the count. Hidden without JavaScript with `.controls`.
+import type { SortMode } from '../../lib/sort.ts';
+import { projectCount, SORT_LABEL, SORT_OPTIONS, sortDirLabel, sortDirName } from '../../lib/strings.ts';
+
+interface Props {
+  count: number;
+}
+
+const SELECT_ID = 'sort-field';
+const MODES: readonly SortMode[] = ['default', 'name', 'updated'];
+
+const { count } = Astro.props;
+---
+<div class="sortrow"><label for={SELECT_ID}>{SORT_LABEL}</label><select id={SELECT_ID} data-sort-field>{MODES.map((mode) => <option value={mode}>{SORT_OPTIONS[mode]}</option>)}</select><button type="button" class="dir" data-sort-dir aria-label={sortDirName('asc')}>{sortDirLabel('asc')}</button><span class="count m" data-count aria-hidden="true">{projectCount(count)}</span></div>
+<style>
+  .sortrow {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  label {
+    color: var(--fg);
+  }
+  select {
+    font: inherit;
+    color: var(--fg-bright);
+    background: var(--bg-light);
+    border: 1px solid var(--control-line);
+    border-radius: 4px;
+    min-height: 36px;
+    padding: 0 8px;
+    min-width: 0;
+    max-width: 22ch;
+  }
+  .dir {
+    flex: none;
+    background: transparent;
+    border: 1px solid var(--control-line);
+    border-radius: 4px;
+    color: var(--fg);
+    padding: 0 10px;
+    min-height: 36px;
+    white-space: nowrap;
+  }
+  .dir:hover {
+    background: var(--bg-light);
+  }
+  .count {
+    margin-left: auto;
+    white-space: nowrap;
+    color: var(--text-dim);
+  }
+  @media (max-width: 760px) {
+    select,
+    .dir {
+      min-height: 40px;
+    }
+    .count {
+      display: none;
+    }
+  }
+</style>
