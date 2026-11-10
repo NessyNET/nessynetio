@@ -1,0 +1,60 @@
+---
+// Project page (ux 4.3): breadcrumb, then the fixed main-column order (README, INSTALL, layout windows, screenshots,
+// description, CHANGELOG) beside the side column (stat, see also). The layout adds its parts through ProjectRegion.
+import Breadcrumb from '../../../components/project/Breadcrumb.astro';
+import Changelog from '../../../components/project/Changelog.astro';
+import Description from '../../../components/project/Description.astro';
+import ProjectRegion from '../../../components/project/ProjectRegion.astro';
+import Readme from '../../../components/project/Readme.astro';
+import SeeAlso from '../../../components/project/SeeAlso.astro';
+import Stat from '../../../components/project/Stat.astro';
+import Base from '../../../layouts/Base.astro';
+import { getSiteModel } from '../../../lib/content/index.ts';
+import { projectMeta } from '../../../lib/meta.ts';
+import { isCategoryAccent } from '../../../lib/palette.ts';
+import { PROJECT_DETAILS_LABEL } from '../../../lib/strings.ts';
+
+export async function getStaticPaths() {
+  const model = await getSiteModel();
+  return model.categories.flatMap((category) =>
+    category.projects.map((project) => ({ params: { category: category.id, slug: project.slug } })),
+  );
+}
+
+const model = await getSiteModel();
+const { category: categoryId, slug } = Astro.params;
+const category = model.categories.find((c) => c.id === categoryId);
+const project = model.projectsBySlug.get(slug ?? '');
+if (category === undefined || project === undefined || project.categoryId !== category.id) {
+  throw new Error(`No project ${categoryId}/${slug} in the site model.`);
+}
+const accent = isCategoryAccent(category.accent) ? category.accent : 'primary';
+---
+<Base
+  model={model}
+  meta={projectMeta(model, project)}
+  current={{ kind: 'project', categoryId: category.id }}
+  status={{
+    kind: 'project',
+    categoryId: category.id,
+    slug: project.slug,
+    status: project.status,
+    ...(project.version === undefined ? {} : { version: project.version }),
+  }}
+>
+  <Breadcrumb categoryId={category.id} typeTag={project.typeTag} slug={project.slug} />
+  <div class="cols">
+    <div>
+      <Readme project={project} accent={accent} />
+      <ProjectRegion project={project} region="install" accent={accent} />
+      <ProjectRegion project={project} region="windows" accent={accent} />
+      {/* The screenshots window (task 022) goes here, and only when the project has screenshots. */}
+      <Description project={project} />
+      <Changelog project={project} />
+    </div>
+    <aside aria-label={PROJECT_DETAILS_LABEL}>
+      <Stat project={project} accent={accent} />
+      <SeeAlso project={project} />
+    </aside>
+  </div>
+</Base>

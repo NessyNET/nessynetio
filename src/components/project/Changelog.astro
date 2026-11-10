@@ -1,0 +1,59 @@
+---
+// CHANGELOG window (ux 4.3 item 6): the newest 2 to 3 entries, then a link to the full history when the project has
+// one. Omitted when the project has no entries.
+import Link from '../Link.astro';
+import Window from '../window/Window.astro';
+import type { Project } from '../../lib/content/model.ts';
+import { CHANGELOG_CMD, CHANGELOG_TITLE, FULL_HISTORY } from '../../lib/strings.ts';
+
+interface Props {
+  project: Project;
+}
+
+const MAX_ENTRIES = 3;
+
+const { project } = Astro.props;
+// The rules only warn when the file is not newest first, so order here as well; ISO dates sort as strings.
+const entries = [...project.changelog].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)).slice(0, MAX_ENTRIES);
+---
+{entries.length > 0 && (
+  <Window id="log" title={CHANGELOG_TITLE} cmd={CHANGELOG_CMD}>
+    <ul class="log">
+      {entries.map((entry) => (
+        <li>
+          <span class="v">v{entry.version}</span> <time datetime={entry.date}>{entry.date}</time>
+          <ul>{entry.items.map((item) => <li><span class="dash" aria-hidden="true">- </span>{item}</li>)}</ul>
+        </li>
+      ))}
+    </ul>
+    {project.changelogUrl !== undefined && <p class="more"><Link href={project.changelogUrl}>{FULL_HISTORY}</Link></p>}
+  </Window>
+)}
+<style>
+  .log,
+  .log ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .log > li {
+    padding: 4px 0;
+  }
+  .v {
+    color: var(--yellow);
+  }
+  time,
+  .dash {
+    color: var(--text-dim);
+  }
+  .log ul {
+    padding-left: 4ch;
+  }
+  .more {
+    margin: 8px 0 0;
+  }
+  .more :global(a) {
+    display: inline-block;
+    padding: 2px 0;
+  }
+</style>

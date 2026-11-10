@@ -27,7 +27,7 @@ const classes = ['win', accent === undefined ? undefined : `accent-${accent}`, c
 <section class={classes} id={`sec-${titleId}`} aria-labelledby={titleId}>
   <div class="tb">
     <Title id={titleId} class="tt">{title}</Title>
-    {meta !== undefined && <span class="tbm">{meta}</span>}
+    {(meta !== undefined || Astro.slots.has('meta')) && <span class="tbm">{meta}<slot name="meta" /></span>}
   </div>
   <div class="body">
     {cmd !== undefined && <p class="cmdline" aria-hidden="true"><Prompt cmd={cmd} /></p>}

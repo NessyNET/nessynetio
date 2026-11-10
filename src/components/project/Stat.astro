@@ -1,0 +1,67 @@
+---
+// stat window (ux 4.3 side column): type, status, version, updated, the layout's rows, get, source, then issues and
+// licence only when they exist. A table so each value stays tied to its name. The get/source cells are composed here
+// rather than with GetLinks/SourceLink: those add the bar's `get:` prefix or the card labels, and this page-level row
+// shows the page labels (`see install`, the source host).
+import Link from '../Link.astro';
+import StatusWord from '../StatusWord.astro';
+import Window from '../window/Window.astro';
+import type { Project } from '../../lib/content/model.ts';
+import type { CategoryAccent } from '../../lib/palette.ts';
+import { issuesLabel, statCaption, statCmd, STAT_TITLE } from '../../lib/strings.ts';
+import ProjectRegion from './ProjectRegion.astro';
+
+interface Props {
+  project: Project;
+  accent: CategoryAccent | 'primary';
+}
+
+const { project, accent } = Astro.props;
+const { typeTag, getSlot, sourceSlot, issues, licence, version } = project;
+---
+<Window id="stat" title={STAT_TITLE} cmd={statCmd(project.slug)} accent={accent}>
+  <table>
+    <caption class="sr-only">{statCaption(project.name)}</caption>
+    <tbody>
+      {typeTag !== null && <tr><th scope="row">type</th><td>{typeTag.label}</td></tr>}
+      <tr><th scope="row">status</th><td><StatusWord status={project.status} /></td></tr>
+      {version !== undefined && <tr><th scope="row">version</th><td>{version}</td></tr>}
+      <tr><th scope="row">updated</th><td><time datetime={project.updated}>{project.updated}</time></td></tr>
+      <ProjectRegion project={project} region="stat" accent={accent} />
+      <tr><th scope="row">get</th><td>{getSlot.kind === 'text'
+        ? <span class="na">{getSlot.text}</span>
+        : getSlot.links.map((entry, i) => <>{i > 0 && ' '}<Link href={entry.href ?? ''}>{entry.label}</Link></>)}</td></tr>
+      <tr><th scope="row">source</th><td>{sourceSlot.kind === 'text'
+        ? <span class="na">{sourceSlot.text}</span>
+        : <Link href={sourceSlot.href}>{sourceSlot.label}</Link>}</td></tr>
+      {issues !== undefined && <tr><th scope="row">issues</th><td><Link href={issues}>{issuesLabel(project.source?.host)}</Link></td></tr>}
+      {licence !== undefined && <tr><th scope="row">licence</th><td>{licence}</td></tr>}
+    </tbody>
+  </table>
+</Window>
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    font-weight: 400;
+    color: var(--text-dim);
+    text-align: left;
+    vertical-align: top;
+    padding: 2px 12px 2px 0;
+    width: 9ch;
+  }
+  td {
+    color: var(--fg-bright);
+    padding: 2px 0;
+    overflow-wrap: anywhere;
+  }
+  td :global(a) {
+    display: inline-block;
+    padding: 2px 0;
+  }
+  .na {
+    color: var(--text-dim);
+  }
+</style>

@@ -1,0 +1,79 @@
+---
+// README.md window (ux 4.3 item 1): h1, lede, metaline, get/source bar (7.10), then the notice (7.11).
+// The primitives render `span.slot-get` / `span.slot-src`; the bar's `ul.acts` is composed here, one `li` per slot.
+import GetLinks from '../GetLinks.astro';
+import Link from '../Link.astro';
+import Notice from '../Notice.astro';
+import SourceLink from '../SourceLink.astro';
+import StatusWord from '../StatusWord.astro';
+import Window from '../window/Window.astro';
+import type { Project } from '../../lib/content/model.ts';
+import type { CategoryAccent } from '../../lib/palette.ts';
+import * as routes from '../../lib/routes.ts';
+import { README_TITLE } from '../../lib/strings.ts';
+
+interface Props {
+  project: Project;
+  accent: CategoryAccent | 'primary';
+}
+
+const { project, accent } = Astro.props;
+---
+<Window id="readme" title={README_TITLE} titleTag="p" meta={project.slug} accent={accent}>
+  <h1>{project.name}</h1>
+  <p class="out">{project.summary}</p>
+  <p class="metaline"><StatusWord status={project.status} />{' '}{project.version !== undefined && <><span class="ver">v{project.version}</span>{' '}</>}<span>updated {project.updated}</span>{project.tags.map((tag) => (
+    <>{' '}<Link class="tag" href={routes.categoryWithTag(project.categoryId, tag.id)}><span aria-hidden="true">#</span>{tag.id}</Link></>
+  ))}</p>
+  <div class="getbar"><ul class="acts" aria-label="Availability"><li><GetLinks value={project.getSlot} context="bar" /></li><li><SourceLink value={project.sourceSlot} context="bar" /></li></ul></div>
+  {project.notice !== undefined && <Notice notice={project.notice} />}
+</Window>
+<style>
+  .metaline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 2ch;
+    margin: 0;
+    align-items: baseline;
+    color: var(--text-dim);
+  }
+  .ver {
+    color: var(--yellow);
+  }
+  .metaline :global(.tag) {
+    color: var(--purple);
+    display: inline-block;
+    padding: 2px 0;
+  }
+  .getbar {
+    margin: 12px 0 0;
+    padding: 8px 12px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .acts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 3ch;
+  }
+  .acts :global(a) {
+    display: inline-block;
+    padding: 2px 0;
+  }
+  .acts :global(.na) {
+    color: var(--text-dim);
+  }
+  @media (max-width: 760px) {
+    .acts {
+      gap: 4px 2ch;
+    }
+    .acts :global(a) {
+      padding: 6px 0;
+    }
+  }
+</style>

@@ -135,6 +135,20 @@ export const UPDATED_PREFIX = 'updated ';
 // --- Project page (ux 4.3, 5.6)
 export const SEE_ALSO_MINE = 'more by me';
 export const SEE_ALSO_ELSEWHERE = 'elsewhere (not mine)';
+export const README_TITLE = 'README.md';
+export const STAT_TITLE = 'stat';
+export const statCmd = (slug: string): string => `stat ${slug}`;
+export const statCaption = (name: string): string => `Details of ${name}`;
+export const issuesLabel = (host?: string): string => (host === undefined ? 'issues' : `${host} issues`);
+/** Fallback link of "more by me" when the category has no other project (ux 5.1). */
+export const allProjectsOf = (categoryId: string): string => `all ${categoryId} projects`;
+export const SEE_ALSO_TITLE = 'see also';
+export const DESCRIPTION_TITLE = 'description';
+export const DESCRIPTION_CMD = 'cat README.md | tail';
+export const CHANGELOG_TITLE = 'CHANGELOG';
+export const CHANGELOG_CMD = 'git log --tags';
+export const FULL_HISTORY = 'full history';
+export const PROJECT_DETAILS_LABEL = 'Project details';
 export const WEB_PREVIEW_CAPTION = 'A screenshot, not a live embed. Use "Open tool" for the real thing.';
 
 /** A run of text inside a step; `projectName` is replaced by the project's name. */

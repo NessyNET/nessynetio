@@ -1,0 +1,51 @@
+---
+// Breadcrumb (ux 3.3): `~ / <category> / <type tag> / <slug>`. A project without a type tag (local zero-type
+// fallback, ux 7.12) has no type crumb. The separators are aria-hidden text, not CSS content (lint L6).
+import Link from '../Link.astro';
+import type { Tag } from '../../lib/content/model.ts';
+import * as routes from '../../lib/routes.ts';
+
+interface Props {
+  categoryId: string;
+  typeTag: Tag | null;
+  slug: string;
+}
+
+const { categoryId, typeTag, slug } = Astro.props;
+const crumbs = [
+  { text: '~', href: routes.home() },
+  { text: categoryId, href: routes.category(categoryId) },
+  ...(typeTag === null ? [] : [{ text: typeTag.id, href: routes.categoryWithTag(categoryId, typeTag.id) }]),
+];
+---
+<nav class="crumb" aria-label="Breadcrumb">
+  <ol>
+    {crumbs.map((crumb, i) => (
+      <li>{i > 0 && <span class="sep" aria-hidden="true">/</span>}<Link href={crumb.href}>{crumb.text}</Link></li>
+    ))}
+    <li aria-current="page"><span class="sep" aria-hidden="true">/</span>{slug}</li>
+  </ol>
+</nav>
+<style>
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    color: var(--text-dim);
+  }
+  .sep {
+    padding: 0 0.4ch;
+  }
+  li :global(a) {
+    color: var(--text-dim);
+    display: inline-block;
+    padding: 2px 0;
+    min-width: 24px;
+    text-align: center;
+  }
+  li[aria-current='page'] {
+    color: var(--fg);
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+// see also window (ux 3.3, 4.3): up to 3 more projects of mine (or a link to the category when there are none), then
+// "elsewhere (not mine)" with the bookmarks linked to this project, only when there are any.
+import BookmarkMini from '../bookmarks/BookmarkMini.astro';
+import Link from '../Link.astro';
+import Window from '../window/Window.astro';
+import type { Project } from '../../lib/content/model.ts';
+import * as routes from '../../lib/routes.ts';
+import { SEE_ALSO_ELSEWHERE, SEE_ALSO_MINE, SEE_ALSO_TITLE, allProjectsOf } from '../../lib/strings.ts';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { mine, elsewhere } = project.seeAlso;
+---
+<Window id="see" title={SEE_ALSO_TITLE}>
+  <p class="sub">{SEE_ALSO_MINE}</p>
+  {mine.length > 0
+    ? <ul class="plain">{mine.map((other) => <li><Link href={routes.project(other.categoryId, other.slug)}>{other.name}</Link></li>)}</ul>
+    : <p class="plain"><Link href={routes.category(project.categoryId)}>{allProjectsOf(project.categoryId)}</Link></p>}
+  {elsewhere.length > 0 && (
+    <>
+      <p class="sub">{SEE_ALSO_ELSEWHERE}</p>
+      <BookmarkMini bookmarks={elsewhere} groupId={elsewhere[0]?.groupId ?? project.categoryId} max={elsewhere.length} />
+    </>
+  )}
+</Window>
+<style>
+  .sub {
+    margin: 10px 0 4px;
+    color: var(--fg-bright);
+  }
+  .sub:first-child {
+    margin-top: 0;
+  }
+  .plain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .plain :global(a) {
+    display: inline-block;
+    padding: 3px 0;
+  }
+</style>

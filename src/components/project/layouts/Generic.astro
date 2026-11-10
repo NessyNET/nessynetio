@@ -1,0 +1,12 @@
+---
+// The generic layout (design 3.3.1): the common windows only, so it adds no INSTALL, window or stat row. It exists so
+// the dispatcher has a layout for every project (also the zero-type-tag local fallback).
+import type { Project } from '../../../lib/content/model.ts';
+import type { CategoryAccent } from '../../../lib/palette.ts';
+
+interface Props {
+  project: Project;
+  region: 'install' | 'windows' | 'stat';
+  accent?: CategoryAccent | 'primary' | undefined;
+}
+---

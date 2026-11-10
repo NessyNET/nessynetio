@@ -1,0 +1,34 @@
+---
+// Region dispatcher (design 3.3.1): each layout adds its INSTALL window, its category windows and its extra stat rows
+// at three fixed places on the page. To register a layout (020, 021): import its component, add one line to
+// LAYOUTS naming the regions it renders. Layout components take exactly the props below; `stat` content is `<tr>`
+// rows for the stat table, `install` content is one window (this component adds the `#install` wrapper).
+import type { Layout, Project } from '../../lib/content/model.ts';
+import type { CategoryAccent } from '../../lib/palette.ts';
+import Generic from './layouts/Generic.astro';
+
+type Region = 'install' | 'windows' | 'stat';
+
+interface Props {
+  project: Project;
+  region: Region;
+  accent?: CategoryAccent | 'primary' | undefined;
+}
+
+interface Registered {
+  component: typeof Generic;
+  regions: readonly Region[];
+}
+
+const GENERIC: Registered = { component: Generic, regions: [] };
+const LAYOUTS: Partial<Record<Layout, Registered>> = {
+  generic: GENERIC,
+};
+
+const { project, region, accent } = Astro.props;
+// A layout that is not registered yet falls back to the generic one, so every project still builds.
+const { component: LayoutComponent, regions } = LAYOUTS[project.layout] ?? GENERIC;
+const renders = regions.includes(region);
+---
+{renders && region === 'install' && <div id="install"><LayoutComponent project={project} region={region} accent={accent} /></div>}
+{renders && region !== 'install' && <LayoutComponent project={project} region={region} accent={accent} />}

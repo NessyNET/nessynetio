@@ -58,6 +58,16 @@ describe('Window', () => {
     expect(html).toMatch(/<span class="tbm">loch-lantern<\/span>/);
   });
 
+  it('renders a named meta slot inside span.tbm, so the title meta can hold markup', async () => {
+    const html = (
+      await container.renderToString(Window, {
+        props: { id: 'ls', title: 'projects' },
+        slots: { meta: '<span data-count>3 projects</span>' },
+      })
+    ).replace(/ data-astro-cid-[a-z0-9]+/g, '');
+    expect(html).toContain('<span class="tbm"><span data-count>3 projects</span></span>');
+  });
+
   it('has no accent class without an accent and no meta span without meta', async () => {
     const html = await render(Window, { id: 'ls', title: 'projects' });
     expect(html).not.toContain('accent-');
