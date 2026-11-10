@@ -1,0 +1,13 @@
+/var/log/nginx/nessynet/*.log {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 www-data adm
+    sharedscripts
+    postrotate
+        invoke-rc.d nginx rotate >/dev/null 2>&1 || nginx -s reopen
+    endscript
+}
