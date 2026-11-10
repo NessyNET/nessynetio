@@ -1,0 +1,16 @@
+[[relation]]
+id = "docs"
+description = "Documentation."
+
+[[bookmark]]
+name = "Flagged"
+url = "https://example.com/"
+note = "No marker text, only the flag."
+relation = "docs"
+sample = true
+
+[[bookmark]]
+name = "Plain"
+url = "https://example.com/plain"
+note = "Not a sample."
+relation = "docs"

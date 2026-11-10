@@ -43,6 +43,17 @@ describe('Link.astro', () => {
     expect(html).toContain('aria-current="page"');
   });
 
+  it('external with ariaLabel: the accessible name still ends with " (opens in new tab)"', async () => {
+    const html = await render({ ...opts, href: 'https://gear.nessynet.io/', ariaLabel: 'Gear page' });
+    expect(html).toContain('aria-label="Gear page (opens in new tab)"');
+  });
+
+  it('internal with ariaLabel: the label is passed through unchanged', async () => {
+    const html = await render({ ...opts, href: '/ffxiv/', ariaLabel: 'FFXIV' });
+    expect(html).toContain('aria-label="FFXIV"');
+    expect(html).not.toContain('opens in new tab');
+  });
+
   it('omits optional attributes when not given', async () => {
     const html = await render({ ...opts, href: '/ffxiv/' });
     expect(html).not.toMatch(/class=|aria-label=|aria-current=/);

@@ -1,0 +1,14 @@
+[[relation]]
+id = "docs"
+description = "Documentation."
+
+[[group]]
+id = "misc"
+label = "Misc"
+
+[[bookmark]]
+name = "Example"
+url = "https://example.com/"
+note = "A note."
+relation = "docs"
+projects = ["x"]

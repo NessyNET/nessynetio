@@ -1,0 +1,6 @@
+[[category]]
+id = "ffxiv"
+label = "FFXIV"
+blurb = "Plugins."
+accent = "blue"
+tags = [{ id = "plugin", type = true }, { id = "ui" }]

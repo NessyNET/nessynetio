@@ -1,8 +1,8 @@
 // Every fixed UI string (ux 6.2, notice labels from 6.3 / R24) and fixed layout copy that is not owner content.
 // Templates never compose user-facing wording ad hoc (design 4 "Wording").
 
-export type SortMode = 'default' | 'name' | 'updated';
-export type SortDir = 'asc' | 'desc';
+import type { SortDir, SortMode } from './sort.ts';
+
 export type NoticeKind = 'local' | 'private' | 'retired' | 'separate';
 
 const plural = (n: number, one: string, many: string): string => `${n} ${n === 1 ? one : many}`;

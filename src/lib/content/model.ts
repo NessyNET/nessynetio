@@ -2,9 +2,10 @@
 // Field names are the contract; optional fields are absent (never `undefined`-valued) when not set.
 // Dates are `YYYY-MM-DD` strings. Accent tokens are plain strings: `src/lib/palette.ts` (004) owns the allow-list.
 
+import type { TaglineColour } from '../palette.ts';
+
 export type Layout = 'plugin' | 'offline' | 'web' | 'mod' | 'modpack' | 'tool' | 'bot' | 'generic';
 export type Status = 'active' | 'retired';
-export type Accent = 'green' | 'yellow' | 'cyan' | 'teal' | 'blue' | 'purple' | 'pink' | 'orange';
 
 // --- Per-layout detail tables (design 3.3.1, keys camelCased). Arrays are normalised to [] when absent.
 
@@ -264,7 +265,7 @@ export interface Category {
 
 export interface TaglineSegment {
   readonly text: string;
-  readonly accent?: Accent;
+  readonly accent?: TaglineColour;
 }
 
 export interface Whoami {

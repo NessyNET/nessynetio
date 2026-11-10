@@ -1,0 +1,29 @@
+#:schema ../../schema/project.json
+slug = "x"
+name = "X"
+category = "ffxiv"
+status = "active"
+summary = "One sentence."
+priority = 1
+updated = 2026-01-05
+description = "Prose."
+tags = ["plugin"]
+version = "1.0.0"
+sample = true
+
+[[get]]
+kind = "install"
+
+[[get]]
+kind = "download"
+url = "/downloads/x.zip"
+
+[[changelog]]
+version = "1.0.0"
+sample = true
+date = 2026-01-05
+items = ["First."]
+
+[notice]
+kind = "local"
+text = "Only for me. [sample]"
