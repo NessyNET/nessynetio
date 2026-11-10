@@ -4,6 +4,7 @@
 import Window from '../../window/Window.astro';
 import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
+import { BOT_COMMANDS_CAPTION, BOT_COMMANDS_COLUMNS, BOT_COMMANDS_TITLE, BOT_INVITE, BOT_STAT, botCommandsCmd } from '../../../lib/strings.ts';
 import KvTable from './KvTable.astro';
 
 interface Props {
@@ -13,29 +14,21 @@ interface Props {
   repoUrl?: string | undefined;
 }
 
-// STRINGS-TODO (021): move into strings.ts with literal pins.
-const COMMANDS_TITLE = 'commands';
-const commandsCmd = (slug: string) => `${slug} --help`;
-const COMMANDS_CAPTION = 'Bot commands';
-const COMMANDS_COLUMNS = ['command', 'what it does', 'who'] as const;
-const STAT = { platform: 'platform', hosting: 'hosting', invite: 'invite' } as const;
-const INVITE = { open: 'public', closed: 'not public' } as const;
-
 const { project, region, accent } = Astro.props;
 const details = project.layout === 'bot' ? project.details : undefined;
 const accentProp = accent === undefined ? {} : { accent };
 ---
 {details !== undefined && region === 'windows' && details.commands.length > 0 && (
-  <Window id="cmd" title={COMMANDS_TITLE} cmd={commandsCmd(project.slug)} {...accentProp}>
-    <KvTable caption={COMMANDS_CAPTION} columns={COMMANDS_COLUMNS}>
+  <Window id="cmd" title={BOT_COMMANDS_TITLE} cmd={botCommandsCmd(project.slug)} {...accentProp}>
+    <KvTable caption={BOT_COMMANDS_CAPTION} columns={BOT_COMMANDS_COLUMNS}>
       {details.commands.map((c) => <tr><td><code>{c.name}</code></td><td>{c.help}</td><td>{c.who}</td></tr>)}
     </KvTable>
   </Window>
 )}
 {details !== undefined && region === 'stat' && (
   <>
-    <tr><th scope="row">{STAT.platform}</th><td>{details.platform}</td></tr>
-    <tr><th scope="row">{STAT.hosting}</th><td>{details.hosting}</td></tr>
-    <tr><th scope="row">{STAT.invite}</th><td>{details.invite ? INVITE.open : INVITE.closed}</td></tr>
+    <tr><th scope="row">{BOT_STAT.platform}</th><td>{details.platform}</td></tr>
+    <tr><th scope="row">{BOT_STAT.hosting}</th><td>{details.hosting}</td></tr>
+    <tr><th scope="row">{BOT_STAT.invite}</th><td>{details.invite ? BOT_INVITE.open : BOT_INVITE.closed}</td></tr>
   </>
 )}

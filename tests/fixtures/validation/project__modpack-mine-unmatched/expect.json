@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "projects/mc/pack.toml",
+    "entry": "pack",
+    "field": "minecraft.mods[1]"
+  },
+  "strict": {
+    "level": "warning",
+    "file": "projects/mc/pack.toml",
+    "entry": "pack",
+    "field": "minecraft.mods[1]"
+  }
+}

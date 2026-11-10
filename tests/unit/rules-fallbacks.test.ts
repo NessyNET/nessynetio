@@ -44,6 +44,12 @@ const CHECKS: Record<string, (v: Validated) => void> = {
     expect(projectOf(v, 'gear-tweaks').data.get).toEqual([]);
     expect(normalise(v.resolved).projectsBySlug.get('gear-tweaks')?.getSlot).toEqual({ kind: 'text', text: 'Not distributed yet' });
   },
+  installStepsDropped: (v) => {
+    expect(projectOf(v, 'lochctl').data.get).toEqual([]);
+    const project = normalise(v.resolved).projectsBySlug.get('lochctl');
+    expect(project?.get).toEqual([]);
+    expect(project?.getSlot.kind).toBe('text');
+  },
   bookmarkToGeneral: (v) => {
     const data = bookmarkOf(v, 'Dalamud docs');
     expect(data.category).toBeUndefined();

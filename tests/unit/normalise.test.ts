@@ -288,6 +288,46 @@ describe('projects', () => {
   });
 });
 
+describe('modpack own mods', () => {
+  const modpack = (mods: Record<string, unknown>[]) =>
+    project('mc', 'pack', {
+      name: 'Pack',
+      tags: ['modpack'],
+      minecraft: { loader: 'fabric', game_versions: ['1.21'], import_url: 'https://example.org/p', memory_gb: 4, mods_total: 3, mods },
+    });
+  const cats = [category('mc', { tags: [typeTag('mod'), typeTag('modpack')] }), category('other')];
+  const mod = (slug: string, name: string, categoryId = 'mc') =>
+    project(categoryId, slug, { name, tags: categoryId === 'mc' ? ['mod'] : ['plugin'], ...(categoryId === 'mc' ? { minecraft: { loader: 'fabric', game_versions: ['1.21'], side: 'both' }, ffxiv: undefined } : {}) });
+  const modsOf = (model: ReturnType<typeof build>) => {
+    const pack = find(model, 'pack');
+    if (pack.layout !== 'modpack') throw new Error('not a modpack');
+    return pack.details.mods;
+  };
+
+  it('sets path for a mine mod whose name exactly equals a published project name, in any category', () => {
+    const model = build({
+      categories: [...cats],
+      projects: [mod('peat', 'Peatmoss'), project('other', 'x', { name: 'Elsewhere', tags: ['plugin'] }), modpack([
+        { name: 'Peatmoss', version: '1', mine: true },
+        { name: 'Elsewhere', mine: true },
+      ])],
+    });
+    expect(modsOf(model).map((m) => m.path)).toEqual(['/mc/peat/', '/other/x/']);
+  });
+
+  it('leaves path out for an unmatched mine mod, a near-miss name, and every mine = false mod', () => {
+    const model = build({
+      categories: [...cats],
+      projects: [mod('peat', 'Peatmoss'), modpack([
+        { name: 'Unknown', mine: true },
+        { name: 'peatmoss', mine: true },
+        { name: 'Peatmoss', url: 'https://example.org/peatmoss', mine: false },
+      ])],
+    });
+    for (const m of modsOf(model)) expect(m).not.toHaveProperty('path');
+  });
+});
+
 describe('get, source and notice strings (ux 5.2, 6.2)', () => {
   const ffxiv = { ffxiv: { requires: 'Dalamud' } };
 

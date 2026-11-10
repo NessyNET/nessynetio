@@ -27,7 +27,7 @@ import {
   type WhoamiData,
 } from './schema.ts';
 import { parseTagline } from './tagline.ts';
-import type { Layout } from './model.ts';
+import type { Layout, ModpackDetails, ToolDetails } from './model.ts';
 import { LAYOUTS, parseDetails, resolveLayout } from './variants.ts';
 
 // --- The table. `local` and `strict` are the levels in each mode; `uxRow` quotes the source row.
@@ -59,6 +59,8 @@ export const RULES: readonly Rule[] = [
   { code: 'project/get-none-not-alone', local: 'error', strict: 'error', uxRow: 'project/get-none-not-alone: a none get entry alongside other get entries', message: () => "a 'none' get entry must be the only get entry" },
   { code: 'project/external-get-own-host', local: 'warning', strict: 'warning', uxRow: "'external' get link on nessynet.io: warning; rendered as internal", message: (c) => `external link '${c['url']}' is on the site host; it is rendered as an internal link` },
   { code: 'project/install-without-repo-url', local: 'warning', strict: 'error', sampleExempt: true, uxRow: 'Plugin project with an install get entry, in a category without repo_url (rev 4, R28)', message: (c) => `install entry needs repo_url on category '${c['category']}'; the entry is dropped` },
+  { code: 'project/install-without-steps', local: 'warning', strict: 'error', uxRow: 'Tool project with an install get entry and no [linux] install methods: warning; the install entry is dropped (no dangling see install)', message: () => "install entry needs at least one [[linux.install]] method; the entry is dropped" },
+  { code: 'project/modpack-mine-unmatched', local: 'warning', strict: 'warning', uxRow: 'Modpack mod with mine = true whose name matches no published project name: warning in both modes; rendered as plain text with the me badge', message: (c) => `mod '${c['name']}' is marked mine but no published project has exactly that name; it is shown as plain text` },
   { code: 'project/notice-missing', local: 'warning', strict: 'error', uxRow: 'Retired project without a notice date, or get = none without a notice', message: (c) => c['detail'] ?? '' },
   { code: 'project/screenshot-file', local: 'error', strict: 'error', uxRow: 'Screenshot file must exist (design 3.3)', message: (c) => c['detail'] ?? '' },
   { code: 'project/screenshot-caption', local: 'error', strict: 'error', uxRow: 'Screenshot without a caption', message: () => 'caption is required (it is also the alt text)' },
@@ -293,7 +295,7 @@ function checkProjectTags(report: Report, where: Where, data: ProjectData, categ
   return { layout, tags: valid.map((t) => t.id) };
 }
 
-function checkGet(report: Report, where: Where, data: ProjectData, layout: Layout | null, category: CategoryData | undefined, opts: RulesOptions): ProjectData['get'] {
+function checkGet(report: Report, where: Where, data: ProjectData, layout: Layout | null, category: CategoryData | undefined, opts: RulesOptions, toolInstallMethods: number): ProjectData['get'] {
   const { get } = data;
   if (get.some((g) => g.kind === 'none') && get.length > 1) report.add('project/get-none-not-alone', { ...where, field: 'get' });
   get.forEach((entry, i) => {
@@ -302,9 +304,13 @@ function checkGet(report: Report, where: Where, data: ProjectData, layout: Layou
     }
   });
 
-  if (layout !== 'plugin' || category === undefined || category.repo_url !== undefined) return get;
   const first = get.findIndex((g) => g.kind === 'install');
   if (first === -1) return get;
+  if (layout === 'tool' && toolInstallMethods === 0) {
+    report.add('project/install-without-steps', { ...where, field: `get[${first}]` });
+    return get.filter((g) => g.kind !== 'install');
+  }
+  if (layout !== 'plugin' || category === undefined || category.repo_url !== undefined) return get;
   report.add('project/install-without-repo-url', { ...where, field: `get[${first}]` }, { category: category.id }, data.sample === true);
   return get.filter((g) => g.kind !== 'install');
 }
@@ -359,6 +365,7 @@ function checkNestedUnknownKeys(report: Report, where: Where, data: ProjectData)
 async function checkProjects(report: Report, projects: readonly ParsedProject[], graph: Graph, opts: RulesOptions): Promise<ParsedProject[]> {
   const resolved: ParsedProject[] = [];
   const firstBySlug = new Map<string, string>();
+  const publishedNames = new Set(projects.filter((p) => graph.categoriesById.has(p.data.category)).map((p) => p.data.name));
   for (const project of projects) {
     const { data, file } = project;
     const where = { file, entry: data.slug };
@@ -380,16 +387,23 @@ async function checkProjects(report: Report, projects: readonly ParsedProject[],
     const tagResult = category === undefined ? null : checkProjectTags(report, where, data, category);
     const layout = tagResult?.layout ?? null;
 
+    let toolInstallMethods = 0;
     if (layout !== null) {
       if (LAYOUTS[layout].requiresVersion && data.version === undefined) {
         report.add('project/version-missing', { ...where, field: 'version' }, { layout });
       }
       const details = parseDetails(layout, data, { file, entry: data.slug });
+      if (details.details !== undefined && layout === 'modpack') {
+        (details.details as ModpackDetails).mods.forEach((mod, i) => {
+          if (mod.mine && !publishedNames.has(mod.name)) report.add('project/modpack-mine-unmatched', { ...where, field: `minecraft.mods[${i}]` }, { name: mod.name });
+        });
+      }
+      if (details.details !== undefined && layout === 'tool') toolInstallMethods = (details.details as ToolDetails).install.length;
       report.diagnostics.push(...details.diagnostics);
       for (const key of details.unknownKeys) report.add('project/unknown-detail-key', { ...where, field: key }, { key });
     }
 
-    const get = checkGet(report, where, data, layout, category, opts);
+    const get = checkGet(report, where, data, layout, category, opts, toolInstallMethods);
     checkNotice(report, where, data);
     checkChangelog(report, where, data);
     await checkScreenshots(report, where, project, opts.contentDir);

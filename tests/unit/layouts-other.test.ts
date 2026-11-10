@@ -3,6 +3,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { clearSiteMemo, loadSite } from '../../src/lib/content/index.ts';
+import ProjectRegion from '../../src/components/project/ProjectRegion.astro';
 import type { Project, SiteModel } from '../../src/lib/content/model.ts';
 import Page from '../../src/pages/[category]/[slug]/index.astro';
 
@@ -163,6 +164,17 @@ describe('modpack layout (highland-pack)', () => {
   });
 });
 
+describe('modpack own mods without a matching project', () => {
+  it('shows an unmatched mine mod as plain text with the me badge, not a link', async () => {
+    const pack = project('highland-pack');
+    if (pack.layout !== 'modpack') throw new Error('not a modpack');
+    const synthetic = { ...pack, details: { ...pack.details, mods: [{ name: 'Missing Mod', version: '0.1.0', mine: true }] } };
+    const html = strip(await container.renderToString(ProjectRegion, { props: { project: synthetic, region: 'windows' } }));
+    expect(html).toContain('<td>Missing Mod</td><td>0.1.0</td><td><span class="me">me</span></td>');
+    expect(html).not.toMatch(/<a [^>]*>Missing Mod/);
+  });
+});
+
 describe('tool layout (lochctl)', () => {
   it('has one install block per method, each with its own copy field, and the long command unchanged', async () => {
     const html = await renderPage('linux', 'lochctl');
@@ -213,7 +225,8 @@ describe('tool layout (lochctl)', () => {
   it('adds language, needs and distros to stat', async () => {
     const html = await renderPage('linux', 'lochctl');
     expect(statNames(html).slice(0, 7)).toEqual(['type', 'status', 'version', 'updated', 'language', 'needs', 'distros']);
-    expect(stat(html)).toMatchObject({ language: 'Rust', needs: 'pacman, systemd' });
+    // only `supported` distros: Fedora (untested) and NixOS (unsupported) are left out
+    expect(stat(html)).toMatchObject({ language: 'Rust', needs: 'pacman, systemd', distros: 'Arch, EndeavourOS, CachyOS' });
   });
 
   it('has no distros window when the tool lists none, and the #install gate holds for every tool', async () => {

@@ -1,0 +1,26 @@
+slug = "pack"
+name = "Pack"
+category = "mc"
+status = "active"
+summary = "A pack."
+priority = 1
+updated = 2026-02-01
+description = "Prose."
+tags = ["modpack"]
+version = "1.0.0"
+
+[minecraft]
+loader = "Fabric"
+game_versions = ["1.21"]
+import_url = "https://example.org/pack"
+memory_gb = 4
+mods_total = 2
+mods = [
+  { name = "Gear Tweaks", version = "1.2.0", mine = true },
+  { name = "Missing Mod", version = "0.1.0", mine = true },
+  { name = "Sodium", url = "https://example.org/sodium", mine = false },
+]
+
+[[get]]
+kind = "external"
+url = "https://example.org/pack/download"

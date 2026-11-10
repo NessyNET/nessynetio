@@ -25,6 +25,7 @@ import type {
   GetEntry,
   GetSlot,
   Layout,
+  ModpackDetails,
   Notice,
   Project,
   Relation,
@@ -194,6 +195,14 @@ export function normalise(resolved: ParsedSite): SiteModel {
   const byCategory = new Map<string, ParsedProject[]>(configs.map((c) => [c.id, []]));
   for (const parsed of resolved.projects) byCategory.get(parsed.data.category)?.push(parsed);
 
+  // Own mods of a modpack link to the project of the same name (first one wins); only published categories count.
+  const pathByName = new Map<string, string>();
+  for (const parsed of resolved.projects) {
+    if (byCategory.has(parsed.data.category) && !pathByName.has(parsed.data.name)) {
+      pathByName.set(parsed.data.name, routes.project(parsed.data.category, parsed.data.slug));
+    }
+  }
+
   const projectsBySlug = new Map<string, Project>();
   const categoryProjects = new Map<string, Project[]>();
   const categoryTags = new Map<string, Tag[]>();
@@ -211,7 +220,7 @@ export function normalise(resolved: ParsedSite): SiteModel {
     const projects = parsedProjects.map((p) => {
       const elsewhere: Bookmark[] = [];
       const mine: Project[] = [];
-      const project = buildProject(p, cfg, tagById, siteHost, { mine, elsewhere });
+      const project = buildProject(p, cfg, tagById, siteHost, { mine, elsewhere }, pathByName);
       seeAlsoElsewhere.set(project.slug, elsewhere);
       seeAlsoMine.set(project.slug, mine);
       return project;
@@ -322,6 +331,7 @@ function buildProject(
   tagById: ReadonlyMap<string, Tag>,
   siteHost: string,
   seeAlso: { mine: Project[]; elsewhere: Bookmark[] },
+  pathByName: ReadonlyMap<string, string>,
 ): Project {
   const { data } = parsed;
   const tags = validTagData(cfg, data).flatMap((t) => tagById.get(t.id) ?? []);
@@ -362,6 +372,13 @@ function buildProject(
   if (layout === 'generic') return { ...base, layout } as Project;
   const { details } = parseDetails(layout, data, { file: parsed.file, entry: data.slug });
   if (details === undefined) throw new Error(`Project "${data.slug}" has no valid ${layout} details; the content gate must stop earlier`);
+  if (layout === 'modpack') {
+    const mods = (details as ModpackDetails).mods.map((mod) => {
+      const path = mod.mine ? pathByName.get(mod.name) : undefined;
+      return path === undefined ? mod : { ...mod, path };
+    });
+    return { ...base, layout, details: { ...(details as ModpackDetails), mods } } as Project;
+  }
   return { ...base, layout, details } as Project;
 }
 

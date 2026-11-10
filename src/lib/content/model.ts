@@ -52,6 +52,8 @@ export interface ModpackMod {
   readonly url?: string;
   /** The owner's own mod: links internally and carries the `me` badge. */
   readonly mine: boolean;
+  /** Page path of the published project of this name; set only for a `mine` mod whose `name` matches one exactly. */
+  readonly path?: string;
 }
 
 export interface ModpackDetails {

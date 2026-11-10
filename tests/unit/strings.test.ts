@@ -245,3 +245,44 @@ describe('bookmarks page and permission wording', () => {
     expect([s.PERMISSIONS_DIR, s.PERMISSIONS_LINK, s.STATUS_EMPTY]).toEqual(['drwxr-xr-x', 'lrwxrwxrwx', 'empty']);
   });
 });
+
+describe('other project layouts (mod, modpack, tool, bot)', () => {
+  it('mod strings', () => {
+    expect(s.modLoaderStep('Fabric')).toBe('Install the Fabric loader for your Minecraft version (see versions).');
+    expect([s.modGetLead('Loch Lantern'), s.MOD_GET_OR]).toEqual(['Get Loch Lantern from ', ' or ']);
+    expect(s.MOD_DROP_STEP).toBe('Put the .jar and its required dependencies in your mods/ folder.');
+    expect([s.MOD_VERSIONS_TITLE, s.MOD_VERSIONS_CMD, s.MOD_VERSIONS_CAPTION]).toEqual(['versions', 'ls releases/', 'Compatible files']);
+    expect([...s.MOD_VERSIONS_COLUMNS]).toEqual(['minecraft', 'loader', 'file', 'released']);
+    expect([s.MOD_DEPS_TITLE, s.MOD_DEPS_CMD, s.MOD_DEPS_CAPTION]).toEqual(['dependencies', 'cat fabric.mod.json | jq .depends', 'Dependencies']);
+    expect([...s.MOD_DEPS_COLUMNS]).toEqual(['mod', 'need', 'why']);
+    expect(s.MOD_STAT).toEqual({ loader: 'loader', minecraft: 'minecraft', side: 'side' });
+  });
+
+  it('modpack strings', () => {
+    expect(s.packLauncherStep('Prism Launcher')).toBe('Install Prism Launcher.');
+    expect(s.packLauncherStep(undefined)).toBe('Install a launcher that imports modpacks.');
+    expect([s.PACK_IMPORT_STEP, s.PACK_IMPORT_COPY_NAME]).toEqual(['Choose Add Instance, then Import, and paste this link:', 'import link']);
+    expect(s.packRamStep(6)).toBe('Launch the instance. Allocate at least 6 GB RAM.');
+    expect([s.PACK_MODS_TITLE, s.packModsMeta(1), s.packModsMeta(12), s.packModsCmd(5)]).toEqual(['mods.txt', '1 mod', '12 mods', 'head -n 5 mods.txt']);
+    expect([s.PACK_MODS_CAPTION, s.PACK_BY_ME, s.PACK_BY_OTHER, s.PACK_FULL_LIST]).toEqual(['Mods in this pack', 'me', 'other', 'Full list (mods.txt)']);
+    expect([...s.PACK_MODS_COLUMNS]).toEqual(['mod', 'version', 'by']);
+    expect([s.packShowing(5, 1), s.packShowing(5, 12), s.packMemory(6)]).toEqual(['Showing 5 of 1 mod.', 'Showing 5 of 12 mods.', '6 GB']);
+    expect(s.PACK_STAT).toEqual({ loader: 'loader', minecraft: 'minecraft', mods: 'mods', memory: 'memory' });
+  });
+
+  it('tool strings', () => {
+    expect([s.toolCommandCopyName('lochctl sync'), s.toolManTitle('lochctl')]).toEqual(['command: lochctl sync', 'man lochctl']);
+    expect(s.TOOL_MAN_SECTIONS).toEqual({ synopsis: 'SYNOPSIS', commands: 'COMMANDS', options: 'OPTIONS', example: 'EXAMPLE' });
+    expect([s.TOOL_EXAMPLE_COPY_NAME, s.TOOL_DIST_TITLE, s.TOOL_DIST_CMD, s.TOOL_DIST_CAPTION]).toEqual(['example command', 'distros', 'cat SUPPORT.md', 'Supported distributions']);
+    expect([...s.TOOL_DIST_COLUMNS]).toEqual(['distro', 'support', 'how']);
+    expect(s.TOOL_SUPPORT_WORDS).toEqual({ supported: 'supported', untested: 'works, untested', unsupported: 'not supported' });
+    expect([s.TOOL_NO_VALUE, s.TOOL_STAT]).toEqual(['-', { language: 'language', needs: 'needs', distros: 'distros' }]);
+  });
+
+  it('bot strings', () => {
+    expect([s.BOT_COMMANDS_TITLE, s.botCommandsCmd('lochbot'), s.BOT_COMMANDS_CAPTION]).toEqual(['commands', 'lochbot --help', 'Bot commands']);
+    expect([...s.BOT_COMMANDS_COLUMNS]).toEqual(['command', 'what it does', 'who']);
+    expect(s.BOT_STAT).toEqual({ platform: 'platform', hosting: 'hosting', invite: 'invite' });
+    expect(s.BOT_INVITE).toEqual({ open: 'public', closed: 'not public' });
+  });
+});

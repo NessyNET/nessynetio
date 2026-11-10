@@ -5,7 +5,7 @@ import CopyField from '../../CopyField.astro';
 import Window from '../../window/Window.astro';
 import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
-import { INSTALL_CMD, INSTALL_TITLE } from '../../../lib/strings.ts';
+import { INSTALL_CMD, INSTALL_TITLE, TOOL_DIST_CAPTION, TOOL_DIST_CMD, TOOL_DIST_COLUMNS, TOOL_DIST_TITLE, TOOL_EXAMPLE_COPY_NAME, TOOL_MAN_SECTIONS, TOOL_NO_VALUE, TOOL_STAT, TOOL_SUPPORT_WORDS, toolCommandCopyName, toolManTitle } from '../../../lib/strings.ts';
 import KvTable from './KvTable.astro';
 
 interface Props {
@@ -14,19 +14,6 @@ interface Props {
   accent?: CategoryAccent | 'primary' | undefined;
   repoUrl?: string | undefined;
 }
-
-// STRINGS-TODO (021): move into strings.ts with literal pins.
-const commandCopyName = (command: string) => `command: ${command}`;
-const manTitle = (slug: string) => `man ${slug}`;
-const MAN_SECTIONS = { synopsis: 'SYNOPSIS', commands: 'COMMANDS', options: 'OPTIONS', example: 'EXAMPLE' } as const;
-const EXAMPLE_COPY_NAME = 'example command';
-const DIST_TITLE = 'distros';
-const DIST_CMD = 'cat SUPPORT.md';
-const DIST_CAPTION = 'Supported distributions';
-const DIST_COLUMNS = ['distro', 'support', 'how'] as const;
-const SUPPORT_WORDS = { supported: 'supported', untested: 'works, untested', unsupported: 'not supported' } as const;
-const NO_VALUE = '-';
-const STAT = { language: 'language', needs: 'needs', distros: 'distros' } as const;
 
 const { project, region, accent } = Astro.props;
 const details = project.layout === 'tool' ? project.details : undefined;
@@ -39,7 +26,7 @@ const accentProp = accent === undefined ? {} : { accent };
     {details.install.map((method) => (
       <div class="method">
         <h3>{method.method}</h3>
-        <CopyField value={method.command} what={commandCopyName(method.command)} />
+        <CopyField value={method.command} what={toolCommandCopyName(method.command)} />
         {method.note !== undefined && <p class="note">{method.note}</p>}
       </div>
     ))}
@@ -47,22 +34,22 @@ const accentProp = accent === undefined ? {} : { accent };
 )}
 {details !== undefined && usage !== undefined && region === 'windows' && (
   <>
-    <Window id="man" title={manTitle(project.slug)} cmd={manTitle(project.slug)} {...accentProp}>
+    <Window id="man" title={toolManTitle(project.slug)} cmd={toolManTitle(project.slug)} {...accentProp}>
       <dl class="man">
-        <div><dt>{MAN_SECTIONS.synopsis}</dt><dd><code>{usage.synopsis}</code></dd></div>
+        <div><dt>{TOOL_MAN_SECTIONS.synopsis}</dt><dd><code>{usage.synopsis}</code></dd></div>
         {usage.commands.length > 0 && (
-          <div><dt>{MAN_SECTIONS.commands}</dt><dd><dl class="opts">{usage.commands.map((c) => <div><dt>{c.name}</dt><dd>{c.help}</dd></div>)}</dl></dd></div>
+          <div><dt>{TOOL_MAN_SECTIONS.commands}</dt><dd><dl class="opts">{usage.commands.map((c) => <div><dt>{c.name}</dt><dd>{c.help}</dd></div>)}</dl></dd></div>
         )}
         {usage.options.length > 0 && (
-          <div><dt>{MAN_SECTIONS.options}</dt><dd><dl class="opts">{usage.options.map((o) => <div><dt>{o.flag}</dt><dd>{o.help}</dd></div>)}</dl></dd></div>
+          <div><dt>{TOOL_MAN_SECTIONS.options}</dt><dd><dl class="opts">{usage.options.map((o) => <div><dt>{o.flag}</dt><dd>{o.help}</dd></div>)}</dl></dd></div>
         )}
-        <div><dt>{MAN_SECTIONS.example}</dt><dd><CopyField value={usage.example} what={EXAMPLE_COPY_NAME} /></dd></div>
+        <div><dt>{TOOL_MAN_SECTIONS.example}</dt><dd><CopyField value={usage.example} what={TOOL_EXAMPLE_COPY_NAME} /></dd></div>
       </dl>
     </Window>
     {details.distros.length > 0 && (
-      <Window id="dist" title={DIST_TITLE} cmd={DIST_CMD} {...accentProp}>
-        <KvTable caption={DIST_CAPTION} columns={DIST_COLUMNS}>
-          {details.distros.map((d) => <tr><td>{d.name}</td><td>{SUPPORT_WORDS[d.support]}</td><td>{d.how ?? NO_VALUE}</td></tr>)}
+      <Window id="dist" title={TOOL_DIST_TITLE} cmd={TOOL_DIST_CMD} {...accentProp}>
+        <KvTable caption={TOOL_DIST_CAPTION} columns={TOOL_DIST_COLUMNS}>
+          {details.distros.map((d) => <tr><td>{d.name}</td><td>{TOOL_SUPPORT_WORDS[d.support]}</td><td>{d.how ?? TOOL_NO_VALUE}</td></tr>)}
         </KvTable>
       </Window>
     )}
@@ -70,9 +57,9 @@ const accentProp = accent === undefined ? {} : { accent };
 )}
 {details !== undefined && region === 'stat' && (
   <>
-    <tr><th scope="row">{STAT.language}</th><td>{details.language}</td></tr>
-    {details.needs.length > 0 && <tr><th scope="row">{STAT.needs}</th><td>{details.needs.join(', ')}</td></tr>}
-    {supported.length > 0 && <tr><th scope="row">{STAT.distros}</th><td>{supported.join(', ')}</td></tr>}
+    <tr><th scope="row">{TOOL_STAT.language}</th><td>{details.language}</td></tr>
+    {details.needs.length > 0 && <tr><th scope="row">{TOOL_STAT.needs}</th><td>{details.needs.join(', ')}</td></tr>}
+    {supported.length > 0 && <tr><th scope="row">{TOOL_STAT.distros}</th><td>{supported.join(', ')}</td></tr>}
   </>
 )}
 <style>

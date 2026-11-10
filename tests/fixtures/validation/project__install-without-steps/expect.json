@@ -1,0 +1,15 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "projects/tools/lochctl.toml",
+    "entry": "lochctl",
+    "field": "get[0]"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/tools/lochctl.toml",
+    "entry": "lochctl",
+    "field": "get[0]"
+  },
+  "resolvedCheck": "installStepsDropped"
+}
