@@ -204,6 +204,9 @@ describe('stress site', () => {
     expect(html).not.toContain('data-chiprow');
     expect(html).not.toContain('data-empty');
     expect(html).toMatch(/ls ~\/terraria/);
+    const footer = /<footer[\s\S]*<\/footer>/.exec(html)?.[0] ?? '';
+    expect(footer).toMatch(/<span class="mid">0 projects<\/span><span class="sp"><\/span><span class="rt">empty<\/span>/);
+    expect(footer).not.toContain('data-tag-name');
   });
 });
 

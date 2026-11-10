@@ -204,3 +204,21 @@ describe('chrome and landing wording', () => {
     expect([s.BOOKMARKS_ROW_NAME, s.BOOKMARKS_ROW_TARGET]).toEqual(['bookmarks', '-> elsewhere']);
   });
 });
+
+describe('bookmarks page and permission wording', () => {
+  it('bookmarks page strings', () => {
+    expect([s.BOOKMARKS_PATH, s.BOOKMARKS_CD_CMD, s.JUMP_CD]).toEqual(['~/bookmarks', 'cd ~/bookmarks', 'cd']);
+    expect([s.RELATIONS_TITLE, s.RELATIONS_CMD]).toEqual(['relations', 'cat .relations']);
+    expect([s.RELATED_LABEL, s.byAuthor('Kovid Goyal')]).toEqual(['related:', 'by Kovid Goyal']);
+  });
+
+  it('group title and meta: free groups add " · group"', () => {
+    expect(s.groupTitle('ffxiv')).toBe('ffxiv/');
+    expect(s.groupMeta(3, false)).toBe('3 links · external');
+    expect(s.groupMeta(1, true)).toBe('1 link · external · group');
+  });
+
+  it('permission strings and the empty status word', () => {
+    expect([s.PERMISSIONS_DIR, s.PERMISSIONS_LINK, s.STATUS_EMPTY]).toEqual(['drwxr-xr-x', 'lrwxrwxrwx', 'empty']);
+  });
+});

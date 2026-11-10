@@ -15,7 +15,7 @@ interface Props {
 const { status, links, siteHost } = Astro.props;
 const { path, mid, right } = statusCells(status);
 ---
-<footer class="statusline" aria-label="Status line"><div class="in"><span class="mode">{MODE_CELL}</span><span class="pth">{path ?? <span data-badpath>{NOT_FOUND_PATH_FALLBACK}</span>}</span>{status.kind === 'category' ? <span class="mid">{TAG_PREFIX}<span data-tag-name>{TAG_INITIAL}</span> {SORT_PREFIX}<span data-sort-name>{SORT_INITIAL}</span></span> : <span class="mid">{mid}</span>}<span class="sp"></span><span class="rt">{status.kind === 'category' ? <span data-count>{right}</span> : right}</span>{links.github !== undefined && <Link href={links.github} siteHost={siteHost}>{LINK_KEY_GITHUB}</Link>}{links.mail !== undefined && <Link href={`mailto:${links.mail}`} siteHost={siteHost}>{LINK_KEY_MAIL}</Link>}</div></footer>
+<footer class="statusline" aria-label="Status line"><div class="in"><span class="mode">{MODE_CELL}</span><span class="pth">{path ?? <span data-badpath>{NOT_FOUND_PATH_FALLBACK}</span>}</span>{status.kind === 'category' && status.empty !== true ? <span class="mid">{TAG_PREFIX}<span data-tag-name>{TAG_INITIAL}</span> {SORT_PREFIX}<span data-sort-name>{SORT_INITIAL}</span></span> : <span class="mid">{mid}</span>}<span class="sp"></span><span class="rt">{status.kind === 'category' && status.empty !== true ? <span data-count>{right}</span> : right}</span>{links.github !== undefined && <Link href={links.github} siteHost={siteHost}>{LINK_KEY_GITHUB}</Link>}{links.mail !== undefined && <Link href={`mailto:${links.mail}`} siteHost={siteHost}>{LINK_KEY_MAIL}</Link>}</div></footer>
 
 <style>
   .statusline {

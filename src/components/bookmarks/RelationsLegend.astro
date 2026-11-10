@@ -1,0 +1,38 @@
+---
+// Legend of relation badges and their descriptions, in config order (ux 4.4).
+import Window from '../window/Window.astro';
+import type { Relation } from '../../lib/content/model.ts';
+import { RELATIONS_CMD, RELATIONS_TITLE } from '../../lib/strings.ts';
+
+interface Props {
+  relations: readonly Relation[];
+}
+
+const { relations } = Astro.props;
+---
+<Window id="rel" title={RELATIONS_TITLE} cmd={RELATIONS_CMD} accent="cyan">
+  <dl class="rels">{relations.map((r) => <div><dt><span class="rel">{r.id}</span></dt><dd>{r.description}</dd></div>)}</dl>
+</Window>
+<style>
+  .rels {
+    margin: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .rels div {
+    display: grid;
+    grid-template-columns: 14ch 1fr;
+    gap: 1ch;
+  }
+  dd {
+    margin: 0;
+    color: var(--fg-bright);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 760px) {
+    .rels div {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -13,7 +13,7 @@ interface Props {
 const { category } = Astro.props;
 ---
 {category.bookmarks.length > 0 && (
-  <Window id="bm" title={CATEGORY_BOOKMARKS_TITLE} meta={STATUS_EXTERNAL} cmd={lsBookmarksCmd(category.id)} class="accent-cyan">
+  <Window id="bm" title={CATEGORY_BOOKMARKS_TITLE} meta={STATUS_EXTERNAL} cmd={lsBookmarksCmd(category.id)} accent="cyan">
     <BookmarkMini bookmarks={category.bookmarks} groupId={category.id} />
   </Window>
 )}

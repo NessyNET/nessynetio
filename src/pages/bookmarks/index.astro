@@ -1,0 +1,21 @@
+---
+// Bookmarks page (ux 4.4): intro and jump row, relations legend, then one window per non-empty group.
+import BookmarkGroupWindow from '../../components/bookmarks/BookmarkGroup.astro';
+import BookmarksIntro from '../../components/bookmarks/BookmarksIntro.astro';
+import RelationsLegend from '../../components/bookmarks/RelationsLegend.astro';
+import Base from '../../layouts/Base.astro';
+import { getSiteModel } from '../../lib/content/index.ts';
+import { bookmarksMeta } from '../../lib/meta.ts';
+
+const model = await getSiteModel();
+// The model already skips empty groups and orders categories, free groups, then general (ux 4.4).
+const groups = model.bookmarks;
+const linkTotal = groups.reduce((n, g) => n + g.bookmarks.length, 0);
+---
+<Base model={model} meta={bookmarksMeta(model)} current={{ kind: 'bookmarks' }} status={{ kind: 'bookmarks', links: linkTotal }}>
+  <div class="pair">
+    <BookmarksIntro groups={groups} />
+    <RelationsLegend relations={model.relations} />
+  </div>
+  {groups.map((group) => <BookmarkGroupWindow group={group} />)}
+</Base>

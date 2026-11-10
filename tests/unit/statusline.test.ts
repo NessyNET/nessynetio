@@ -65,6 +65,13 @@ describe('StatusLine.astro', () => {
     expect(none.map((x) => x.cls)).toEqual(['mode', 'pth', 'mid', 'sp', 'rt']);
   });
 
+  it('empty category: 0 projects, then `empty`, and no tag/sort/count hooks', async () => {
+    const html = await render({ kind: 'category', categoryId: 'terraria', projects: 0, empty: true });
+    const c = cells(html);
+    expect(c.map((x) => x.text).slice(0, 5)).toEqual(['NESSY', '~/terraria', '0 projects', '', 'empty']);
+    expect(html).not.toMatch(/data-tag-name|data-sort-name|data-count/);
+  });
+
   it('category: path, tag and sort hooks, count hook', async () => {
     const html = await render({ kind: 'category', categoryId: 'ffxiv', projects: 8 });
     const c = cells(html);

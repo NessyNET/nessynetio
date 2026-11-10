@@ -1,0 +1,35 @@
+---
+// Bookmarks header window `bh` (ux 4.4): holds the page h1, the fixed intro, and the jump row to the non-empty groups.
+import Link from '../Link.astro';
+import Window from '../window/Window.astro';
+import type { BookmarkGroup } from '../../lib/content/model.ts';
+import { BOOKMARKS_CD_CMD, BOOKMARKS_INTRO_EMPHASIS, BOOKMARKS_INTRO_LEAD, BOOKMARKS_PATH, JUMP_CD, TITLE_BOOKMARKS } from '../../lib/strings.ts';
+
+interface Props {
+  /** Non-empty groups, in page order. */
+  groups: readonly BookmarkGroup[];
+}
+
+
+const { groups } = Astro.props;
+---
+<Window id="bh" title={BOOKMARKS_PATH} titleTag="p" cmd={BOOKMARKS_CD_CMD} accent="cyan">
+  <h1>{TITLE_BOOKMARKS}</h1>
+  <p class="out">{BOOKMARKS_INTRO_LEAD} <strong>{BOOKMARKS_INTRO_EMPHASIS}</strong></p>
+  <p class="jump"><span class="m">{JUMP_CD}</span>{groups.map((g) => <> <Link href={`#bm-${g.id}`}>{g.id}</Link></>)}</p>
+</Window>
+<style>
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 2ch;
+    margin: 8px 0 0;
+  }
+  .jump :global(a) {
+    display: inline-block;
+    padding: 4px 0;
+  }
+  .m {
+    color: var(--text-dim);
+  }
+</style>

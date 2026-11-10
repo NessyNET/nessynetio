@@ -16,6 +16,8 @@ import {
   LS_COLUMNS,
   LS_TITLE,
   lsMeta,
+  PERMISSIONS_DIR,
+  PERMISSIONS_LINK,
   projectCount,
 } from '../../lib/strings.ts';
 
@@ -39,9 +41,9 @@ const [modeHead, nameHead, itemsHead, contentsHead] = LS_COLUMNS;
     </thead>
     <tbody>
       {categories.map((c) => (
-        <tr class={`accent-${c.accent}`}><td class="perm" aria-hidden="true">drwxr-xr-x</td><td class="dir"><Link href={routes.category(c.id)}>{c.id}</Link><span class="slash" aria-hidden="true">/</span></td><td class="sz">{projectCount(c.projects.length)}</td><td>{withoutStop(c.blurbFirstSentence)}</td></tr>
+        <tr class={`accent-${c.accent}`}><td class="perm" aria-hidden="true">{PERMISSIONS_DIR}</td><td class="dir"><Link href={routes.category(c.id)}>{c.id}</Link><span class="slash" aria-hidden="true">/</span></td><td class="sz">{projectCount(c.projects.length)}</td><td>{withoutStop(c.blurbFirstSentence)}</td></tr>
       ))}
-      <tr class="accent-cyan lnkrow"><td class="perm" aria-hidden="true">lrwxrwxrwx</td><td class="dir"><Link href={routes.bookmarks()}>{BOOKMARKS_ROW_NAME}</Link> <span class="m" aria-hidden="true">{BOOKMARKS_ROW_TARGET}</span></td><td class="sz">{linkCount(bookmarkCount)}</td><td>{BOOKMARKS_ROW_DESCRIPTION} <span class="m">{BOOKMARKS_ROW_SUFFIX}</span></td></tr>
+      <tr class="accent-cyan lnkrow"><td class="perm" aria-hidden="true">{PERMISSIONS_LINK}</td><td class="dir"><Link href={routes.bookmarks()}>{BOOKMARKS_ROW_NAME}</Link> <span class="m" aria-hidden="true">{BOOKMARKS_ROW_TARGET}</span></td><td class="sz">{linkCount(bookmarkCount)}</td><td>{BOOKMARKS_ROW_DESCRIPTION} <span class="m">{BOOKMARKS_ROW_SUFFIX}</span></td></tr>
     </tbody>
   </table>
 </Window>

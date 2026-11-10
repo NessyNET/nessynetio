@@ -182,6 +182,16 @@ pre {
   color: var(--accent, var(--green));
 }
 
+/* ---- Relation badge (ux 7.13): shared by the bookmark rows, the mini rows and the relations legend. */
+.rel {
+  color: var(--cyan);
+  border: 1px solid var(--control-line);
+  border-radius: 3px;
+  padding: 0 6px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
 /* ---- Page grids (ux 7.3). Both stack at 900px. */
 /* header + side window, whoami + links.txt */
 .pair {

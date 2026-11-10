@@ -2,6 +2,7 @@
 // Opt-in empty category (ux 5.8): the `projects` window with the message only; no controls, no rows.
 import Link from '../Link.astro';
 import type { Category } from '../../lib/content/model.ts';
+import type { CategoryAccent } from '../../lib/palette.ts';
 import * as routes from '../../lib/routes.ts';
 import { EMPTY_CATEGORY_LEAD, EMPTY_CATEGORY_LINK, emptyCategoryBody, LS_TITLE, lsCategoryCmd, projectCount } from '../../lib/strings.ts';
 import Window from '../window/Window.astro';
@@ -12,7 +13,7 @@ interface Props {
 
 const { category } = Astro.props;
 ---
-<Window id="ls" title={LS_TITLE} meta={projectCount(0)} cmd={lsCategoryCmd(category.id)} class={`accent-${category.accent}`}>
+<Window id="ls" title={LS_TITLE} meta={projectCount(0)} cmd={lsCategoryCmd(category.id)} accent={category.accent as CategoryAccent}>
   <p class="emptycat"><b>{EMPTY_CATEGORY_LEAD}</b> {emptyCategoryBody(category.label)}<Link href={routes.home()}>{EMPTY_CATEGORY_LINK}</Link>.</p>
 </Window>
 <style>

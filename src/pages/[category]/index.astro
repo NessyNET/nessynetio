@@ -25,7 +25,7 @@ const side = repoSlot ? 'repo' : category.bookmarks.length > 0 ? 'bookmarks' : n
   model={model}
   meta={categoryMeta(model, category)}
   current={{ kind: 'category', categoryId: category.id }}
-  status={{ kind: 'category', categoryId: category.id, projects: category.projects.length }}
+  status={{ kind: 'category', categoryId: category.id, projects: category.projects.length, ...(category.projects.length === 0 ? { empty: true as const } : {}) }}
 >
   {side === null
     ? <CategoryHeader category={category} />

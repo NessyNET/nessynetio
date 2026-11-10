@@ -1,0 +1,65 @@
+---
+// RELATED_LABEL = `related:`. `-> ` arrow text is decoration (aria-hidden), as in BookmarkMini.
+// Symlink-format bookmark row (ux 7.13): no status, priority, updated, version, get or source.
+import Link from '../Link.astro';
+import type { Bookmark } from '../../lib/content/model.ts';
+import { byAuthor, PERMISSIONS_LINK, RELATED_LABEL } from '../../lib/strings.ts';
+
+interface Props {
+  bookmark: Bookmark;
+}
+
+const { bookmark: b } = Astro.props;
+const hasMeta = b.relation !== undefined || b.author !== undefined || b.projects.length > 0;
+---
+<li class="bm"><span class="perm" aria-hidden="true">{PERMISSIONS_LINK}</span><div class="bmain"><h3><Link class="ext nm" href={b.url}>{b.name}</Link> <span class="lnk" aria-hidden="true">-&gt;</span> <span class="host">{b.host}</span></h3><p>{b.note}</p>{hasMeta && <p class="bmeta">{b.relation !== undefined && <span class="rel">{b.relation.id}</span>}{b.author !== undefined && <span>{byAuthor(b.author)}</span>}{b.projects.length > 0 && <span>{RELATED_LABEL} {b.projects.map((p, i) => <>{i > 0 && ', '}<Link href={p.path}>{p.name}</Link></>)}</span>}</p>}</div></li>
+<style>
+  .bm {
+    display: grid;
+    grid-template-columns: 12ch minmax(0, 1fr);
+    gap: 2px 2ch;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .bm:last-child {
+    border-bottom: 0;
+  }
+  .perm,
+  .lnk,
+  .host {
+    color: var(--text-dim);
+  }
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+  h3 :global(.nm) {
+    color: var(--cyan);
+    font-weight: 700;
+  }
+  p {
+    margin: 0;
+  }
+  .bmeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 2ch;
+    align-items: baseline;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .bmeta :global(a) {
+    display: inline-block;
+    padding: 2px 0;
+  }
+  @media (max-width: 760px) {
+    .bm {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .perm {
+      display: none;
+    }
+  }
+</style>

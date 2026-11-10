@@ -118,6 +118,20 @@ export const LOG_TITLE = 'updates.log';
 export const LOG_CMD = 'tail -n 4 updates.log';
 export const BOOKMARKS_INTRO_LEAD = 'Not my projects. Things my projects run on, docs I learned from, and work that inspired me.';
 export const BOOKMARKS_INTRO_EMPHASIS = 'Every link here opens another site in a new tab.';
+export const BOOKMARKS_PATH = '~/bookmarks';
+export const BOOKMARKS_CD_CMD = 'cd ~/bookmarks';
+/** Prefix of the jump row of group links. */
+export const JUMP_CD = 'cd';
+export const RELATIONS_TITLE = 'relations';
+export const RELATIONS_CMD = 'cat .relations';
+export const RELATED_LABEL = 'related:';
+export const byAuthor = (author: string): string => `by ${author}`;
+export const groupTitle = (id: string): string => `${id}/`;
+/** `N link(s) · external`, plus ` · group` for a free group (ux 4.4). */
+export const groupMeta = (count: number, free: boolean): string => `${linkCount(count)} · ${STATUS_EXTERNAL}${free ? ' · group' : ''}`;
+/** Decorative `ls -l` permission columns (landing table, bookmark rows). */
+export const PERMISSIONS_DIR = 'drwxr-xr-x';
+export const PERMISSIONS_LINK = 'lrwxrwxrwx';
 
 // --- Category page (ux 4.2, 7.9; mocks ffxiv.html)
 export const categoryPath = (id: string): string => `~/${id}`;
@@ -206,6 +220,8 @@ export const TAB_HOME = 'home';
 export const TAB_BOOKMARKS = 'bookmarks';
 export const STATUS_EXTERNAL = 'external';
 export const STATUS_404 = '404';
+/** Right cell of the status line on an opt-in empty category (r8 `empty-category.html`). */
+export const STATUS_EMPTY = 'empty';
 export const STATUS_NOT_FOUND = 'not found';
 export const TAG_PREFIX = 'tag:';
 export const SORT_PREFIX = 'sort:';
