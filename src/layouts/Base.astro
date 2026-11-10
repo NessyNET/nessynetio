@@ -6,6 +6,7 @@ import latinFont from '../../node_modules/@fontsource-variable/jetbrains-mono/fi
 import nojsHref from '../styles/nojs.css?url';
 import Link from '../components/Link.astro';
 import Meta from '../components/chrome/Meta.astro';
+import FocusNudge from '../components/chrome/FocusNudge.astro';
 import StatusLine from '../components/chrome/StatusLine.astro';
 import TabBar from '../components/chrome/TabBar.astro';
 import type { StatusLineProps } from '../components/chrome/status-line.ts';
@@ -38,6 +39,7 @@ const { model, meta, current, status } = Astro.props;
     <TabBar model={model} current={current} />
     <main id="main" class="screen"><slot /></main>
     <StatusLine status={status} links={model.whoami?.links ?? {}} siteHost={model.site.host} />
+    <FocusNudge />
     <div id="live" class="sr-only" aria-live="polite"></div>
   </body>
 </html>

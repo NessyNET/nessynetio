@@ -75,7 +75,8 @@ describe('Base.astro', () => {
   });
 
   it('renders no inline script or style and no style attributes', () => {
-    expect(html).not.toMatch(/<script\b/);
+    const inline = [...html.matchAll(/<script\b([^>]*)>/g)].filter((m) => !/\bsrc=/.test(m[1] ?? ''));
+    expect(inline).toHaveLength(0);
     expect(html).not.toMatch(/<style\b/);
     expect(html).not.toMatch(/\sstyle\s*=/);
   });

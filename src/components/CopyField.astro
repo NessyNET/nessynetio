@@ -1,5 +1,6 @@
 ---
 // Code field with a copy button (ux 7.16). Markup only: the behaviour is attached by the copy script (025).
+import CopyScript from './CopyScript.astro';
 import { COPY_LABEL, copyName } from '../lib/strings.ts';
 
 interface Props {
@@ -15,6 +16,7 @@ const { value, what } = Astro.props;
   <code>{value}</code>
   <button class="copy" type="button" data-copy={value} data-js-only aria-label={copyName(what)}><span data-label>{COPY_LABEL}</span></button>
 </div>
+<CopyScript />
 <style>
   .copyrow {
     display: flex;
