@@ -31,7 +31,7 @@ export const defaultCard = (model: SiteModel): OgCardInput => ({
 
 export const homeCard = (model: SiteModel): OgCardInput => ({
   kind: 'home',
-  title: model.site.host,
+  title: model.whoami?.name ?? model.site.host,
   subtitle: model.whoami?.taglinePlain ?? model.site.description,
 });
 
@@ -87,7 +87,8 @@ export function ogPathFor(pagePath: string, input: OgCardInput, contentDir: stri
   const hash = createHash('sha256').update(JSON.stringify(input));
   const shot = readScreenshot(input, contentDir);
   if (shot !== undefined) hash.update(createHash('sha256').update(shot).digest());
-  return routes.og(pagePath, hash.digest('hex').slice(0, 8));
+  // The 404 page path carries an extension; the card name is `404-<hash>.png`.
+  return routes.og(pagePath.replace(/\.html$/, ''), hash.digest('hex').slice(0, 8));
 }
 
 export const ogAlt = (input: OgCardInput): string => `${input.title}: ${input.subtitle}`;

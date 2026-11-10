@@ -6,11 +6,9 @@ import { Resvg } from '@resvg/resvg-js';
 import satori from 'satori';
 import sharp from 'sharp';
 import { type PaletteToken, paletteHex } from '../lib/palette.ts';
+import { OG_RETIRED, OG_SITE_NAME, versionLabel } from '../lib/strings.ts';
 import { OG_HEIGHT, OG_WIDTH } from './inputs.ts';
 import type { OgCardInput } from './types.ts';
-
-// STRINGS-TODO: move to src/lib/strings.ts when Brokkr's strings round is committed.
-const OG_SITE_NAME = 'nessynet.io';
 
 const FONT = 'JetBrains Mono';
 // Relative to the project root, not `import.meta.url`: the build bundles this module into `dist/.prerender/`.
@@ -22,13 +20,23 @@ const getFonts = () =>
     { name: FONT, data: loadFont('JetBrainsMono-Bold.ttf'), weight: 700, style: 'normal' },
   ]);
 
-const SHOT_WIDTH = 480;
-const SHOT_HEIGHT = 300;
+/** Legibility floors at the size chat clients show the card (Freya 028 re-check). */
+const SUMMARY_SIZE = 38;
+const META_SIZE = 32;
+const SHOT_WIDTH = 400;
+const SHOT_HEIGHT = 250;
 const PAD = 64;
 const INNER_WIDTH = OG_WIDTH - 2 * PAD;
-const FOOTER_HEIGHT = 48;
+const FOOTER_HEIGHT = 44;
 const SHOT_GAP = 48;
 const SHOT_BORDER = 2;
+
+const TITLE_SIZES = [64, 56, 48, 40] as const;
+const MONO_ADVANCE = 0.6; // JetBrains Mono: advance width as a fraction of the font size
+
+/** Largest title size that keeps the title within two lines of a column `width` wide (Satori ignores line clamps here). */
+const titleSize = (title: string, width: number): number =>
+  TITLE_SIZES.find((size) => Math.ceil(title.length / Math.floor(width / (size * MONO_ADVANCE))) <= 2) ?? TITLE_SIZES[TITLE_SIZES.length - 1]!;
 
 type Node = { type: string; props: Record<string, unknown> };
 const el = (type: string, style: Record<string, unknown>, children?: unknown, extra: Record<string, unknown> = {}): Node => ({
@@ -47,14 +55,19 @@ const isToken = (value: string | undefined): value is PaletteToken => {
 
 function layout(input: OgCardInput, shotUri: string | undefined): Node {
   const accent = paletteHex(isToken(input.accent) ? input.accent : 'primary');
-  const meta = [input.categoryLabel, input.version === undefined ? undefined : `v${input.version}`, input.status === 'retired' ? 'retired' : undefined]
+  const accented = [input.categoryLabel, input.version === undefined ? undefined : versionLabel(input.version)]
     .filter((part): part is string => part !== undefined)
     .join('  ');
-  const body = el('div', { flexDirection: 'column', width: shotUri === undefined ? INNER_WIDTH : INNER_WIDTH - SHOT_WIDTH - 2 * SHOT_BORDER - SHOT_GAP }, [
-    meta === '' ? null : text({ fontSize: 28, color: accent, marginBottom: 20 }, meta),
-    el('div', { width: 120, height: 8, backgroundColor: accent, marginBottom: 28 }),
-    text({ fontSize: 72, fontWeight: 700, color: paletteHex('fg_bright'), lineClamp: 2, lineHeight: 1.15 }, input.title),
-    text({ fontSize: 32, color: paletteHex('fg'), marginTop: 24, lineClamp: 4, lineHeight: 1.35 }, input.subtitle),
+  const meta = [
+    accented === '' ? null : text({ color: accent }, accented),
+    input.status === 'retired' ? text({ color: paletteHex('muted') }, OG_RETIRED) : null,
+  ].filter((node) => node !== null);
+  const bodyWidth = shotUri === undefined ? INNER_WIDTH : INNER_WIDTH - SHOT_WIDTH - 2 * SHOT_BORDER - SHOT_GAP;
+  const body = el('div', { flexDirection: 'column', width: bodyWidth }, [
+    meta.length === 0 ? null : el('div', { fontSize: META_SIZE, gap: 24, marginBottom: 16 }, meta),
+    el('div', { width: 120, height: 8, backgroundColor: accent, marginBottom: 20 }),
+    text({ fontSize: titleSize(input.title, bodyWidth), fontWeight: 700, color: paletteHex('fg_bright'), lineClamp: 2, lineHeight: 1.1 }, input.title),
+    text({ fontSize: SUMMARY_SIZE, color: paletteHex('fg'), marginTop: 20, lineClamp: 4, lineHeight: 1.3 }, input.subtitle),
   ]);
   const shot =
     shotUri === undefined

@@ -311,3 +311,7 @@ export const BOT_COMMANDS_CAPTION = 'Bot commands';
 export const BOT_COMMANDS_COLUMNS = ['command', 'what it does', 'who'] as const;
 export const BOT_STAT = { platform: 'platform', hosting: 'hosting', invite: 'invite' } as const;
 export const BOT_INVITE = { open: 'public', closed: 'not public' } as const;
+
+// --- Link-preview card (interim template, design 3.5.5)
+export const OG_SITE_NAME = 'nessynet.io';
+export const OG_RETIRED = 'retired';

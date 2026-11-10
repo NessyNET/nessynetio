@@ -1,4 +1,5 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -43,6 +44,22 @@ describe('ogPathFor', () => {
   });
 });
 
+describe('ogPathFor, screenshot bytes', () => {
+  it('changes when the bytes change under the same file name', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'nessy-og-'));
+    try {
+      const card = input({ screenshot: { file: 'shot.png', alt: 'a' } });
+      writeFileSync(join(dir, 'shot.png'), 'first bytes');
+      const before = ogPathFor('/ffxiv/gorse/', card, dir);
+      expect(ogPathFor('/ffxiv/gorse/', card, dir)).toBe(before);
+      writeFileSync(join(dir, 'shot.png'), 'other bytes');
+      expect(ogPathFor('/ffxiv/gorse/', card, dir)).not.toBe(before);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
 describe('renderCard', () => {
   const shot = readFileSync(join(E2E_DIR, 'projects/linux/lochctl/01.png'));
   const long = input({ title: 'a-very-long-project-name-that-has-to-wrap-onto-lines', subtitle: 'x'.repeat(90) });
@@ -81,7 +98,15 @@ describe('ogInputsFor', () => {
     const inputs = ogInputsFor(model);
     for (const path of model.paths) expect(inputs.has(path), path).toBe(true);
     expect(inputs.get('/404.html')?.kind).toBe('default');
+    expect(ogPathFor('/404.html', inputs.get('/404.html') as OgCardInput, E2E_DIR)).toMatch(/^\/og\/404-[0-9a-f]{8}\.png$/);
     expect(inputs.size).toBe(model.paths.length + 1);
+  });
+
+  it('home card: whoami name as title, plain tagline (or description) as subtitle, not the host twice', () => {
+    const home = ogInputsFor(model).get('/');
+    expect(home).toMatchObject({ kind: 'home', title: model.whoami?.name });
+    expect(home?.subtitle).toBe(model.whoami?.taglinePlain ?? model.site.description);
+    expect(home?.title).not.toBe(model.site.host);
   });
 
   it('builds plain inputs that serialise (the model itself is cyclic)', () => {

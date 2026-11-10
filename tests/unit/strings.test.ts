@@ -288,6 +288,10 @@ describe('other project layouts (mod, modpack, tool, bot)', () => {
     expect([s.TOOL_NO_VALUE, s.TOOL_STAT]).toEqual(['-', { language: 'language', needs: 'needs', distros: 'distros' }]);
   });
 
+  it('link-preview card strings', () => {
+    expect([s.OG_SITE_NAME, s.OG_RETIRED]).toEqual(['nessynet.io', 'retired']);
+  });
+
   it('bot strings', () => {
     expect([s.BOT_COMMANDS_TITLE, s.botCommandsCmd('lochbot'), s.BOT_COMMANDS_CAPTION]).toEqual(['commands', 'lochbot --help', 'Bot commands']);
     expect([...s.BOT_COMMANDS_COLUMNS]).toEqual(['command', 'what it does', 'who']);
