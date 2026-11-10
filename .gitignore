@@ -13,3 +13,10 @@ dist/
 *~
 .DS_Store
 .claude/
+
+# Spike scratch, e2e/test artefacts
+.spikes/
+.e2e-sites/
+test-results/
+playwright-report/
+.lighthouseci/

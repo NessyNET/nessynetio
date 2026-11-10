@@ -1,0 +1,47 @@
+{
+  "name": "nessynetio",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/build.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "node scripts/lint.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "samples": "node scripts/samples.mjs",
+    "gen-schema": "node scripts/gen-schema.mjs",
+    "gen-tokens": "node scripts/gen-tokens.mjs",
+    "sync-palette": "node scripts/sync-palette.mjs",
+    "check-output": "node scripts/check-output.mjs",
+    "budget": "node scripts/budget.mjs",
+    "serve:static": "node tests/server/static-server.mjs",
+    "test:server": "bash tests/server/run.sh",
+    "e2e": "playwright test",
+    "lhci": "lhci autorun --config=tests/lighthouserc.json",
+    "deploy": "node scripts/release.mjs",
+    "verify": "npm run lint && npm run check && npm test && npm run build -- --strict --allow-samples"
+  },
+  "dependencies": {
+    "astro": "7.4.7",
+    "zod": "4.6.7",
+    "smol-toml": "1.9.1",
+    "sharp": "0.35.5",
+    "@astrojs/sitemap": "3.7.4",
+    "satori": "0.63.2",
+    "@resvg/resvg-js": "2.6.2",
+    "@fontsource-variable/jetbrains-mono": "5.3.0"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "@astrojs/check": "0.9.12",
+    "vitest": "5.1.0",
+    "@playwright/test": "1.65.0",
+    "axe-core": "4.14.0",
+    "@axe-core/playwright": "4.14.0",
+    "@lhci/cli": "0.16.0",
+    "parse5": "8.1.1"
+  }
+}
