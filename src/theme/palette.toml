@@ -1,0 +1,31 @@
+# Single source of truth. Edit here, run `python3 generate.py`.
+# Loch Ness: peat-dark water, highland mist, heather, bracken, and a pastel-green Nessie.
+name = "Nessy"
+
+[base]
+bg_dark   = "#0e1a1c"   # deep loch
+bg        = "#121f22"   # dark water
+bg_light  = "#1a2b2e"
+line      = "#172629"
+selection = "#25403f"
+border    = "#223639"
+comment   = "#5b7a78"   # mist
+muted     = "#7f9c98"
+fg        = "#cfdcd5"   # pale fog
+fg_bright = "#e8f1ea"
+
+[accent]
+primary = "#a3d9a5"     # Nessie: pastel green (UI accent, cursor)
+green   = "#a3d9a5"
+red     = "#e27d7d"     # rowan berry
+orange  = "#e0a470"     # bracken / whisky
+yellow  = "#e3d08a"     # gorse
+teal    = "#7fcdb5"
+cyan    = "#7fc4d6"     # loch water
+blue    = "#7fa8d6"     # highland sky
+purple  = "#b39bd6"     # heather
+pink    = "#d89bb5"     # thistle
+
+[ansi]
+normal = ["#223639", "#e27d7d", "#a3d9a5", "#e3d08a", "#7fa8d6", "#b39bd6", "#7fc4d6", "#cfdcd5"]
+bright = ["#456563", "#ee9c9c", "#bfe8c0", "#efdfa8", "#a0c1e6", "#c9b8e6", "#a0d8e6", "#e8f1ea"]
