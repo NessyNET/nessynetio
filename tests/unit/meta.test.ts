@@ -5,6 +5,8 @@ import { type PageMeta, bookmarksMeta, categoryMeta, homeMeta, notFoundMeta, pro
 import { project, siteModel } from '../helpers/chrome-model.ts';
 
 const model = siteModel();
+/** `projectMeta` reads the first screenshot for the card; the shared test helper builds projects without the list. */
+const withShots = (p: ReturnType<typeof project>) => ({ ...p, screenshots: [] }) as unknown as typeof p;
 const [ffxiv, , linux] = model.categories;
 if (ffxiv === undefined || linux === undefined) throw new Error('fixture');
 
@@ -27,7 +29,7 @@ describe('page meta builders (ux 3.2)', () => {
   });
 
   it('project: Name, short category label, summary', () => {
-    expect(projectMeta(model, project('linux', 'lochctl', 'lochctl', 'Manage lochs from the shell.'))).toMatchObject({
+    expect(projectMeta(model, withShots(project('linux', 'lochctl', 'lochctl', 'Manage lochs from the shell.')))).toMatchObject({
       title: 'lochctl · Linux tools · nessynet.io',
       description: 'Manage lochs from the shell.',
       canonicalPath: '/linux/lochctl/',
@@ -35,7 +37,7 @@ describe('page meta builders (ux 3.2)', () => {
   });
 
   it('project in an unknown category fails loudly (a pages bug, not content)', () => {
-    expect(() => projectMeta(model, project('nope', 'x'))).toThrow(/nope/);
+    expect(() => projectMeta(model, withShots(project('nope', 'x')))).toThrow(/nope/);
   });
 
   it('bookmarks and 404 use the site description', () => {
@@ -65,9 +67,10 @@ describe('page meta builders (ux 3.2)', () => {
 });
 
 describe('social-card fields (R19)', () => {
-  it('mirror title and description; landing previews the plain tagline; no card yet', () => {
-    const project_ = projectMeta(model, project('linux', 'lochctl', 'lochctl', 'Manage lochs from the shell.'));
-    expect(project_).toMatchObject({ ogType: 'website', ogTitle: project_.title, ogDescription: 'Manage lochs from the shell.', og: null });
+  it('mirror title and description; landing previews the plain tagline; each page has a card', () => {
+    const project_ = projectMeta(model, withShots(project('linux', 'lochctl', 'lochctl', 'Manage lochs from the shell.')));
+    expect(project_).toMatchObject({ ogType: 'website', ogTitle: project_.title, ogDescription: 'Manage lochs from the shell.' });
+    expect(project_.og).toMatchObject({ path: expect.stringMatching(/^\/og\/linux-lochctl-[0-9a-f]{8}\.png$/), width: 1200, height: 630 });
     const tagged = siteModel({ whoami: { ...(model.whoami as NonNullable<typeof model.whoami>), taglinePlain: 'plugins & mods' } });
     expect(homeMeta(tagged).ogDescription).toBe('plugins & mods');
     expect(homeMeta(tagged).description).toBe('Plugins, mods and small tools.');

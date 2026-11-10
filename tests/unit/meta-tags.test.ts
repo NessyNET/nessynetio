@@ -73,10 +73,10 @@ describe('meta tags in the built site (R19)', () => {
     }
   });
 
-  it('omits image tags while no card is configured', () => {
+  it('every page has one og:image and twitter:image (card files are checked in og.test.ts)', () => {
     for (const [file, page] of pages) {
-      expect(page.metas.has('og:image'), file).toBe(false);
-      expect(page.metas.has('twitter:image'), file).toBe(false);
+      expect(page.metas.get('og:image'), file).toHaveLength(1);
+      expect(page.metas.get('twitter:image'), file).toHaveLength(1);
     }
   });
 
