@@ -125,6 +125,18 @@ fetch "https://$HOST/" -H 'Accept-Encoding: gzip'
 expect_status "/ (gzip)" 200
 expect_header "/ (gzip)" Content-Encoding "gzip"
 
+# Hidden files under the nested `^~` locations (error_page applies there too, with the headers)
+for nested in /_astro/.hidden /og/.hidden; do
+  fetch "https://$HOST$nested"
+  expect_status "$nested" 404
+  expect_security_headers "$nested (404)"
+  if [[ -z "$NOT_FOUND_MARKER" ]] || grep -q -- "$NOT_FOUND_MARKER" "$BODY"; then
+    pass "$nested body is the 404 page"
+  else
+    fail "$nested body does not contain '$NOT_FOUND_MARKER'"
+  fi
+done
+
 # Hidden files
 fetch "https://$HOST/.build-meta.json"
 expect_status "/.build-meta.json" 404
@@ -132,6 +144,33 @@ fetch "https://$HOST$MAP_PATH"
 expect_status "$MAP_PATH" 404
 fetch "https://$HOST/.hidden"
 expect_status "/.hidden" 404
+
+# TLS (S21): TLS 1.2 and 1.3 handshakes succeed; the config offers nothing older (a modern client cannot try 1.1)
+tls_handshake() { # protocol-flag -> output of s_client, empty on failure
+  openssl s_client -connect "$ADDR:443" -servername "$HOST" "$1" < /dev/null 2> /dev/null || true
+}
+tls1_2="$(tls_handshake -tls1_2)"
+if grep -q "New, TLSv1\.2, Cipher is" <<< "$tls1_2"; then pass "TLS 1.2 handshake"; else fail "TLS 1.2 handshake"; fi
+tls1_3="$(tls_handshake -tls1_3)"
+if grep -q "New, TLSv1\.3, Cipher is" <<< "$tls1_3"; then pass "TLS 1.3 handshake"; else fail "TLS 1.3 handshake"; fi
+if command -v nginx > /dev/null 2>&1; then
+  if nginx -T 2> /dev/null | grep -Eq "ssl_protocols +TLSv1\.2 +TLSv1\.3;"; then pass "ssl_protocols is TLSv1.2 TLSv1.3"; else fail "ssl_protocols is not TLSv1.2 TLSv1.3"; fi
+fi
+
+# Catch-all (S22): an unknown Host on 80 gets no response; an unknown SNI on 443 is rejected; the real name is served
+unknown_status="$(curl -s --max-time 10 -o /dev/null -w '%{http_code}' -H 'Host: unknown.example' "http://$ADDR/" || true)"
+if [[ "$unknown_status" == "000" ]]; then pass "unknown Host on port 80: connection closed (444)"; else fail "unknown Host on port 80 returned $unknown_status"; fi
+
+if openssl s_client -connect "$ADDR:443" -servername unknown.example < /dev/null 2> /dev/null | grep -q "BEGIN CERTIFICATE"; then
+  fail "unknown SNI on 443 was given a certificate"
+else
+  pass "unknown SNI on 443: handshake rejected"
+fi
+if openssl s_client -connect "$ADDR:443" -servername "$HOST" < /dev/null 2> /dev/null | grep -q "subject=.*CN *= *$HOST"; then
+  pass "SNI $HOST is served with its certificate"
+else
+  fail "SNI $HOST did not get the $HOST certificate"
+fi
 
 if ((FAILS > 0)); then
   echo "$FAILS assertion(s) failed"

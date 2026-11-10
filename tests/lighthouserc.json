@@ -1,0 +1,23 @@
+{
+  "ci": {
+    "collect": {
+      "numberOfRuns": 3,
+      "url": [
+        "http://127.0.0.1:4321/",
+        "http://127.0.0.1:4321/ffxiv/",
+        "http://127.0.0.1:4321/ffxiv/loch-lantern/"
+      ],
+      "settings": {
+        "chromeFlags": "--no-sandbox"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.95 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2000 }],
+        "third-parties-insight": ["error", { "maxLength": 0 }]
+      }
+    }
+  }
+}

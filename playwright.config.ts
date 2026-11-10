@@ -6,10 +6,16 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const DEFAULT_BASE = 'http://127.0.0.1:4321';
-const DEFAULT_STRESS = 'http://127.0.0.1:4322';
 const baseURL = process.env['E2E_BASE_URL'] ?? DEFAULT_BASE;
 const resolveRules = process.env['E2E_RESOLVE'];
-const serveLocally = process.env['E2E_BASE_URL'] === undefined;
+
+/** Host names of the `MAP host target` rules, comma separated (Firefox's `network.dns.localDomains`). */
+const mappedHosts = (rules: string): string =>
+  rules
+    .split(',')
+    .map((rule) => /^\s*MAP\s+(\S+)/.exec(rule)?.[1])
+    .filter((host): host is string => host !== undefined)
+    .join(',');
 
 const server = (dir: string, port: number) => ({
   command: `node tests/server/static-server.mjs --dir ${dir} --port ${port}`,
@@ -30,12 +36,17 @@ export default defineConfig({
   use: {
     baseURL,
     ignoreHTTPSErrors: resolveRules !== undefined,
-    ...(resolveRules === undefined ? {} : { launchOptions: { args: [`--host-resolver-rules=${resolveRules}`] } }),
   },
-  ...(serveLocally ? { webServer: [server('.e2e-sites/e2e', 4321), server('.e2e-sites/stress', 4322)] } : {}),
+  // Each build is served locally unless its URL is given (the nginx-backed run serves site-e2e itself).
+  webServer: [
+    ...(process.env['E2E_BASE_URL'] === undefined ? [server('.e2e-sites/e2e', 4321)] : []),
+    ...(process.env['E2E_STRESS_URL'] === undefined ? [server('.e2e-sites/stress', 4322)] : []),
+  ],
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', grep: /@cross/, use: { ...devices['Desktop Firefox'] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'], ...(resolveRules === undefined ? {} : { launchOptions: { args: [`--host-resolver-rules=${resolveRules}`] } }) } },
+    // Firefox has no host-resolver-rules: it resolves the mapped names to loopback and keeps the URL's port, so the
+    // nginx container must publish 443 for it (CI does; a local rootless run uses the chromium project).
+    { name: 'firefox', grep: /@cross/, use: { ...devices['Desktop Firefox'], ...(resolveRules === undefined ? {} : { launchOptions: { firefoxUserPrefs: { 'network.dns.localDomains': mappedHosts(resolveRules) } } }) } },
     { name: 'webkit', grep: /@cross/, use: { ...devices['Desktop Safari'] } },
   ],
 });

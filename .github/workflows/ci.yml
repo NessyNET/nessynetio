@@ -1,0 +1,126 @@
+# Continuous integration (design 3.6.4). The e2e and Lighthouse jobs are added by task 036.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run check
+      - run: npm test
+      # The wrapper also runs the output checks, the budgets and precompression.
+      - run: npm run build -- --strict --allow-samples
+      - name: Sample list in the job summary
+        run: |
+          {
+            echo '### Sample items still in content/'
+            echo '```'
+            npm run --silent samples
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: site-preview
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+
+  # Browser and server checks against the production nginx configuration (design 3.6.4, 5.2). The container serves
+  # the site-e2e build on 443/80 with the unchanged deploy/nginx/ files and a self-signed certificate.
+  e2e:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: node_modules/.astro
+          key: astro-${{ hashFiles('package-lock.json') }}-${{ hashFiles('content/**') }}
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run build -- --strict --content tests/fixtures/site-e2e --out .e2e-sites/e2e
+      - run: npm run build -- --content tests/fixtures/site-stress --out .e2e-sites/stress
+      # Server contract: redirects, 404 status, headers, caching, gzip, TLS, catch-all.
+      - name: Server checks in the nginx container
+        env:
+          DIST: .e2e-sites/e2e
+        run: bash tests/server/run.sh
+      - name: Serve the build from the nginx container
+        env:
+          DIST: .e2e-sites/e2e
+          HTTPS_PORT: 443
+          HTTP_PORT: 80
+        run: bash tests/server/run.sh --serve
+      - name: Map the host names to the container
+        run: echo "127.0.0.1 nessynet.io www.nessynet.io" | sudo tee -a /etc/hosts
+      - run: npm run e2e
+        env:
+          E2E_BASE_URL: https://nessynet.io
+          E2E_RESOLVE: MAP nessynet.io 127.0.0.1:443, MAP www.nessynet.io 127.0.0.1:443
+          E2E_SKIP_BUILD: 1
+      - run: npm run lhci -- --collect.url=https://nessynet.io/ --collect.url=https://nessynet.io/ffxiv/ --collect.url=https://nessynet.io/ffxiv/loch-lantern/ "--collect.settings.chromeFlags=--no-sandbox --ignore-certificate-errors"
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: e2e-results
+          path: .builds/e2e-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  release-readiness:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Stays green while samples exist; the summary shows how far launch is.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Strict build without samples
+        run: |
+          set +e
+          npm run build -- --strict 2>&1 | tee readiness.log
+          status=${PIPESTATUS[0]}
+          {
+            if [ "$status" -eq 0 ]; then
+              echo '### Release readiness: pass'
+            else
+              echo '### Release readiness: not yet'
+              echo '```'
+              grep -E '^(ERROR|WARNING)' readiness.log
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
