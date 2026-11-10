@@ -1,0 +1,15 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "bookmarks.toml",
+    "entry": "Dalamud docs",
+    "field": "group"
+  },
+  "strict": {
+    "level": "error",
+    "file": "bookmarks.toml",
+    "entry": "Dalamud docs",
+    "field": "group"
+  },
+  "resolvedCheck": "bookmarkToGeneral"
+}

@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "error",
+    "file": "projects/nowhere/lost.toml",
+    "entry": "lost",
+    "field": "category"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/nowhere/lost.toml",
+    "entry": "lost",
+    "field": "category"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "site.toml",
+    "entry": "whoami",
+    "field": "links.discord"
+  },
+  "strict": {
+    "level": "error",
+    "file": "site.toml",
+    "entry": "whoami",
+    "field": "links.discord"
+  },
+  "resolvedCheck": "whoamiLinkRemoved"
+}

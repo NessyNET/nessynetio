@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "error",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "screenshots[0].caption"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "screenshots[0].caption"
+  }
+}

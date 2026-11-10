@@ -1,4 +1,4 @@
-import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -111,5 +111,45 @@ describe('loadContent: sample scan', () => {
     expect(parsed.samples).toContainEqual({ file: 'site.toml', entry: 'site', fields: ['description'], assets: [] });
     expect(parsed.samples).toContainEqual({ file: 'bookmarks.toml', entry: 'Flagged', fields: [], assets: [] });
     expect(parsed.samples).toHaveLength(3);
+  });
+});
+
+describe('loadContent: stray files and orphan asset folders', () => {
+  const withTree = async (setup: (dir: string) => Promise<void>) => {
+    const dir = await mkdtemp(join(tmpdir(), 'load-'));
+    try {
+      await cp(fixture('valid'), dir, { recursive: true });
+      await setup(dir);
+      return await loadContent(dir);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  };
+
+  it('a clean tree has none', async () => {
+    const { parsed } = await loadContent(fixture('valid'));
+    expect(parsed.strays).toEqual([]);
+    expect(parsed.orphanAssetDirs).toEqual([]);
+  });
+
+  it('records a .toml directly in projects/ and one nested below a category folder, sorted, content-relative', async () => {
+    const { parsed, diagnostics } = await withTree(async (dir) => {
+      await mkdir(join(dir, 'projects/ffxiv/sub'), { recursive: true });
+      await writeFile(join(dir, 'projects/ffxiv/sub/deep.toml'), 'slug = "deep"\n');
+      await writeFile(join(dir, 'projects/foo.toml'), 'slug = "foo"\n');
+    });
+    expect(parsed.strays).toEqual(['projects/ffxiv/sub/deep.toml', 'projects/foo.toml']);
+    expect(parsed.projects.map((p) => p.data.slug)).toEqual(['x']);
+    expect(diagnostics).toEqual([]);
+  });
+
+  it('records a folder projects/<category>/<name>/ with no <name>.toml; folders with a project file are not orphans', async () => {
+    const { parsed } = await withTree(async (dir) => {
+      await mkdir(join(dir, 'projects/ffxiv/x'), { recursive: true });
+      await writeFile(join(dir, 'projects/ffxiv/x/01.png'), '');
+      await mkdir(join(dir, 'projects/ffxiv/ghost'), { recursive: true });
+      await writeFile(join(dir, 'projects/ffxiv/ghost/01.png'), '');
+    });
+    expect(parsed.orphanAssetDirs).toEqual(['projects/ffxiv/ghost']);
   });
 });

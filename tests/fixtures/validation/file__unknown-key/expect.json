@@ -1,0 +1,12 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "site.toml",
+    "field": "extras"
+  },
+  "strict": {
+    "level": "error",
+    "file": "site.toml",
+    "field": "extras"
+  }
+}

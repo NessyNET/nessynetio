@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "site.toml",
+    "entry": "whoami",
+    "field": "name"
+  },
+  "strict": {
+    "level": "warning",
+    "file": "site.toml",
+    "entry": "whoami",
+    "field": "name"
+  }
+}

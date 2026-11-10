@@ -1,0 +1,15 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "bookmarks.toml",
+    "entry": "Dalamud docs",
+    "field": "projects[1]"
+  },
+  "strict": {
+    "level": "error",
+    "file": "bookmarks.toml",
+    "entry": "Dalamud docs",
+    "field": "projects[1]"
+  },
+  "resolvedCheck": "projectLinkDropped"
+}

@@ -126,6 +126,26 @@ describe('projectSchema', () => {
       }
     });
 
+    it('a value that matches the pattern but cannot be parsed is a schema/type error (https://[bad)', () => {
+      const unparseable = 'https://[bad';
+      const cases: [string, unknown, unknown, string][] = [
+        ['issues', { ...project(), issues: unparseable }, projectSchema, 'issues'],
+        ['source.url', { ...project(), source: { host: 'h', url: unparseable } }, projectSchema, 'source.url'],
+        ['get[0].url', { ...project(), get: [{ kind: 'download', url: unparseable }] }, projectSchema, 'get[0].url'],
+        ['minecraft.import_url', { ...project(), minecraft: { import_url: unparseable } }, projectSchema, 'minecraft.import_url'],
+        ['repo_url', { id: 'a', label: 'A', blurb: 'b', accent: 'blue', tags: [], repo_url: unparseable }, categorySchema, 'repo_url'],
+        ['bookmark url', { name: 'n', url: unparseable, note: 'n', relation: 'r' }, bookmarkSchema, 'url'],
+        ['whoami.links.github', { name: 'n', bio: 'b', links: { github: unparseable } }, whoamiSchema, 'links.github'],
+      ];
+      for (const [label, raw, schema, field] of cases) {
+        expect(codes(raw, schema as z.ZodType), label).toMatchObject([{ code: 'schema/type', level: 'error', field }]);
+      }
+    });
+
+    it('a root-relative get URL is still accepted (no absolute form to parse)', () => {
+      expect(codes({ ...project(), get: [{ kind: 'download', url: '/downloads/a.zip' }] })).toEqual([]);
+    });
+
     it('minecraft URL fields accept http(s) only', () => {
       const mc = (minecraft: unknown) => codes({ ...project(), minecraft });
       expect(mc({ import_url: 'javascript:x' })).toMatchObject([{ field: 'minecraft.import_url' }]);

@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "error",
+    "file": "projects/tools/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "slug"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/tools/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "slug"
+  }
+}

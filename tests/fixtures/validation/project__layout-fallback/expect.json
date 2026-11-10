@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "note",
+    "file": "projects/tools/lochctl.toml",
+    "entry": "lochctl",
+    "field": "tags"
+  },
+  "strict": {
+    "level": "note",
+    "file": "projects/tools/lochctl.toml",
+    "entry": "lochctl",
+    "field": "tags"
+  }
+}

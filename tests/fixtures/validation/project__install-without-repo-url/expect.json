@@ -1,0 +1,15 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "get[0]"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "get[0]"
+  },
+  "resolvedCheck": "installDropped"
+}

@@ -1,0 +1,15 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "tags[2]"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "tags[2]"
+  },
+  "resolvedCheck": "droppedTag"
+}

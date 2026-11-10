@@ -1,0 +1,13 @@
+{
+  "code": "file/unknown-key",
+  "local": {
+    "level": "warning",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "field": "mystery"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "field": "mystery"
+  }
+}

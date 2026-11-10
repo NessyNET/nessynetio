@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "ffxiv.colour"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/ffxiv/gear-tweaks.toml",
+    "entry": "gear-tweaks",
+    "field": "ffxiv.colour"
+  }
+}

@@ -1,0 +1,12 @@
+[site]
+url = "http://nessynet.io"
+description = "Validation base fixture."
+
+[whoami]
+name = "Nessy"
+tagline = "I make *plugins*, *mods* and *tools*"
+bio = "Base fixture bio."
+
+[whoami.links]
+github = "https://github.com/example"
+mail = "hello@nessynet.io"

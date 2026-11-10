@@ -1,0 +1,10 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "projects/ffxiv/ghost"
+  },
+  "strict": {
+    "level": "warning",
+    "file": "projects/ffxiv/ghost"
+  }
+}

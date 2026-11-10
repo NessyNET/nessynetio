@@ -1,0 +1,16 @@
+{
+  "code": "project/type-tag-count",
+  "local": {
+    "level": "warning",
+    "file": "projects/tools/lochctl.toml",
+    "entry": "lochctl",
+    "field": "tags"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/tools/lochctl.toml",
+    "entry": "lochctl",
+    "field": "tags"
+  },
+  "resolvedCheck": "severalTypeTags"
+}

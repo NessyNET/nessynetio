@@ -1,0 +1,15 @@
+[[category]]
+id = "ffxiv"
+label = "FFXIV"
+short_label = "FFXIV"
+blurb = "Plugins for the game."
+accent = "blue"
+repo_url = "https://repo.example.invalid/repo.json"
+tags = [{ id = "plugin", type = true, label = "plugin" }, { id = "ui" }, { id = "qol" }, { id = "Bad Tag" }]
+
+[[category]]
+id = "tools"
+label = "Linux tools"
+blurb = "Small tools."
+accent = "teal"
+tags = [{ id = "cli", type = true }, { id = "web", type = true, label = "web tool" }, { id = "shell" }, { id = "util" }]

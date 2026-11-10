@@ -1,0 +1,15 @@
+{
+  "code": "file/unknown-key",
+  "local": {
+    "level": "warning",
+    "file": "categories.toml",
+    "entry": "ffxiv",
+    "field": "tags[1].colour"
+  },
+  "strict": {
+    "level": "error",
+    "file": "categories.toml",
+    "entry": "ffxiv",
+    "field": "tags[1].colour"
+  }
+}

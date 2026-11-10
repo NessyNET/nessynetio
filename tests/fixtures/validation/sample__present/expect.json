@@ -1,0 +1,12 @@
+{
+  "local": {
+    "level": "note",
+    "file": "site.toml",
+    "entry": "whoami"
+  },
+  "strict": {
+    "level": "error",
+    "file": "site.toml",
+    "entry": "whoami"
+  }
+}

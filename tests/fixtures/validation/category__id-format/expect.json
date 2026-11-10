@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "error",
+    "file": "categories.toml",
+    "entry": "Bad_Id",
+    "field": "id"
+  },
+  "strict": {
+    "level": "error",
+    "file": "categories.toml",
+    "entry": "Bad_Id",
+    "field": "id"
+  }
+}

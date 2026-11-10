@@ -1,0 +1,14 @@
+[[relation]]
+id = "docs"
+description = "Documentation."
+
+[[group]]
+id = "reading"
+label = "Reading"
+
+[[bookmark]]
+name = "Dalamud docs"
+url = "https://nessynet.io/docs/"
+note = "Plugin API docs."
+relation = "docs"
+

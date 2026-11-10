@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "error",
+    "file": "categories.toml",
+    "entry": "ffxiv",
+    "field": "tags[3].id"
+  },
+  "strict": {
+    "level": "error",
+    "file": "categories.toml",
+    "entry": "ffxiv",
+    "field": "tags[3].id"
+  }
+}

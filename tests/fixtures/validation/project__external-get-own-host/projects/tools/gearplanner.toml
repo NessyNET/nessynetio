@@ -1,0 +1,18 @@
+slug = "gearplanner"
+name = "Gear Planner"
+category = "tools"
+status = "active"
+summary = "Plans gear sets online."
+priority = 3
+updated = 2026-01-10
+description = "Prose."
+tags = ["web"]
+
+[[get]]
+kind = "external"
+url = "https://nessynet.io/gear/"
+
+[webtool]
+runs_in = "Browser"
+account = "None"
+data = "Stays in the browser"

@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "projects/tools/gearplanner.toml",
+    "entry": "gearplanner",
+    "field": "get[0].url"
+  },
+  "strict": {
+    "level": "warning",
+    "file": "projects/tools/gearplanner.toml",
+    "entry": "gearplanner",
+    "field": "get[0].url"
+  }
+}

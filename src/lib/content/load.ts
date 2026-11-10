@@ -53,6 +53,10 @@ export interface ParsedSite {
   /** Top-level keys of every file that parsed as TOML, so the rules pass can grade unknown ones. */
   readonly topLevelKeys: readonly { readonly file: string; readonly keys: readonly string[] }[];
   readonly samples: readonly SampleItem[];
+  /** `.toml` files outside `projects/<category>/<slug>.toml` (directly in `projects/`, or below a category folder), sorted. */
+  readonly strays: readonly string[];
+  /** Folders `projects/<category>/<name>/` with no `<name>.toml` beside them, sorted. */
+  readonly orphanAssetDirs: readonly string[];
 }
 
 export const SAMPLE_MARKER = '[sample]';
@@ -191,8 +195,20 @@ export async function loadContent(dir: string): Promise<{ parsed: ParsedSite; di
   const bookmarks = bookmarksFile === undefined ? [] : loader.list(bookmarkSchema, bookmarksFile, 'bookmark', 'name', 'bookmarks.toml');
 
   const projects: ParsedProject[] = [];
-  for (const folder of (await listDir(join(dir, 'projects'))).filter((e) => e.isDirectory())) {
-    for (const entry of (await listDir(join(dir, 'projects', folder.name))).filter((e) => e.isFile() && e.name.endsWith('.toml'))) {
+  const strays: string[] = [];
+  const orphanAssetDirs: string[] = [];
+  const projectsRoot = await listDir(join(dir, 'projects'));
+  strays.push(...projectsRoot.filter((e) => e.isFile() && e.name.endsWith('.toml')).map((e) => `projects/${e.name}`));
+  for (const folder of projectsRoot.filter((e) => e.isDirectory())) {
+    const folderEntries = await listDir(join(dir, 'projects', folder.name));
+    const projectFiles = new Set(folderEntries.filter((e) => e.isFile() && e.name.endsWith('.toml')).map((e) => basename(e.name, '.toml')));
+    for (const sub of folderEntries.filter((e) => e.isDirectory())) {
+      const subPath = `projects/${folder.name}/${sub.name}`;
+      if (!projectFiles.has(sub.name)) orphanAssetDirs.push(subPath);
+      const nested = await listFiles(join(dir, subPath));
+      strays.push(...nested.filter((f) => f.endsWith('.toml')).map((f) => `${subPath}/${f}`));
+    }
+    for (const entry of folderEntries.filter((e) => e.isFile() && e.name.endsWith('.toml'))) {
       const fileSlug = basename(entry.name, '.toml');
       const file = `projects/${folder.name}/${entry.name}`;
       const raw = await loader.readToml(file, true);
@@ -214,6 +230,8 @@ export async function loadContent(dir: string): Promise<{ parsed: ParsedSite; di
     bookmarks,
     topLevelKeys: loader.topLevelKeys,
     samples: loader.samples,
+    strays: strays.sort(),
+    orphanAssetDirs: orphanAssetDirs.sort(),
   };
   return { parsed, diagnostics: loader.diagnostics };
 }

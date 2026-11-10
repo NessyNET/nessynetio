@@ -1,0 +1,14 @@
+[[relation]]
+id = "docs"
+description = "Documentation."
+
+[[group]]
+id = "reading"
+label = "Reading"
+
+[[bookmark]]
+name = "Dalamud docs"
+url = "https://dalamud.dev/"
+note = "Plugin API docs."
+relation = "nope"
+

@@ -1,0 +1,11 @@
+{
+  "code": "project/stray-file",
+  "local": {
+    "level": "error",
+    "file": "projects/ffxiv/sub/deep.toml"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/ffxiv/sub/deep.toml"
+  }
+}

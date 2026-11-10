@@ -1,0 +1,10 @@
+{
+  "local": {
+    "level": "error",
+    "file": "projects/stray.toml"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/stray.toml"
+  }
+}

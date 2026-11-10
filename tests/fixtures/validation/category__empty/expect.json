@@ -1,0 +1,12 @@
+{
+  "local": {
+    "level": "note",
+    "file": "categories.toml",
+    "entry": "empty"
+  },
+  "strict": {
+    "level": "note",
+    "file": "categories.toml",
+    "entry": "empty"
+  }
+}

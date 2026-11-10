@@ -1,0 +1,26 @@
+[[relation]]
+id = "docs"
+description = "Documentation."
+
+[[relation]]
+id = "inspiration"
+description = "Inspired this."
+
+[[group]]
+id = "reading"
+label = "Reading"
+
+[[bookmark]]
+name = "Dalamud docs"
+url = "https://dalamud.dev/"
+note = "Plugin API docs."
+relation = "docs"
+category = "ffxiv"
+projects = ["gear-tweaks"]
+
+[[bookmark]]
+name = "A good blog"
+url = "https://blog.example.com/"
+note = "Worth reading."
+relation = "inspiration"
+group = "reading"

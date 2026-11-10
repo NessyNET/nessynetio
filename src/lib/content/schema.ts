@@ -11,9 +11,16 @@ const HTTP_URL_OR_ROOT_PATH = /^(?:https?:\/\/\S+|\/(?!\/)\S*)$/;
 const HTTPS_URL = /^https:\/\/\S+$/;
 const BARE_ADDRESS = /^(?!mailto:)[^\s@]+@[^\s@]+$/i;
 
-const httpUrl = z.string().regex(HTTP_URL, 'must be an absolute http(s):// URL');
-const httpUrlOrRootPath = z.string().regex(HTTP_URL_OR_ROOT_PATH, 'must be an absolute http(s):// URL or a root-relative path starting with /');
-const httpsUrl = z.string().regex(HTTPS_URL, 'must be an absolute https:// URL');
+// `URL.canParse` catches values the pattern lets through (`https://[bad`); the root-relative form has no absolute URL to parse.
+const parseable = (value: string): boolean => !/^https?:/.test(value) || URL.canParse(value);
+const UNPARSEABLE = 'must be a parseable URL';
+
+const httpUrl = z.string().regex(HTTP_URL, 'must be an absolute http(s):// URL').refine(parseable, UNPARSEABLE);
+const httpUrlOrRootPath = z
+  .string()
+  .regex(HTTP_URL_OR_ROOT_PATH, 'must be an absolute http(s):// URL or a root-relative path starting with /')
+  .refine(parseable, UNPARSEABLE);
+const httpsUrl = z.string().regex(HTTPS_URL, 'must be an absolute https:// URL').refine(parseable, UNPARSEABLE);
 const bareAddress = z.string().regex(BARE_ADDRESS, 'must be a bare e-mail address without "mailto:"');
 const date = z.iso.date();
 

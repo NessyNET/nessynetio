@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "error",
+    "file": "site.toml",
+    "entry": "site",
+    "field": "url"
+  },
+  "strict": {
+    "level": "error",
+    "file": "site.toml",
+    "entry": "site",
+    "field": "url"
+  }
+}

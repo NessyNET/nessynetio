@@ -1,0 +1,15 @@
+{
+  "code": "project/location",
+  "local": {
+    "level": "error",
+    "file": "projects/tools/misfiled.toml",
+    "entry": "misfiled",
+    "field": "category"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/tools/misfiled.toml",
+    "entry": "misfiled",
+    "field": "category"
+  }
+}

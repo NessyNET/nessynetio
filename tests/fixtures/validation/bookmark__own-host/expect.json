@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "bookmarks.toml",
+    "entry": "Dalamud docs",
+    "field": "url"
+  },
+  "strict": {
+    "level": "error",
+    "file": "bookmarks.toml",
+    "entry": "Dalamud docs",
+    "field": "url"
+  }
+}
