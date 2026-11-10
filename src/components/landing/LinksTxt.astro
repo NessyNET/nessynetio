@@ -1,0 +1,50 @@
+---
+// `links.txt` window (ux 4.1, 5.1): at most the two owner links (R5). A missing key omits its row; with neither the
+// window is omitted altogether (the page then lets `whoami` take the full width).
+import Link from '../Link.astro';
+import Window from '../window/Window.astro';
+import type { Whoami } from '../../lib/content/model.ts';
+import { LINK_KEY_GITHUB, LINK_KEY_MAIL, LINKS_CMD, LINKS_TITLE } from '../../lib/strings.ts';
+
+interface Props {
+  links: Whoami['links'];
+}
+
+const { links } = Astro.props;
+const { github, mail } = links;
+/** `https://github.com/nessy/` shown as `github.com/nessy`. */
+const shown = (url: string): string => url.replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+---
+{(github !== undefined || mail !== undefined) && (
+  <Window id="links" title={LINKS_TITLE} cmd={LINKS_CMD} class="links">
+    <dl class="kv">
+      {github !== undefined && <div><dt>{LINK_KEY_GITHUB}<span aria-hidden="true">:</span></dt><dd><Link href={github}>{shown(github)}</Link></dd></div>}
+      {mail !== undefined && <div><dt>{LINK_KEY_MAIL}<span aria-hidden="true">:</span></dt><dd><Link href={`mailto:${mail}`}>{mail}</Link></dd></div>}
+    </dl>
+  </Window>
+)}
+<style>
+  .kv {
+    margin: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .kv div {
+    display: grid;
+    grid-template-columns: 9ch 1fr;
+    gap: 1ch;
+  }
+  dt {
+    color: var(--text-dim);
+  }
+  dd {
+    margin: 0;
+    color: var(--fg-bright);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  dd :global(a) {
+    display: inline-block;
+    padding: 4px 0;
+  }
+</style>

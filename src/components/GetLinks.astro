@@ -3,20 +3,20 @@
 // never struck, never a button). The bar shows a dim `get:` prefix; rows (ux 7.9) do not.
 import Link from './Link.astro';
 import type { GetSlot } from '../lib/content/model.ts';
-import { INSTALL_ON_CARD } from '../lib/strings.ts';
+import { GET_BAR_PREFIX, INSTALL_ON_CARD } from '../lib/strings.ts';
 
 interface Props {
-  slot: GetSlot;
+  value: GetSlot;
   context: 'bar' | 'row';
 }
 
-const { slot, context } = Astro.props;
-const entries = slot.kind === 'links' ? slot.links : [];
+const { value, context } = Astro.props;
+const entries = value.kind === 'links' ? value.links : [];
 ---
 <span class="slot-get">
-  {context === 'bar' && <span class="pre">get: </span>}
-  {slot.kind === 'text'
-    ? <span class="na">{slot.text}</span>
+  {context === 'bar' && <span class="pre">{GET_BAR_PREFIX}</span>}
+  {value.kind === 'text'
+    ? <span class="na">{value.text}</span>
     : <span class="getlinks">{entries.map((entry, i) => (
         <>{i > 0 && ' '}<Link href={entry.href ?? ''}>{context === 'row' && entry.kind === 'install' ? INSTALL_ON_CARD : entry.label}</Link></>
       ))}</span>}

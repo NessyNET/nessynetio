@@ -1,0 +1,103 @@
+---
+// `$ ls -l ~` window (ux 4.1, 7.8): one `drwxr-xr-x` row per published category, then the bookmarks symlink row.
+// The permission strings and the arrow are decoration (`aria-hidden`); at 760px and below the table stacks.
+import Link from '../Link.astro';
+import Window from '../window/Window.astro';
+import type { Category } from '../../lib/content/model.ts';
+import * as routes from '../../lib/routes.ts';
+import {
+  BOOKMARKS_ROW_DESCRIPTION,
+  BOOKMARKS_ROW_NAME,
+  BOOKMARKS_ROW_SUFFIX,
+  BOOKMARKS_ROW_TARGET,
+  linkCount,
+  LS_CAPTION,
+  LS_CMD,
+  LS_COLUMNS,
+  LS_TITLE,
+  lsMeta,
+  projectCount,
+} from '../../lib/strings.ts';
+
+interface Props {
+  categories: readonly Category[];
+  /** Links across all bookmark groups. */
+  bookmarkCount: number;
+}
+
+const { categories, bookmarkCount } = Astro.props;
+const projectTotal = categories.reduce((n, c) => n + c.projects.length, 0);
+/** The landing shows a blurb's first sentence without its full stop, so every row of the column reads alike (ux 4.1). */
+const withoutStop = (sentence: string): string => sentence.replace(/\.$/, '');
+const [modeHead, nameHead, itemsHead, contentsHead] = LS_COLUMNS;
+---
+<Window id="ls" title={LS_TITLE} meta={lsMeta(projectTotal, bookmarkCount)} cmd={LS_CMD}>
+  <table class="ls">
+    <caption class="sr-only">{LS_CAPTION}</caption>
+    <thead>
+      <tr><th class="perm" scope="col" aria-hidden="true">{modeHead}</th><th scope="col">{nameHead}</th><th class="sz" scope="col">{itemsHead}</th><th scope="col">{contentsHead}</th></tr>
+    </thead>
+    <tbody>
+      {categories.map((c) => (
+        <tr class={`accent-${c.accent}`}><td class="perm" aria-hidden="true">drwxr-xr-x</td><td class="dir"><Link href={routes.category(c.id)}>{c.id}</Link><span class="slash" aria-hidden="true">/</span></td><td class="sz">{projectCount(c.projects.length)}</td><td>{withoutStop(c.blurbFirstSentence)}</td></tr>
+      ))}
+      <tr class="accent-cyan lnkrow"><td class="perm" aria-hidden="true">lrwxrwxrwx</td><td class="dir"><Link href={routes.bookmarks()}>{BOOKMARKS_ROW_NAME}</Link> <span class="m" aria-hidden="true">{BOOKMARKS_ROW_TARGET}</span></td><td class="sz">{linkCount(bookmarkCount)}</td><td>{BOOKMARKS_ROW_DESCRIPTION} <span class="m">{BOOKMARKS_ROW_SUFFIX}</span></td></tr>
+    </tbody>
+  </table>
+</Window>
+<style>
+  .ls {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    font-weight: 400;
+    color: var(--text-dim);
+    text-align: left;
+    padding: 2px 20px 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 8px 20px 8px 0;
+    border-bottom: 1px dashed var(--border);
+    vertical-align: top;
+  }
+  .sz {
+    white-space: nowrap;
+  }
+  .perm,
+  .slash,
+  .m {
+    color: var(--text-dim);
+  }
+  .dir :global(a) {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .dir :global(a .xa) {
+    font-weight: 400;
+  }
+  @media (max-width: 760px) {
+    thead {
+      display: none;
+    }
+    .ls,
+    tbody,
+    tr,
+    td {
+      display: block;
+    }
+    tr {
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    td {
+      border: 0;
+      padding: 0;
+    }
+    .perm,
+    .sz {
+      display: none;
+    }
+  }
+</style>

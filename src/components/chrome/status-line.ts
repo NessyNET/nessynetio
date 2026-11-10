@@ -1,6 +1,6 @@
 // Per-page-type contents of the status line (ux 4.1 to 4.5). Plain data: the page passes the numbers, never wording.
 import type { Status } from '../../lib/content/model.ts';
-import { linkCount, projectCount } from '../../lib/strings.ts';
+import { dirCount, linkCount, projectCount, STATUS_404, STATUS_EXTERNAL, STATUS_NOT_FOUND } from '../../lib/strings.ts';
 
 export type StatusLineProps =
   /** `NESSY | ~ | N projects | … | D dirs, 1 link` */
@@ -22,8 +22,6 @@ export interface StatusCells {
   right: string;
 }
 
-const dirCount = (n: number): string => `${n} ${n === 1 ? 'dir' : 'dirs'}`;
-
 export function statusCells(status: StatusLineProps): StatusCells {
   switch (status.kind) {
     case 'home':
@@ -37,8 +35,8 @@ export function statusCells(status: StatusLineProps): StatusCells {
         right: status.version === undefined ? '' : `v${status.version}`,
       };
     case 'bookmarks':
-      return { path: '~/bookmarks', mid: linkCount(status.links), right: 'external' };
+      return { path: '~/bookmarks', mid: linkCount(status.links), right: STATUS_EXTERNAL };
     case 'notfound':
-      return { path: null, mid: '404', right: 'not found' };
+      return { path: null, mid: STATUS_404, right: STATUS_NOT_FOUND };
   }
 }

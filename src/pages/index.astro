@@ -1,1 +1,29 @@
-<html lang="en"><head><meta charset="utf-8" /><title>nessynet.io</title></head><body><p>nessynet.io scaffold</p></body></html>
+---
+// Landing page (ux 4.1): whoami beside links.txt, the `ls -l ~` listing, then updates.log.
+import LinksTxt from '../components/landing/LinksTxt.astro';
+import LsHome from '../components/landing/LsHome.astro';
+import UpdatesLog from '../components/landing/UpdatesLog.astro';
+import Whoami from '../components/landing/Whoami.astro';
+import Base from '../layouts/Base.astro';
+import { getSiteModel } from '../lib/content/index.ts';
+import { homeMeta } from '../lib/meta.ts';
+
+const model = await getSiteModel();
+const { whoami } = model;
+// `whoami` is required content: the loader reports an error when it is missing, so the model never lacks it here.
+if (whoami === null) throw new Error('The site model has no whoami.');
+const hasLinks = whoami.links.github !== undefined || whoami.links.mail !== undefined;
+const bookmarkCount = model.bookmarks.reduce((n, group) => n + group.bookmarks.length, 0);
+---
+<Base
+  model={model}
+  meta={homeMeta(model)}
+  current={{ kind: 'home' }}
+  status={{ kind: 'home', projects: model.projectsBySlug.size, dirs: model.categories.length }}
+>
+  {hasLinks
+    ? <div class="pair"><Whoami whoami={whoami} /><LinksTxt links={whoami.links} /></div>
+    : <Whoami whoami={whoami} />}
+  <LsHome categories={model.categories} bookmarkCount={bookmarkCount} />
+  <UpdatesLog entries={model.updatesLog} />
+</Base>

@@ -1,0 +1,49 @@
+---
+// `$ tail -n 4 updates.log` window (ux 4.1): the most recently updated projects, newest first.
+import Link from '../Link.astro';
+import Window from '../window/Window.astro';
+import type { UpdateEntry } from '../../lib/content/model.ts';
+import { LOG_CMD, LOG_TITLE } from '../../lib/strings.ts';
+
+interface Props {
+  entries: readonly UpdateEntry[];
+}
+
+const { entries } = Astro.props;
+---
+<Window id="log" title={LOG_TITLE} cmd={LOG_CMD}>
+  <ul class="tail">
+    {entries.map((e) => (
+      <li><time datetime={e.date}>{e.date}</time><span><Link href={e.path}>{e.categoryId}/{e.slug}</Link>{e.version !== undefined && <> <span class="y">v{e.version}</span></>} <span class="m">{e.note}</span></span></li>
+    ))}
+  </ul>
+</Window>
+<style>
+  .tail {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 11ch 1fr;
+    gap: 0 1.5ch;
+    padding: 2px 0;
+  }
+  time,
+  .m {
+    color: var(--text-dim);
+  }
+  .y {
+    color: var(--yellow);
+  }
+  span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 760px) {
+    li {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

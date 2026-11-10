@@ -161,3 +161,31 @@ describe('DALAMUD_STEPS', () => {
     ]);
   });
 });
+
+// Chrome, primitive and landing wording (design 4 "Wording"), typed out literally from the r8 mocks / ux 4.1, 6.2.
+describe('chrome and landing wording', () => {
+  it('chrome literals', () => {
+    expect([s.BRAND, s.MODE_CELL, s.TAB_HOME, s.TAB_BOOKMARKS]).toEqual(['nessynet', 'NESSY', 'home', 'bookmarks']);
+    expect([s.STATUS_EXTERNAL, s.STATUS_404, s.STATUS_NOT_FOUND]).toEqual(['external', '404', 'not found']);
+    expect([s.TAG_PREFIX, s.SORT_PREFIX, s.TAG_INITIAL, s.SORT_INITIAL]).toEqual(['tag:', 'sort:', 'all', 'default']);
+    expect([s.TITLE_BOOKMARKS, s.TITLE_NOT_FOUND]).toEqual(['Bookmarks', 'Not found']);
+  });
+
+  it('dirCount is singular for one', () => {
+    expect([s.dirCount(0), s.dirCount(1), s.dirCount(4)]).toEqual(['0 dirs', '1 dir', '4 dirs']);
+  });
+
+  it('primitive literals', () => {
+    expect([s.GET_BAR_PREFIX, s.SOURCE_BAR_PREFIX, s.SOURCE_ROW_LABEL, s.ALL_BOOKMARKS]).toEqual(['get: ', 'source: ', 'source', 'all bookmarks']);
+  });
+
+  it('landing windows', () => {
+    expect([s.WHOAMI_TITLE, s.WHOAMI_META, s.LINKS_TITLE, s.LINKS_CMD]).toEqual(['whoami', 'zsh', 'links.txt', 'cat links.txt']);
+    expect([s.LINK_KEY_GITHUB, s.LINK_KEY_MAIL]).toEqual(['github', 'mail']);
+    expect([s.LS_TITLE, s.LS_CMD, s.LS_COLUMNS]).toEqual(['projects', 'ls -l ~', ['mode', 'name', 'items', 'contents']]);
+    expect([s.LOG_TITLE, s.LOG_CMD]).toEqual(['updates.log', 'tail -n 4 updates.log']);
+    expect(s.LS_CAPTION).toBe('Project categories, and the link to bookmarks');
+    expect(s.lsMeta(19, 16)).toBe('19 projects · 16 links');
+    expect([s.BOOKMARKS_ROW_NAME, s.BOOKMARKS_ROW_TARGET]).toEqual(['bookmarks', '-> elsewhere']);
+  });
+});

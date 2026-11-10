@@ -9,6 +9,7 @@ const plural = (n: number, one: string, many: string): string => `${n} ${n === 1
 
 export const projectCount = (n: number): string => plural(n, 'project', 'projects');
 export const linkCount = (n: number): string => plural(n, 'link', 'links');
+export const dirCount = (n: number): string => plural(n, 'dir', 'dirs');
 
 // --- Get and source slots (ux 5.2, 6.2)
 export const SOURCE_NOT_AVAILABLE = 'Source not available';
@@ -18,6 +19,10 @@ export const NO_LONGER_DISTRIBUTED = 'No longer distributed';
 export const NOT_DISTRIBUTED_YET = 'Not distributed yet';
 export const SEE_INSTALL = 'see install';
 export const INSTALL_ON_CARD = 'install';
+/** Dim prefixes of the project-page get/source bar (ux 5.2, 7.10), and the source link label in category rows. */
+export const GET_BAR_PREFIX = 'get: ';
+export const SOURCE_BAR_PREFIX = 'source: ';
+export const SOURCE_ROW_LABEL = 'source';
 
 export const notDistributedPrivate = (kind?: string): string => `Not distributed (${privateLabel(kind)})`;
 /** `download v{version}`, or bare `download` when the project has no version (ux 6.2, design 3.3 `[[get]]` table). */
@@ -65,12 +70,20 @@ export function filterAnnouncement(o: { count: number; tag?: string; mode: SortM
   return `${projectCount(o.count)}${tagged}, sorted by ${MODE_PHRASE[o.mode]}, ${DIR_PHRASE[o.dir]}`;
 }
 
+/** Pieces of the empty-filter sentence, so the page can leave `#tag` to the script (`emptyFilter` composes them). */
+export const EMPTY_FILTER_TAGGED = ' tagged ';
+export const emptyFilterTail = (categoryLabel: string): string => ` in ${categoryLabel}.`;
 export const emptyFilter = (tag: string, categoryLabel: string): string =>
-  `${projectCount(0)} tagged #${tag} in ${categoryLabel}.`;
+  `${projectCount(0)}${EMPTY_FILTER_TAGGED}#${tag}${emptyFilterTail(categoryLabel)}`;
 export const showAllProjects = (categoryLabel: string): string => `show all ${categoryLabel} projects`;
 
 export const moreToggle = (n: number): string => `+${n} more`;
 export const moreToggleName = (n: number): string => plural(n, 'more tag', 'more tags');
+
+export const TAG_LABEL = 'tag';
+export const TAG_HASH = '#';
+export const MORE_TAGS_LABEL = 'More tags';
+export const tagsFor = (project: string): string => `Tags for ${project}`;
 
 export const SORT_LABEL = 'sort';
 export const SORT_OPTIONS: Readonly<Record<SortMode, string>> = {
@@ -84,8 +97,40 @@ export const sortDirName = (dir: SortDir): string => `Sort direction: ${DIR_PHRA
 // --- Landing and bookmarks (ux 4.1, 4.4)
 export const BOOKMARKS_ROW_DESCRIPTION = "Other people's work I use, learned from, or admire";
 export const BOOKMARKS_ROW_SUFFIX = '(external links)';
+export const BOOKMARKS_ROW_NAME = 'bookmarks';
+export const BOOKMARKS_ROW_TARGET = '-> elsewhere';
+export const ALL_BOOKMARKS = 'all bookmarks';
+
+export const WHOAMI_TITLE = 'whoami';
+export const WHOAMI_META = 'zsh';
+export const LINKS_TITLE = 'links.txt';
+export const LINKS_CMD = 'cat links.txt';
+export const LINK_KEY_GITHUB = 'github';
+export const LINK_KEY_MAIL = 'mail';
+export const LS_TITLE = 'projects';
+export const LS_CMD = 'ls -l ~';
+/** Screen-reader caption of the `ls` table. */
+export const LS_CAPTION = 'Project categories, and the link to bookmarks';
+/** Header of the `ls` table: permissions, name, count, description. */
+export const LS_COLUMNS = ['mode', 'name', 'items', 'contents'] as const;
+export const lsMeta = (projects: number, links: number): string => `${projectCount(projects)} · ${linkCount(links)}`;
+export const LOG_TITLE = 'updates.log';
+export const LOG_CMD = 'tail -n 4 updates.log';
 export const BOOKMARKS_INTRO_LEAD = 'Not my projects. Things my projects run on, docs I learned from, and work that inspired me.';
 export const BOOKMARKS_INTRO_EMPHASIS = 'Every link here opens another site in a new tab.';
+
+// --- Category page (ux 4.2, 7.9; mocks ffxiv.html)
+export const categoryPath = (id: string): string => `~/${id}`;
+export const cdCmd = (id: string): string => `cd ${categoryPath(id)}`;
+export const lsCategoryCmd = (id: string): string => `ls ${categoryPath(id)}`;
+export const lsBookmarksCmd = (groupId: string): string => `ls -l ~/bookmarks/${groupId}`;
+export const REPO_TITLE = 'repo.json';
+export const REPO_INTRO = 'One Dalamud custom repository for every plugin:';
+export const REPO_COPY_WHAT = 'repository URL';
+export const CATEGORY_BOOKMARKS_TITLE = 'bookmarks';
+export const AVAILABILITY_LABEL = 'Availability';
+export const versionLabel = (version: string): string => `v${version}`;
+export const UPDATED_PREFIX = 'updated ';
 
 // --- Project page (ux 4.3, 5.6)
 export const SEE_ALSO_MINE = 'more by me';
@@ -139,5 +184,21 @@ export const emptyCategoryBody = (what: string): string =>
   `This section is set up for ${what}, but none are published. Meanwhile, see `;
 export const EMPTY_CATEGORY_LINK = 'all projects';
 
-// --- Chrome
+// --- Chrome (ux 3.3, 4.1 to 4.5, 7.5)
 export const SKIP_LINK = 'Skip to content';
+export const BRAND = 'nessynet';
+export const MODE_CELL = 'NESSY';
+export const TAB_HOME = 'home';
+export const TAB_BOOKMARKS = 'bookmarks';
+export const STATUS_EXTERNAL = 'external';
+export const STATUS_404 = '404';
+export const STATUS_NOT_FOUND = 'not found';
+export const TAG_PREFIX = 'tag:';
+export const SORT_PREFIX = 'sort:';
+/** Initial values of the live status-line cells, before the category script runs. */
+export const TAG_INITIAL = 'all';
+export const SORT_INITIAL = 'default';
+
+// --- Page titles (ux 3.2)
+export const TITLE_BOOKMARKS = 'Bookmarks';
+export const TITLE_NOT_FOUND = 'Not found';

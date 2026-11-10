@@ -3,20 +3,19 @@
 // for the text case to avoid "source: Source not available".
 import Link from './Link.astro';
 import type { SourceSlot } from '../lib/content/model.ts';
+import { SOURCE_BAR_PREFIX, SOURCE_ROW_LABEL } from '../lib/strings.ts';
 
 interface Props {
-  slot: SourceSlot;
+  value: SourceSlot;
   context: 'bar' | 'row';
 }
 
-const ROW_LABEL = 'source';
-
-const { slot, context } = Astro.props;
+const { value, context } = Astro.props;
 ---
 <span class="slot-src">
-  {slot.kind === 'link'
-    ? <>{context === 'bar' && <span class="pre">source: </span>}<Link href={slot.href}>{context === 'bar' ? slot.label : ROW_LABEL}</Link></>
-    : <span class="na">{slot.text}</span>}
+  {value.kind === 'link'
+    ? <>{context === 'bar' && <span class="pre">{SOURCE_BAR_PREFIX}</span>}<Link href={value.href}>{context === 'bar' ? value.label : SOURCE_ROW_LABEL}</Link></>
+    : <span class="na">{value.text}</span>}
 </span>
 <style>
   .pre {

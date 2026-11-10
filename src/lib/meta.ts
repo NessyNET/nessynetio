@@ -1,6 +1,7 @@
 // Basic per-page meta (ux 3.2 title patterns, R19). 027 extends this with the social-card fields.
 import type { Category, Project, SiteModel } from './content/model.ts';
 import * as routes from './routes.ts';
+import { TITLE_BOOKMARKS, TITLE_NOT_FOUND } from './strings.ts';
 
 export interface PageMeta {
   title: string;
@@ -35,13 +36,13 @@ export function projectMeta(model: SiteModel, p: Project): PageMeta {
 }
 
 export const bookmarksMeta = (model: SiteModel): PageMeta => ({
-  title: titled(model, 'Bookmarks'),
+  title: titled(model, TITLE_BOOKMARKS),
   description: model.site.description,
   canonicalPath: routes.bookmarks(),
 });
 
 export const notFoundMeta = (model: SiteModel): PageMeta => ({
-  title: titled(model, 'Not found'),
+  title: titled(model, TITLE_NOT_FOUND),
   description: model.site.description,
   canonicalPath: routes.notFound(),
 });

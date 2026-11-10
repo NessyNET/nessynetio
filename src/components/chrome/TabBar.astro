@@ -3,6 +3,7 @@
 import Link from '../Link.astro';
 import * as routes from '../../lib/routes.ts';
 import type { SiteModel } from '../../lib/content/model.ts';
+import { BRAND, TAB_BOOKMARKS, TAB_HOME } from '../../lib/strings.ts';
 
 interface Props {
   model: SiteModel;
@@ -20,9 +21,9 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { key: 'home', name: 'home', href: routes.home(), accent: 'primary' },
+  { key: 'home', name: TAB_HOME, href: routes.home(), accent: 'primary' },
   ...model.categories.map((c) => ({ key: `category:${c.id}`, name: c.id, href: routes.category(c.id), accent: c.accent })),
-  { key: 'bookmarks', name: 'bookmarks', href: routes.bookmarks(), accent: 'cyan' },
+  { key: 'bookmarks', name: TAB_BOOKMARKS, href: routes.bookmarks(), accent: 'cyan' },
 ];
 
 const currentKey =
@@ -34,7 +35,7 @@ const currentKey =
 // A project page marks its parent category as the current section, not as the page.
 const currentValue = current.kind === 'project' ? 'true' : 'page';
 ---
-<header class="tmux"><div class="in"><Link href={routes.home()} class="brand" siteHost={model.site.host}>nessynet</Link><nav aria-label="Main"><ul>{tabs.map((tab, i) => (
+<header class="tmux"><div class="in"><Link href={routes.home()} class="brand" siteHost={model.site.host}>{BRAND}</Link><nav aria-label="Main"><ul>{tabs.map((tab, i) => (
   <li class={`accent-${tab.accent}`}><Link href={tab.href} siteHost={model.site.host} {...(tab.key === currentKey ? { current: currentValue } : {})}><span class="n" aria-hidden="true">{i}:</span>{tab.name}{tab.key === currentKey && <span class="mark" aria-hidden="true">*</span>}</Link></li>
 ))}</ul></nav></div></header>
 

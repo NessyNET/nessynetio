@@ -157,8 +157,8 @@ const links = (...entries: ReturnType<typeof link>[]): GetSlot => ({ kind: 'link
 describe('GetLinks', () => {
   it('bar: get: prefix, links in file order, install is "see install"', async () => {
     const slot = links(link(S.SEE_INSTALL, '#install', 'install', false), link('Modrinth', 'https://modrinth.com/x', 'external', true));
-    const html = await render(GetLinks, { slot, context: 'bar' });
-    expect(text(html)).toBe(`get: ${S.SEE_INSTALL} Modrinth ${S.EXTERNAL_ARROW} (opens in new tab)`);
+    const html = await render(GetLinks, { value: slot, context: 'bar' });
+    expect(text(html)).toBe(`${S.GET_BAR_PREFIX}${S.SEE_INSTALL} Modrinth ${S.EXTERNAL_ARROW} (opens in new tab)`);
     expect(html.indexOf('see install')).toBeLessThan(html.indexOf('Modrinth'));
     expect(html).toContain('href="#install"');
     expect(html).toMatch(/href="https:\/\/modrinth.com\/x" target="_blank"/);
@@ -166,29 +166,29 @@ describe('GetLinks', () => {
   });
 
   it('row: install entry uses the card label and there is no get: prefix', async () => {
-    const html = await render(GetLinks, { slot: links(link(S.SEE_INSTALL, '#install', 'install', false)), context: 'row' });
+    const html = await render(GetLinks, { value: links(link(S.SEE_INSTALL, '#install', 'install', false)), context: 'row' });
     expect(text(html)).toBe(S.INSTALL_ON_CARD);
-    expect(html).not.toContain('get:');
+    expect(html).not.toContain(S.GET_BAR_PREFIX);
   });
 
   it('row: other entries keep their label', async () => {
-    const html = await render(GetLinks, { slot: links(link(S.downloadLabel('1.2.0'), 'https://x.test/a.jar', 'download', true)), context: 'row' });
+    const html = await render(GetLinks, { value: links(link(S.downloadLabel('1.2.0'), 'https://x.test/a.jar', 'download', true)), context: 'row' });
     expect(text(html)).toContain('download v1.2.0');
   });
 
   it('web tool: Open tool label from the entry, external with arrow', async () => {
     const slot = links(link(S.openTool('gear.nessynet.io'), 'https://gear.nessynet.io', 'external', true));
-    const html = await render(GetLinks, { slot, context: 'bar' });
-    expect(spoken(html)).toBe(`get: ${S.openTool('gear.nessynet.io')} (opens in new tab)`);
+    const html = await render(GetLinks, { value: slot, context: 'bar' });
+    expect(spoken(html)).toBe(`${S.GET_BAR_PREFIX}${S.openTool('gear.nessynet.io')} (opens in new tab)`);
   });
 
   const texts = [S.NOT_DISTRIBUTED_LOCAL, S.notDistributedPrivate('bot'), S.NO_LONGER_DISTRIBUTED, S.NOT_DISTRIBUTED_YET];
   it.each(texts)('text slot %s is plain text, never a control', async (t) => {
     for (const context of ['bar', 'row'] as const) {
-      const html = await render(GetLinks, { slot: { kind: 'text', text: t }, context });
+      const html = await render(GetLinks, { value: { kind: 'text', text: t }, context });
       expect(html).toContain(t);
       expect(html).not.toMatch(NO_CONTROLS);
-      expect(text(html)).toBe(context === 'bar' ? `get: ${t}` : t);
+      expect(text(html)).toBe(context === 'bar' ? `${S.GET_BAR_PREFIX}${t}` : t);
     }
   });
 });
@@ -198,23 +198,23 @@ describe('SourceLink', () => {
   const none: SourceSlot = { kind: 'text', text: S.SOURCE_NOT_AVAILABLE };
 
   it('bar link: source: prefix, label, external arrow', async () => {
-    const html = await render(SourceLink, { slot: link_, context: 'bar' });
-    expect(spoken(html)).toBe('source: GitHub (opens in new tab)');
+    const html = await render(SourceLink, { value: link_, context: 'bar' });
+    expect(spoken(html)).toBe(`${S.SOURCE_BAR_PREFIX}GitHub (opens in new tab)`);
     expect(text(html)).toContain(`GitHub ${S.EXTERNAL_ARROW}`);
     expect(html).toContain('target="_blank"');
   });
 
   it('row link: source label, no prefix', async () => {
-    const html = await render(SourceLink, { slot: link_, context: 'row' });
-    expect(spoken(html)).toBe('source (opens in new tab)');
-    expect(text(html)).toBe(`source ${S.EXTERNAL_ARROW} (opens in new tab)`);
+    const html = await render(SourceLink, { value: link_, context: 'row' });
+    expect(spoken(html)).toBe(`${S.SOURCE_ROW_LABEL} (opens in new tab)`);
+    expect(text(html)).toBe(`${S.SOURCE_ROW_LABEL} ${S.EXTERNAL_ARROW} (opens in new tab)`);
   });
 
   it.each(['bar', 'row'] as const)('%s text: exact string, no source: prefix, never a control', async (context) => {
-    const html = await render(SourceLink, { slot: none, context });
+    const html = await render(SourceLink, { value: none, context });
     expect(text(html)).toBe(S.SOURCE_NOT_AVAILABLE);
     expect(html).not.toMatch(NO_CONTROLS);
-    expect(html).not.toContain('source:');
+    expect(html).not.toContain(S.SOURCE_BAR_PREFIX);
   });
 });
 
@@ -249,7 +249,7 @@ describe('BookmarkMini', () => {
     const html = await render(BookmarkMini, { bookmarks: [1, 2, 3, 4, 5, 6].map((n) => bm(n)), groupId: 'ffxiv' });
     expect([...html.matchAll(/class="ext"/g)]).toHaveLength(4);
     expect(html).not.toContain('Name5');
-    expect(html).toMatch(/<a [^>]*href="\/bookmarks\/#bm-ffxiv"[^>]*>all bookmarks<\/a>/);
+    expect(html).toMatch(new RegExp(`<a [^>]*href="/bookmarks/#bm-ffxiv"[^>]*>${S.ALL_BOOKMARKS}</a>`));
     expect(html).not.toMatch(/href="\/bookmarks\/#bm-ffxiv"[^>]*target=/);
   });
 
