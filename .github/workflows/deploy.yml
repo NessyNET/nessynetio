@@ -1,0 +1,125 @@
+# Deploy (design 3.6.4, ADR 014, 015). Automatic after a green push-triggered ci run on main, behind the repository
+# variable DEPLOY_ENABLED; manual redeploy and rollback by dispatch. The server-side deploy-gate and activate scripts
+# are the last line of defence: whatever this workflow does, only a strict, sample-free build from main is activated.
+name: deploy
+
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What to do
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+      release_id:
+        description: Rollback only. A release id such as 20261109T120000Z-abc1234; empty means the previous release
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  release:
+    # workflow_run fires for pull-request runs too, and `branches` matches the head branch name only, so the guard
+    # restates every condition. Manual deploys come from main only and need the same DEPLOY_ENABLED flag; rollback is
+    # a separate job and stays available whatever the flag says.
+    if: >-
+      (vars.DEPLOY_ENABLED == 'true'
+      && github.event_name == 'workflow_run'
+      && github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.event == 'push'
+      && github.event.workflow_run.head_branch == 'main'
+      && github.event.workflow_run.head_repository.full_name == github.repository)
+      || (vars.DEPLOY_ENABLED == 'true'
+      && github.event_name == 'workflow_dispatch'
+      && github.ref == 'refs/heads/main'
+      && inputs.action == 'deploy')
+    environment: production
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.DEPLOY_SHA }}
+          fetch-depth: 0
+      # An older run that finishes late must not replace a newer release; the newer commit's own run deploys it.
+      - name: Skip if a newer main commit exists
+        id: tip
+        run: |
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" = "$DEPLOY_SHA" ]; then
+            echo "superseded=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "superseded=true" >> "$GITHUB_OUTPUT"
+            echo "Deploy of ${DEPLOY_SHA:0:7} skipped: superseded by a newer main commit (its own run deploys it)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        if: steps.tip.outputs.superseded != 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Write the deploy key and the pinned host key
+        if: steps.tip.outputs.superseded != 'true'
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS_LINE: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          umask 077
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$RUNNER_TEMP/deploy_key"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS_LINE" > "$RUNNER_TEMP/known_hosts"
+          echo "DEPLOY_SSH_KEY_FILE=$RUNNER_TEMP/deploy_key" >> "$GITHUB_ENV"
+      - run: npm ci
+        if: steps.tip.outputs.superseded != 'true'
+      # Builds strict (never --allow-samples), runs the checks, uploads, activates, smoke-tests, rolls back on failure.
+      - run: npm run deploy
+        if: steps.tip.outputs.superseded != 'true'
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_KNOWN_HOSTS: ${{ runner.temp }}/known_hosts
+      - name: Remove the key files
+        if: always()
+        run: rm -f "$RUNNER_TEMP/deploy_key" "$RUNNER_TEMP/known_hosts"
+
+  rollback:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.action == 'rollback'
+    environment: production
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+      RELEASE_ID: ${{ inputs.release_id }}
+    steps:
+      - name: Write the deploy key and the pinned host key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS_LINE: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          umask 077
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$RUNNER_TEMP/deploy_key"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS_LINE" > "$RUNNER_TEMP/known_hosts"
+      - name: Roll back
+        run: |
+          if [ -n "$RELEASE_ID" ] && ! [[ "$RELEASE_ID" =~ ^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{7,12}$ ]]; then
+            echo "release_id is not a release id" >&2
+            exit 1
+          fi
+          ssh -i "$RUNNER_TEMP/deploy_key" -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o "UserKnownHostsFile=$RUNNER_TEMP/known_hosts" "${DEPLOY_USER:-deploy}@$DEPLOY_HOST" \
+            "rollback${RELEASE_ID:+ $RELEASE_ID}"
+      - name: Smoke test
+        run: |
+          curl -fsS -o /dev/null https://nessynet.io/
+          test "$(curl -s -o /dev/null -w '%{http_code}' https://nessynet.io/__nope__/)" = 404
+      - name: Remove the key files
+        if: always()
+        run: rm -f "$RUNNER_TEMP/deploy_key" "$RUNNER_TEMP/known_hosts"
