@@ -209,6 +209,27 @@ example = "lochctl check && lochctl update -y"
     });
   });
 
+  it('parses a manual install method: no command, steps and a note', () => {
+    const raw = toml(`
+[linux]
+language = "JSON"
+install = [
+  { method = "VS Code", steps = ["Open Extensions.", "Search for Nessy."], note = "Restart the editor." },
+  { method = "kitty", command = "kitty +kitten themes Nessy" },
+]
+[linux.usage]
+synopsis = "x"
+example = "x"
+`);
+    const r = parseDetails('tool', raw, ctx);
+    expect(r.diagnostics).toEqual([]);
+    expect(r.unknownKeys).toEqual([]);
+    expect((r.details as { install: unknown }).install).toEqual([
+      { method: 'VS Code', steps: ['Open Extensions.', 'Search for Nessy.'], note: 'Restart the editor.' },
+      { method: 'kitty', command: 'kitty +kitten themes Nessy' },
+    ]);
+  });
+
   it('defaults omitted tool arrays, including usage.commands and usage.options', () => {
     const raw = toml('[linux]\nlanguage = "Go"\n[linux.usage]\nsynopsis = "x"\nexample = "x"');
     expect(parseDetails('tool', raw, ctx).details).toEqual({

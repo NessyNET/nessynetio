@@ -1,0 +1,21 @@
+---
+// The numbered install list shared by the plugin, mod, modpack and manual tool steps (ux 4.3): 3ch indent, dim
+// numbers, 3px between items. Items are slotted `<li>`s, so the rules reach them through `:global`.
+---
+<ol class="steps"><slot /></ol>
+<style>
+  .steps {
+    margin: 0;
+    padding-left: 3ch;
+  }
+  .steps :global(li) {
+    padding: 3px 0;
+  }
+  .steps :global(li)::marker {
+    color: var(--text-dim);
+  }
+  .steps :global(a) {
+    display: inline-block;
+    padding: 2px 0;
+  }
+</style>

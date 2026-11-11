@@ -17,9 +17,21 @@ One palette, shipped as config files for kitty, a few editors and the shell prom
 language = "TOML"
 needs = []
 
+[[linux.install]]
+method = "kitty"
+command = "kitty +kitten themes --reload-in=all Nessy"
+
+[[linux.install]]
+method = "VS Code"
+steps = ["Copy the `dist/vscode` folder to `~/.vscode/extensions/nessy-theme`.", "Restart the editor and choose Nessy.", "Use a literal \\` and <b>no markup</b> here."]
+note = "Add `include nessy.conf` to the settings if the theme does not appear."
+
 [linux.usage]
 synopsis = "cp kitty/nessy.conf ~/.config/kitty/themes/"
 example = "kitty +kitten themes --reload-in=all Nessy"
+
+[[get]]
+kind = "install"
 
 [[get]]
 kind = "download"

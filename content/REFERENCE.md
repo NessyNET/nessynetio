@@ -222,13 +222,14 @@ Top of every project file.
 | `distros` | optional | `[[linux.distros]]` or an inline list. |
 
 #### `layout.tool.install`
-`[[linux.install]]`, one per method.
+`[[linux.install]]`, one per method. A method with a `command` shows a copy button; one without shows its `steps` and `note` as plain text.
 
 | Key | Need | Notes |
 |---|---|---|
 | `method` | required | e.g. `Arch Linux (AUR)`. |
-| `command` | required | Copyable command. |
-| `note` | optional | One short line. |
+| `command` | optional | Copyable command. Leave it out for manual steps (an editor, a settings page): no copy button is shown, and the method then needs `steps` or a `note`. |
+| `steps` | optional | List of short manual steps, shown as a numbered list. Put paths and typed text in backticks (`` `dist/vscode` ``) to show them as code; write `\`` for a literal backtick. |
+| `note` | optional | One short line; backticks work as in `steps`. |
 
 #### `layout.tool.usage`
 `[linux.usage]`.

@@ -160,7 +160,14 @@ const toolSchema = z
     language: z.string(),
     needs: strings,
     install: z
-      .array(z.strictObject({ method: z.string(), command: z.string(), note: z.string().optional() }))
+      .array(
+        z.strictObject({
+          method: z.string(),
+          command: z.string().optional(),
+          steps: z.array(z.string()).optional(),
+          note: z.string().optional(),
+        }),
+      )
       .default([]),
     usage: z.strictObject({
       synopsis: z.string(),

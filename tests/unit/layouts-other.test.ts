@@ -181,6 +181,26 @@ describe('modpack own mods without a matching project', () => {
   });
 });
 
+describe('tool layout: manual install methods (nessy-theme)', () => {
+  it('shows a command-less method as an ordered list with its note and no copy field; command methods keep theirs', async () => {
+    const inst = section(await renderPage('linux', 'nessy-theme'), 'inst');
+    expect([...inst.matchAll(/<h3>([^<]*)<\/h3>/g)].map((m) => m[1])).toEqual(['kitty', 'VS Code']);
+    expect(count(inst, 'data-copy=')).toBe(1);
+    const manual = inst.slice(inst.indexOf('<h3>VS Code</h3>'));
+    expect(manual).not.toContain('data-copy=');
+    expect(manual).not.toContain('copyrow');
+    expect(count(manual, '<ol')).toBe(1);
+    const items = [...manual.matchAll(/<li>(.*?)<\/li>/g)].map((m) => m[1]);
+    expect(items).toEqual([
+      'Copy the <code>dist/vscode</code> folder to <code>~/.vscode/extensions/nessy-theme</code>.',
+      'Restart the editor and choose Nessy.',
+      'Use a literal ` and &lt;b&gt;no markup&lt;/b&gt; here.',
+    ]);
+    expect(manual).toContain('Add <code>include nessy.conf</code> to the settings if the theme does not appear.');
+    expect(manual).not.toMatch(/<b>/);
+  });
+});
+
 describe('tool layout (lochctl)', () => {
   it('has one install block per method, each with its own copy field, and the long command unchanged', async () => {
     const html = await renderPage('linux', 'lochctl');

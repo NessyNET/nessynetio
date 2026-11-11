@@ -1,0 +1,14 @@
+{
+  "local": {
+    "level": "warning",
+    "file": "projects/tools/lochctl.toml",
+    "entry": "lochctl",
+    "field": "linux.install[1].steps[0]"
+  },
+  "strict": {
+    "level": "error",
+    "file": "projects/tools/lochctl.toml",
+    "entry": "lochctl",
+    "field": "linux.install[1].steps[0]"
+  }
+}

@@ -1,0 +1,29 @@
+slug = "lochctl"
+name = "lochctl"
+category = "tools"
+status = "active"
+summary = "Manages lochs."
+priority = 2
+updated = 2026-01-15
+description = "Prose."
+tags = ["cli", "shell"]
+version = "0.3.0"
+
+[source]
+host = "GitHub"
+url = "https://github.com/example/lochctl"
+
+[[get]]
+kind = "install"
+
+[linux]
+language = "Rust"
+needs = ["cargo"]
+install = [
+  { method = "cargo", command = "cargo install lochctl" },
+  { method = "VS Code" },
+]
+
+[linux.usage]
+synopsis = "lochctl [options]"
+example = "lochctl --help"

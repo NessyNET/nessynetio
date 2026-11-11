@@ -6,6 +6,7 @@ import CopyField from '../../CopyField.astro';
 import Notice from '../../Notice.astro';
 import Window from '../../window/Window.astro';
 import StepText from './StepText.astro';
+import Steps from './Steps.astro';
 import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
 import { DALAMUD_STEPS, INSTALL_CMD, INSTALL_TITLE, REPO_URL_COPY_NAME, REQUIRES_LABEL } from '../../../lib/strings.ts';
@@ -24,26 +25,16 @@ const accentProp = accent === undefined ? {} : { accent };
 ---
 {region === 'install' && repoUrl !== undefined && (
   <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
-    <ol class="steps">
+    <Steps>
       {DALAMUD_STEPS.map((step) => (
         <li><StepText parts={step.parts} name={project.name} />{step.repoUrlCopy === true && <CopyField value={repoUrl} what={REPO_URL_COPY_NAME} />}</li>
       ))}
-    </ol>
+    </Steps>
     {project.caution !== undefined && <Notice kind="warn" text={project.caution} />}
   </Window>
 )}
 {region === 'stat' && requires !== undefined && <tr><th scope="row">{REQUIRES_LABEL}</th><td>{requires}</td></tr>}
 <style>
-  .steps {
-    margin: 0;
-    padding-left: 3ch;
-  }
-  .steps li {
-    padding: 3px 0;
-  }
-  .steps li::marker {
-    color: var(--text-dim);
-  }
   strong {
     font-weight: 700;
   }

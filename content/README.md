@@ -67,7 +67,7 @@ What each `get.kind` shows:
 
 | `kind` | Shows |
 |---|---|
-| `install` | `see install`; plugins also get the repo URL steps (needs the category `repo_url`), tools show their install methods. |
+| `install` | `see install`; plugins also get the repo URL steps (needs the category `repo_url`), tools show their install methods (a method with no `command` is manual: it shows `steps` and a `note`, with no copy button; put paths in backticks to show them as code). |
 | `external` | A link to another site, marked with an arrow and "opens in new tab". Web tools show `Open tool: {host}`. |
 | `download` | A `download` link to `url`. |
 | `none` | `Not distributed (local only)`, `(private ...)` or `No longer distributed`, chosen by the notice. Needs a `notice`. |

@@ -4,6 +4,7 @@
 import { resolve, sep } from 'node:path';
 import sharp from 'sharp';
 import { resolveLevel, type Diagnostic, type Rule } from './diagnostics.ts';
+import { parseInlineCode } from '../inline-code.ts';
 import { classifyHref } from '../links.ts';
 import { CATEGORY_ACCENTS, isCategoryAccent } from '../palette.ts';
 import { RESERVED_CATEGORY_IDS } from '../routes.ts';
@@ -59,6 +60,8 @@ export const RULES: readonly Rule[] = [
   { code: 'project/get-none-not-alone', local: 'error', strict: 'error', uxRow: 'project/get-none-not-alone: a none get entry alongside other get entries', message: () => "a 'none' get entry must be the only get entry" },
   { code: 'project/external-get-own-host', local: 'warning', strict: 'warning', uxRow: "'external' get link on nessynet.io: warning; rendered as internal", message: (c) => `external link '${c['url']}' is on the site host; it is rendered as an internal link` },
   { code: 'project/install-without-repo-url', local: 'warning', strict: 'error', sampleExempt: true, uxRow: 'Plugin project with an install get entry, in a category without repo_url (rev 4, R28)', message: (c) => `install entry needs repo_url on category '${c['category']}'; the entry is dropped` },
+  { code: 'project/install-method-empty', local: 'error', strict: 'error', uxRow: 'A [[linux.install]] method with no command needs steps or a note', message: (c) => `install method '${c['method']}' has no command; add steps or a note that say how to install` },
+  { code: 'project/install-text-backtick', local: 'warning', strict: 'error', uxRow: 'Unclosed backtick in an install steps item or note', message: () => 'unclosed backtick; the text is shown as written' },
   { code: 'project/install-without-steps', local: 'warning', strict: 'error', uxRow: 'Tool project with an install get entry and no [linux] install methods: warning; the install entry is dropped (no dangling see install)', message: (c) => `install entry needs at least one install method in [linux] install; ${c['mode'] === 'strict' ? 'add an install method or remove the install entry' : 'the entry is dropped'}` },
   { code: 'project/modpack-mine-unmatched', local: 'warning', strict: 'warning', uxRow: 'Modpack mod with mine = true whose name matches no published project name: warning in both modes; rendered as plain text with the me badge', message: (c) => `mod '${c['name']}' is marked mine but no published project has exactly that name; it is shown as plain text` },
   { code: 'project/notice-missing', local: 'warning', strict: 'error', uxRow: 'Retired project without a notice date, or get = none without a notice', message: (c) => c['detail'] ?? '' },
@@ -398,7 +401,19 @@ async function checkProjects(report: Report, projects: readonly ParsedProject[],
           if (mod.mine && !publishedNames.has(mod.name)) report.add('project/modpack-mine-unmatched', { ...where, field: `minecraft.mods[${i}]` }, { name: mod.name });
         });
       }
-      if (details.details !== undefined && layout === 'tool') toolInstallMethods = (details.details as ToolDetails).install.length;
+      if (details.details !== undefined && layout === 'tool') {
+        const methods = (details.details as ToolDetails).install;
+        toolInstallMethods = methods.length;
+        methods.forEach((m, i) => {
+          if (m.command === undefined && (m.steps ?? []).length === 0 && (m.note ?? '').trim() === '') {
+            report.add('project/install-method-empty', { ...where, field: `linux.install[${i}]` }, { method: m.method });
+          }
+          (m.steps ?? []).forEach((step, j) => {
+            if (parseInlineCode(step).unclosed) report.add('project/install-text-backtick', { ...where, field: `linux.install[${i}].steps[${j}]` });
+          });
+          if (m.note !== undefined && parseInlineCode(m.note).unclosed) report.add('project/install-text-backtick', { ...where, field: `linux.install[${i}].note` });
+        });
+      }
       report.diagnostics.push(...details.diagnostics);
       for (const key of details.unknownKeys) report.add('project/unknown-detail-key', { ...where, field: key }, { key });
     }

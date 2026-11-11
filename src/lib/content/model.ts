@@ -69,7 +69,9 @@ export interface ModpackDetails {
 
 export interface ToolInstall {
   readonly method: string;
-  readonly command: string;
+  /** Absent for a manual method: no copy field, the `steps` and `note` carry the instructions. */
+  readonly command?: string;
+  readonly steps?: readonly string[];
   readonly note?: string;
 }
 

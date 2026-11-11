@@ -7,6 +7,7 @@ import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
 import { GET_OR, INSTALL_CMD, INSTALL_TITLE, MOD_DEPS_CAPTION, MOD_DEPS_CMD, MOD_DEPS_COLUMNS, MOD_DEPS_TITLE, MOD_DROP_STEP, MOD_STAT, MOD_VERSIONS_CAPTION, MOD_VERSIONS_CMD, MOD_VERSIONS_COLUMNS, MOD_VERSIONS_TITLE, modGetLead, modLoaderStep } from '../../../lib/strings.ts';
 import StepText from './StepText.astro';
+import Steps from './Steps.astro';
 import KvTable from './KvTable.astro';
 
 interface Props {
@@ -23,11 +24,11 @@ const accentProp = accent === undefined ? {} : { accent };
 ---
 {details !== undefined && region === 'install' && (
   <Window id="inst" title={INSTALL_TITLE} cmd={INSTALL_CMD} {...accentProp}>
-    <ol class="steps">
+    <Steps>
       <li><StepText parts={modLoaderStep(details.loader)} /></li>
       {links.length > 0 && <li>{modGetLead(project.name)}{links.map((entry, i) => <>{i > 0 && GET_OR}<Link href={entry.href ?? ''}>{entry.label}</Link></>)}.</li>}
       <li><StepText parts={MOD_DROP_STEP} /></li>
-    </ol>
+    </Steps>
   </Window>
 )}
 {details !== undefined && region === 'windows' && (
@@ -57,19 +58,3 @@ const accentProp = accent === undefined ? {} : { accent };
     <tr><th scope="row">{MOD_STAT.side}</th><td>{details.side}</td></tr>
   </>
 )}
-<style>
-  .steps {
-    margin: 0;
-    padding-left: 3ch;
-  }
-  .steps li {
-    padding: 3px 0;
-  }
-  .steps li::marker {
-    color: var(--text-dim);
-  }
-  .steps :global(a) {
-    display: inline-block;
-    padding: 2px 0;
-  }
-</style>

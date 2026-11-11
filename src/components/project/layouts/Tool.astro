@@ -1,12 +1,16 @@
 ---
-// Linux tool layout (ux 4.3): one INSTALL block per method with its own copy field, the `man <tool>` window (SYNOPSIS,
+// Linux tool layout (ux 4.3): one INSTALL block per method with its own copy field (none for a manual method, which
+// shows its steps as an ordered list instead), the `man <tool>` window (SYNOPSIS,
 // COMMANDS, OPTIONS, EXAMPLE with copy), a `distros` table, and language / needs / distros stat rows.
 import CopyField from '../../CopyField.astro';
 import Window from '../../window/Window.astro';
 import type { Project } from '../../../lib/content/model.ts';
+import { parseInlineCode } from '../../../lib/inline-code.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
 import { INSTALL_CMD, INSTALL_TITLE, TOOL_DIST_CAPTION, TOOL_DIST_CMD, TOOL_DIST_COLUMNS, TOOL_DIST_TITLE, TOOL_EXAMPLE_COPY_NAME, TOOL_MAN_SECTIONS, TOOL_NO_VALUE, TOOL_STAT, TOOL_SUPPORT_WORDS, toolCommandCopyName, toolManTitle } from '../../../lib/strings.ts';
 import KvTable from './KvTable.astro';
+import StepText from './StepText.astro';
+import Steps from './Steps.astro';
 
 interface Props {
   project: Project;
@@ -26,8 +30,11 @@ const accentProp = accent === undefined ? {} : { accent };
     {details.install.map((method) => (
       <div class="method">
         <h3>{method.method}</h3>
-        <CopyField value={method.command} what={toolCommandCopyName(method.command)} />
-        {method.note !== undefined && <p class="note">{method.note}</p>}
+        {method.command !== undefined && <CopyField value={method.command} what={toolCommandCopyName(method.command)} />}
+        {method.steps !== undefined && method.steps.length > 0 && (
+          <Steps>{method.steps.map((step) => <li><StepText parts={parseInlineCode(step).parts} /></li>)}</Steps>
+        )}
+        {method.note !== undefined && <p class="note"><StepText parts={parseInlineCode(method.note).parts} /></p>}
       </div>
     ))}
   </Window>
