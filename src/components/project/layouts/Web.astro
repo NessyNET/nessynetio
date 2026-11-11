@@ -1,14 +1,12 @@
 ---
 // Web tool layout (ux 4.3 FFXIV web tool, 5.6): no INSTALL; `what it does` (the description, ending with the primary
-// Open tool button), a static `preview` (the first screenshot, only when there is one), and host / runs in / account / data stat
-// rows. The page omits the generic description window for this layout, because `what it does` carries it.
+// Open tool button), and host / runs in / account / data stat rows. The page omits the generic description window for this layout, because `what it does` carries it.
 import Link from '../../Link.astro';
 import Window from '../../window/Window.astro';
 import { hostOf } from '../../../lib/links.ts';
 import type { Project } from '../../../lib/content/model.ts';
 import type { CategoryAccent } from '../../../lib/palette.ts';
-import Screenshots from '../Screenshots.astro';
-import { OPEN_TOOL_BUTTON, PREVIEW_CMD, PREVIEW_TITLE, STAT_ACCOUNT, STAT_DATA, STAT_HOST, STAT_RUNS_IN, WEB_PREVIEW_CAPTION, WHAT_TITLE, whatCmd } from '../../../lib/strings.ts';
+import { OPEN_TOOL_BUTTON, STAT_ACCOUNT, STAT_DATA, STAT_HOST, STAT_RUNS_IN, WHAT_TITLE, whatCmd } from '../../../lib/strings.ts';
 
 interface Props {
   project: Project;
@@ -31,11 +29,6 @@ const accentProp = accent === undefined ? {} : { accent };
         <p class="openbtn"><Link class="btn-open" href={toolUrl}>{OPEN_TOOL_BUTTON}{' '}<span class="host">{host}</span></Link></p>
       )}
     </Window>
-    {project.screenshots.length > 0 && (
-      <Window id="prev" title={PREVIEW_TITLE} cmd={PREVIEW_CMD}>
-        <Screenshots project={project} mode="single">{WEB_PREVIEW_CAPTION}</Screenshots>
-      </Window>
-    )}
   </>
 )}
 {region === 'stat' && (

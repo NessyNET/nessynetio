@@ -176,8 +176,6 @@ export const offlineGetLead = (name: string): string => `Get ${name}: `;
 export const GET_OR = ' or ';
 export const WHAT_TITLE = 'what it does';
 export const whatCmd = (slug: string): string => `${slug} --help`;
-export const PREVIEW_TITLE = 'preview';
-export const PREVIEW_CMD = 'ls screenshots/';
 export const OPEN_TOOL_BUTTON = 'Open tool';
 export const STAT_HOST = 'host';
 export const STAT_RUNS_IN = 'runs in';
@@ -185,7 +183,17 @@ export const STAT_ACCOUNT = 'account';
 export const STAT_DATA = 'data';
 export const SCREENSHOTS_TITLE = 'screenshots/';
 export const SCREENSHOTS_CMD = 'ls screenshots/';
-export const WEB_PREVIEW_CAPTION = 'A screenshot, not a live embed. Use "Open tool" for the real thing.';
+
+// --- Screenshot modal (ux 5.5)
+export const SHOT_MODAL_TITLE = 'screenshot';
+export const SHOT_CLOSE = 'close';
+export const SHOT_PREV = 'prev';
+export const SHOT_NEXT = 'next';
+export const SHOT_CLOSE_LABEL = 'Close screenshot';
+export const SHOT_PREV_LABEL = 'Prev screenshot';
+export const SHOT_NEXT_LABEL = 'Next screenshot';
+export const SHOT_HINT = '← → · Esc';
+export const shotCounter = (position: number, total: number): string => `${position} of ${total}`;
 
 /** A run of text inside a step; `projectName` is replaced by the project's name. */
 export type StepPart =

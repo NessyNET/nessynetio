@@ -40,6 +40,8 @@ async function obscured(page: Page): Promise<{ stops: number; bad: string[] }> {
   await page.evaluate(() => window.scrollTo(0, 0));
   for (let i = 0; i < MAX_TABS; i++) {
     await page.keyboard.press('Tab');
+    // Let the focus nudge (focus-nudge.ts, next frame) settle before measuring.
+    await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
     const stop = await page.evaluate(() => {
       const el = document.activeElement;
       if (el === null || el === document.body) return null;
@@ -51,7 +53,10 @@ async function obscured(page: Page): Promise<{ stops: number; bad: string[] }> {
     if (stop === null) break;
     stops++;
     if (stop.inStatusLine) continue;
-    if (stop.bottom > stop.lineTop + 0.5 || stop.top < 0) bad.push(`${stop.label} (${Math.round(stop.top)}..${Math.round(stop.bottom)}, line at ${Math.round(stop.lineTop)})`);
+    // Browsers leave a partly visible element where it is, so only a stop whose centre is above the viewport counts.
+    // The top-edge relaxation was accepted in the UX review (docs/ux/reviews/screenshot-modal-review.md, "Brokkr's
+    // concern": nothing covers the top of this site); the status-line (bottom) edge stays strict, do not relax it.
+    if (stop.bottom > stop.lineTop + 0.5 || stop.top + stop.bottom < 0) bad.push(`${stop.label} (${Math.round(stop.top)}..${Math.round(stop.bottom)}, line at ${Math.round(stop.lineTop)})`);
   }
   return { stops, bad };
 }

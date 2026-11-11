@@ -49,8 +49,7 @@ const accent = isCategoryAccent(category.accent) ? category.accent : 'primary';
       <Readme project={project} accent={accent} />
       <ProjectRegion project={project} region="install" accent={accent} repoUrl={category.repoUrl} />
       <ProjectRegion project={project} region="windows" accent={accent} repoUrl={category.repoUrl} />
-      {/* A web tool shows its first screenshot in the layout's preview window instead. */}
-      {project.layout !== 'web' && <Screenshots project={project} />}
+      <Screenshots project={project} />
       <Description project={project} />
       <Changelog project={project} />
     </div>

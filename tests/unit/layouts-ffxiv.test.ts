@@ -3,6 +3,7 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import Screenshots from '../../src/components/project/Screenshots.astro';
 import ProjectRegion from '../../src/components/project/ProjectRegion.astro';
 import { clearSiteMemo, loadSite } from '../../src/lib/content/index.ts';
 import type { Project, SiteModel } from '../../src/lib/content/model.ts';
@@ -213,7 +214,7 @@ describe('web layout', () => {
   it('has no INSTALL; what-it-does and preview windows follow README, then the changelog; no description window', async () => {
     const html = await renderPage('ffxiv', 'gorse-gearplanner');
     expect(html).not.toContain('id="install"');
-    expect(windowIds(html).slice(0, 4)).toEqual(['readme', 'what', 'prev', 'log']);
+    expect(windowIds(html).slice(0, 4)).toEqual(['readme', 'what', 'shots', 'log']);
     expect(windowIds(html)).not.toContain('desc');
   });
 
@@ -228,13 +229,36 @@ describe('web layout', () => {
     expect(what.lastIndexOf('btn-open')).toBeGreaterThan(what.lastIndexOf('<p class="out">'));
   });
 
-  it('preview holds the static-screenshot caption; no preview window without screenshots', async () => {
-    const prev = section(await renderPage('ffxiv', 'gorse-gearplanner'), 'prev');
-    expect(prev).toContain('<h2 id="w-prev" class="tt">preview</h2>');
-    expect(prev).toContain('A screenshot, not a live embed. Use &quot;Open tool&quot; for the real thing.');
+  it('has no preview window; the screenshots window follows what it does, and is absent without screenshots', async () => {
+    const html = await renderPage('ffxiv', 'gorse-gearplanner');
+    expect(windowIds(html)).not.toContain('prev');
+    expect(html).not.toContain('not a live embed');
+    expect(windowIds(html).indexOf('shots')).toBe(windowIds(html).indexOf('what') + 1);
     const ledger = await renderPage('ffxiv', 'retainer-ledger');
     expect(project('retainer-ledger').screenshots).toHaveLength(0);
-    expect(windowIds(ledger)).not.toContain('prev');
+    expect(windowIds(ledger)).not.toContain('shots');
+    expect(ledger).not.toContain('<dialog');
+  });
+
+  it('shows every screenshot as a thumbnail link to a large image, with one closed modal dialog', async () => {
+    const base = project('gorse-gearplanner');
+    const shots = [
+      { file: 'a.png', caption: 'First view' },
+      { file: 'b.png', caption: 'Second view' },
+      { file: 'c.png', caption: 'Third view' },
+    ];
+    const win = section(strip(await container.renderToString(Screenshots, { props: { project: { ...base, screenshots: shots } } })), 'shots');
+    const links = [...win.matchAll(/<a [^>]*data-shot[^>]*>/g)];
+    expect(links).toHaveLength(3);
+    for (const [tag] of links) expect(tag).toMatch(/ href="[^"]+"/);
+    const grid = win.slice(0, win.indexOf('<dialog'));
+    expect(count(grid, '<img')).toBe(3);
+    expect([...grid.matchAll(/<img[^>]* alt="([^"]*)"/g)].map((m) => m[1])).toEqual(['First view', 'Second view', 'Third view']);
+    expect([...grid.matchAll(/<figcaption>([^<]*)<\/figcaption>/g)].map((m) => m[1])).toEqual(['First view', 'Second view', 'Third view']);
+    expect(count(win, '<dialog')).toBe(1);
+    expect(win).not.toMatch(/<dialog[^>]* open/);
+    const dialog = slice(win, '<dialog', '</dialog>');
+    expect(dialog).not.toMatch(/<img[^>]* src=/);
   });
 
   it('has the get link naming the host in a new tab, and the separate-site notice', async () => {

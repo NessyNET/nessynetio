@@ -62,8 +62,14 @@ describe('ux 6.2 fixed strings (verbatim)', () => {
     ['repo URL copy name', s.REPO_URL_COPY_NAME, 'repository URL'],
     ['web what window title', s.WHAT_TITLE, 'what it does'],
     ['web what window command', s.whatCmd('gorse-gearplanner'), 'gorse-gearplanner --help'],
-    ['web preview window title', s.PREVIEW_TITLE, 'preview'],
-    ['web preview window command', s.PREVIEW_CMD, 'ls screenshots/'],
+    ['screenshot modal title', s.SHOT_MODAL_TITLE, 'screenshot'],
+    ['screenshot modal close button', s.SHOT_CLOSE, 'close'],
+    ['screenshot modal previous button', s.SHOT_PREV, 'prev'],
+    ['screenshot modal next button', s.SHOT_NEXT, 'next'],
+    ['screenshot modal close name', s.SHOT_CLOSE_LABEL, 'Close screenshot'],
+    ['screenshot modal previous name', s.SHOT_PREV_LABEL, 'Prev screenshot'],
+    ['screenshot modal next name', s.SHOT_NEXT_LABEL, 'Next screenshot'],
+    ['screenshot modal key hint', s.SHOT_HINT, '← → · Esc'],
     ['web open tool button', s.OPEN_TOOL_BUTTON, 'Open tool'],
     ['web stat host row', s.STAT_HOST, 'host'],
     ['web stat runs in row', s.STAT_RUNS_IN, 'runs in'],
@@ -94,8 +100,8 @@ describe('ux 6.2 fixed strings (verbatim)', () => {
 });
 
 describe('other fixed copy (verbatim)', () => {
-  it('web preview caption (ux 5.6)', () => {
-    expect(s.WEB_PREVIEW_CAPTION).toBe('A screenshot, not a live embed. Use "Open tool" for the real thing.');
+  it('screenshot modal counter (ux 5.5)', () => {
+    expect(s.shotCounter(2, 5)).toBe('2 of 5');
   });
 
   it('landing bookmarks row (ux 4.1)', () => {

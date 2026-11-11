@@ -1,52 +1,86 @@
 ---
-// Screenshots (ux 4.3 item 4, 5.5, R18): each image is optimised to AVIF/WebP at 480/960/1440 with intrinsic
-// dimensions, lazy-loaded, alt = caption. `grid`: the `screenshots/` window, omitted when there are none. `single`:
-// only the first image as a bare figure (the web preview); the slot, when given, replaces the visible caption.
-import { Picture } from 'astro:assets';
+// Screenshots window (ux 4.3 item 4, 5.5, R18), omitted when there are none. Each image is optimised to AVIF/WebP at
+// 480/960/1440 with intrinsic dimensions, lazy-loaded, alt = caption. A thumbnail is a link to the large image (1440
+// px wide, or the original when smaller), so it works without JavaScript; `shots.ts` turns the click into a modal.
+import { getImage, Picture } from 'astro:assets';
 import Window from '../window/Window.astro';
 import type { Project } from '../../lib/content/model.ts';
 import { resolveScreenshot } from '../../lib/images.ts';
-import { SCREENSHOTS_CMD, SCREENSHOTS_TITLE } from '../../lib/strings.ts';
+import {
+  SCREENSHOTS_CMD,
+  SCREENSHOTS_TITLE,
+  SHOT_CLOSE,
+  SHOT_CLOSE_LABEL,
+  SHOT_HINT,
+  SHOT_MODAL_TITLE,
+  SHOT_NEXT,
+  SHOT_NEXT_LABEL,
+  SHOT_PREV,
+  SHOT_PREV_LABEL,
+  shotCounter,
+ } from '../../lib/strings.ts';
+import ShotsScript from './ShotsScript.astro';
 
 interface Props {
   project: Project;
-  mode?: 'grid' | 'single';
 }
 
-const { project, mode = 'grid' } = Astro.props;
-const shots = (mode === 'single' ? project.screenshots.slice(0, 1) : project.screenshots).map((shot) => ({
-  caption: shot.caption,
-  image: resolveScreenshot(shot.file),
-}));
-const SIZES = '(max-width: 900px) 100vw, 640px';
-const hasCaption = Astro.slots.has('default');
+const LARGE_WIDTH = 1440;
+const { project } = Astro.props;
+const shots = await Promise.all(
+  project.screenshots.map(async (shot) => {
+    const image = resolveScreenshot(shot.file);
+    const large = await getImage({ src: image, width: Math.min(image.width, LARGE_WIDTH), format: 'webp' });
+    return { caption: shot.caption, image, largeSrc: large.src };
+  }),
+);
+const SIZES = '(max-width: 900px) 50vw, 200px';
 ---
-{shots.length > 0 && mode === 'grid' && (
+{shots.length > 0 && (
   <Window id="shots" title={SCREENSHOTS_TITLE} cmd={SCREENSHOTS_CMD}>
     <div class="shots">
       {shots.map((shot) => (
         <figure>
-          <Picture src={shot.image} formats={['avif', 'webp']} widths={[480, 960, 1440]} sizes={SIZES} alt={shot.caption} loading="lazy" decoding="async" />
+          <a class="shot" href={shot.largeSrc} data-shot>
+            <Picture src={shot.image} formats={['avif', 'webp']} widths={[480, 960, 1440]} sizes={SIZES} alt={shot.caption} loading="lazy" decoding="async" />
+          </a>
           <figcaption>{shot.caption}</figcaption>
         </figure>
       ))}
     </div>
+    <dialog class="win shotbox" aria-label={SHOT_MODAL_TITLE} data-shotbox>
+      <div class="tb">
+        <p class="tt">{SHOT_MODAL_TITLE}</p>
+        <span class="tbm"><button type="button" class="shotbtn" aria-label={SHOT_CLOSE_LABEL} data-shot-close>{SHOT_CLOSE}</button></span>
+      </div>
+      <div class="body">
+        <img alt="" />
+        <div class="shotinfo" aria-live="polite" aria-atomic="true">
+          <p class="shotcap" data-shot-caption>{shots[0]?.caption}</p>
+          <p class="shotcount" data-shot-count>{shotCounter(1, shots.length)}</p>
+        </div>
+        <div class="shotnav" data-shot-nav>
+          <button type="button" class="shotbtn" aria-label={SHOT_PREV_LABEL} data-shot-prev>{SHOT_PREV}</button>
+          <span class="shothint" aria-hidden="true">{SHOT_HINT}</span>
+          <button type="button" class="shotbtn" aria-label={SHOT_NEXT_LABEL} data-shot-next>{SHOT_NEXT}</button>
+        </div>
+      </div>
+    </dialog>
+    <ShotsScript />
   </Window>
 )}
-{shots.length > 0 && mode === 'single' && shots.map((shot) => (
-  <figure>
-    <Picture src={shot.image} formats={['avif', 'webp']} widths={[480, 960, 1440]} sizes={SIZES} alt={shot.caption} loading="lazy" decoding="async" />
-    <figcaption>{hasCaption ? <slot /> : shot.caption}</figcaption>
-  </figure>
-))}
 <style>
   .shots {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
     gap: 16px;
   }
   figure {
     margin: 0;
+  }
+  .shot {
+    display: block;
+    border-radius: 6px;
   }
   figure :global(img) {
     width: 100%;
@@ -55,9 +89,99 @@ const hasCaption = Astro.slots.has('default');
     border-radius: 6px;
     background: var(--bg-dark);
   }
+  .shot:hover :global(img) {
+    border-color: var(--control-line);
+  }
   figcaption {
     margin-top: 6px;
     color: var(--text-dim);
     font-size: 13px;
+  }
+  dialog.shotbox {
+    padding: 0;
+    color: inherit;
+    width: min(calc(100vw - 24px), 1440px);
+    max-width: none;
+    max-height: calc(100dvh - 24px);
+    overflow: hidden;
+  }
+  /* A column whose image area shrinks, so the title bar, caption and buttons always stay in view (ux 5.5b). */
+  dialog.shotbox[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  dialog.shotbox::backdrop {
+    background: color-mix(in srgb, var(--bg-dark) 85%, transparent);
+  }
+  :global(body:has(dialog.shotbox[open])) {
+    overflow: hidden;
+  }
+  .shotbox .tb {
+    flex: none;
+  }
+  .shotbox .body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 10px;
+  }
+  .shotbox :global(img) {
+    flex: 0 1 auto;
+    min-height: 0;
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    border: 0;
+  }
+  .shotinfo {
+    flex: none;
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    justify-content: space-between;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .shotcap {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+  .shotcount {
+    margin: 0;
+    white-space: nowrap;
+  }
+  .shotnav {
+    flex: none;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .shotnav[hidden] {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .shothint {
+      display: none;
+    }
+  }
+  .shotbtn {
+    font: inherit;
+    color: var(--fg-bright);
+    background: var(--bg-light);
+    border: 1px solid var(--control-line);
+    border-radius: 4px;
+    padding: 4px 12px;
+    min-height: 40px;
+    cursor: pointer;
   }
 </style>

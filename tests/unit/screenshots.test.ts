@@ -6,6 +6,7 @@ import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
+import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { findImage, resolveScreenshot } from '../../src/lib/images.ts';
 
@@ -124,17 +125,29 @@ describe('screenshots in the built site-e2e', () => {
     expect(byId(page('ffxiv/heather-hotbar'), 'sec-w-shots')).toBeUndefined();
   });
 
-  it('shows the first screenshot in the web preview and adds no separate screenshots window', () => {
+  it('shows a web tool\'s screenshot in the screenshots window like any other project, with no preview window', () => {
     const doc = page('ffxiv/gorse-gearplanner');
-    expect(byId(doc, 'sec-w-shots')).toBeUndefined();
-    const prev = byId(doc, 'sec-w-prev') as Node;
-    expect(el(prev, 'picture')).toHaveLength(1);
-    const img = el(prev, 'img')[0] as Node;
+    expect(byId(doc, 'sec-w-prev')).toBeUndefined();
+    const win = byId(doc, 'sec-w-shots') as Node;
+    expect(el(win, 'picture')).toHaveLength(1);
+    const img = el(win, 'img')[0] as Node;
     expect(attr(img, 'alt')).toBe('The gear planner with a job selected and melds shown');
     expect(attr(img, 'loading')).toBe('lazy');
-    expect(Number(attr(img, 'width'))).toBeGreaterThan(0);
-    const caption = el(prev, 'figcaption').map((f) => f.childNodes?.[0]?.value);
-    expect(caption).toEqual(['A screenshot, not a live embed. Use "Open tool" for the real thing.']);
+  });
+
+  it('links each thumbnail to a built image of at most 1440 px, and the dialog loads nothing until opened', async () => {
+    const doc = page('ffxiv/loch-lantern');
+    const links = all(doc, (n) => n.nodeName === 'a' && attr(n, 'data-shot') !== undefined);
+    expect(links).toHaveLength(3);
+    for (const link of links) {
+      const href = attr(link, 'href') as string;
+      expect(href).toMatch(/^\/_astro\/.+\.webp$/);
+      expect(existsSync(join(out, href)), href).toBe(true);
+      expect((await sharp(join(out, href)).metadata()).width, href).toBeLessThanOrEqual(1440);
+    }
+    const dialog = el(doc, 'dialog');
+    expect(dialog).toHaveLength(1);
+    expect(all(dialog[0] as Node, (n) => n.nodeName === 'img' && attr(n, 'src') !== undefined)).toHaveLength(0);
   });
 
   it('wrote avif and webp variants under _astro, and each 960 px variant is at most 200 KB', () => {
