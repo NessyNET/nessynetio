@@ -3,10 +3,13 @@
 # unchanged files are what gets tested.
 FROM ubuntu:26.04
 
+# The Ubuntu package revision is not pinned: security updates remove old revisions from the archive, and the server
+# takes them too. The upstream version is checked instead, so a move off 1.28.3 fails the build and gets noticed.
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      nginx=1.28.3-2ubuntu1.12 curl openssl ca-certificates \
- && rm -r -f /var/lib/apt/lists/*
+      nginx curl openssl ca-certificates \
+ && rm -r -f /var/lib/apt/lists/* \
+ && nginx -v 2>&1 | grep -F 'nginx/1.28.3'
 
 RUN mkdir -p /etc/letsencrypt/live/nessynet.io /var/www/letsencrypt /var/log/nginx/nessynet \
  && chown www-data:adm /var/log/nginx/nessynet \
