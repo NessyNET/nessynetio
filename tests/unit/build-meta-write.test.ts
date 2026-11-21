@@ -87,18 +87,20 @@ describe('release environment', () => {
   }, SLOW);
 });
 
+// A fixture with one sample item (whoami): the real content/ no longer has samples, so it cannot stand in for one.
 describe('samples', () => {
-  it('--strict --allow-samples on content/ records samplesAllowed: true', () => {
+  it('--strict --allow-samples on sample content records samplesAllowed: true', async () => {
     const out = outDir();
-    const result = build(['--strict', '--allow-samples', '--out', out]);
+    const result = await withFixture('sample__present', async (dir) => build(['--strict', '--allow-samples', '--content', dir, '--out', out]));
     expect(result.status, result.stdout + result.stderr).toBe(0);
     expect(readMeta(out)).toMatchObject({ strict: true, samplesAllowed: true });
   }, SLOW);
 
-  it('--strict on content/ fails at the data gate, before anything is built', () => {
+  it('--strict on sample content fails at the data gate, before anything is built', async () => {
     const out = outDir();
-    const result = build(['--strict', '--out', out]);
+    const result = await withFixture('sample__present', async (dir) => build(['--strict', '--content', dir, '--out', out]));
     expect(result.status).toBe(1);
+    expect(result.stdout + result.stderr).toMatch(/sample content/);
     expect(existsSync(join(out, 'index.html'))).toBe(false);
   }, SLOW);
 });
