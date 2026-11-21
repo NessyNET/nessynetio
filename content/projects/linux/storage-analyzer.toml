@@ -1,0 +1,46 @@
+#:schema ../../schema/project.json
+slug = "storage-analyzer"
+name = "storage-analyzer"
+category = "linux"
+status = "active"
+summary = "A disk-usage TUI with a directory tree and a treemap that fill in live while it scans."
+priority = 1
+updated = 2026-10-24
+version = "0.1.0"
+tags = ["tui"]
+description = """
+Point it at a folder and see where the space goes. It scans in the background and the interface stays responsive, with a directory tree, a treemap of the current folder, a file-type breakdown and a list of the largest files, all updating as results arrive.
+
+The layout is inspired by WinDirStat and WizTree. You can delete files and folders from inside it, always after a confirmation that shows the path, size and file count. Nothing else is ever modified.
+"""
+
+[linux]
+language = "Rust"
+needs = []
+
+[linux.usage]
+synopsis = "storage-analyzer [OPTIONS] [PATH]"
+example = "storage-analyzer ~"
+options = [
+  { flag = "-x, --one-file-system", help = "stay on the root's filesystem" },
+  { flag = "--cross-filesystems", help = "descend into every filesystem, including proc, sys and network mounts" },
+  { flag = "--apparent", help = "show apparent size instead of disk usage" },
+  { flag = "--threads <N>", help = "number of scan threads" },
+  { flag = "--top <N>", help = "number of entries in the largest-files view" },
+  { flag = "--history", help = "remember scans between sessions" },
+]
+
+[[screenshots]]
+file = "01.png"
+caption = "Folder tree view with map visualizer"
+
+[[screenshots]]
+file = "02.png"
+caption = "Breakdown of what filetypes take up the most space"
+
+[[get]]
+kind = "none"
+
+[notice]
+kind = "local"
+text = "storage-analyzer currently is private/personal only. Source will be available and installable through AUR and cargo."
