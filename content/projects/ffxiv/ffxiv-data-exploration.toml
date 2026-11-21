@@ -1,0 +1,59 @@
+#:schema ../../schema/project.json
+slug = "ffxiv-data-exploration"
+name = "FFXIV Data Exploration"
+category = "ffxiv"
+status = "active"
+summary = "Explore FFXIV game data tables: relationship graph, row browser and diffs between game versions."
+priority = 1
+updated = 2026-10-13
+tags = ["web"]
+source = { host = "GitHub", url = "https://github.com/tnessy/ffxiv-data-exploration" }
+description = """
+A browser-based tool for exploring FFXIV excel sheet data. Visualise how tables relate in a graph, browse row data, search across versions, and diff schema and data changes between game versions.
+"""
+
+[webtool]
+runs_in = "any modern browser"
+account = "none"
+data = "static site"
+
+[[get]]
+kind = "external"
+url = "https://tnessy.github.io/ffxiv-data-exploration/"
+
+[[screenshots]]
+file = "01.png"
+caption = "Sheet relationship graph"
+
+[[screenshots]]
+file = "02.png"
+caption = "Raw data view"
+
+[[screenshots]]
+file = "03.png"
+caption = "Overview of changes in patch"
+
+[[changelog]]
+version = "1.0.4"
+date = 2026-10-13
+items = ["Add 7.56hf1, 7.57 data"]
+
+[[changelog]]
+version = "1.0.3"
+date = 2026-09-08
+items = ["Add 7.55hf1, 7.55hf2, 7.56 data"]
+
+[[changelog]]
+version = "1.0.2"
+date = 2026-07-28
+items = ["Add 7.51hf1, 7.51hf2, 7.55 data"]
+
+[[changelog]]
+version = "1.0.1"
+date = 2026-06-02
+items = ["Add 7.51 data"]
+
+[[changelog]]
+version = "1.0.0"
+date = 2026-05-31
+items = ["Initial release with 7.0 to 7.50 data"]
