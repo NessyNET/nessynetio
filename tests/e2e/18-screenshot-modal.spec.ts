@@ -221,7 +221,7 @@ test('modal: fits a phone with no sideways scroll and the whole image visible @c
 test.describe('JavaScript off', () => {
   test.use({ javaScriptEnabled: false });
 
-  test('a thumbnail is a plain link that opens the image @cross', async ({ page }) => {
+  test('a thumbnail is a plain link that opens the image @cross', async ({ page, problems }) => {
     await page.setViewportSize(DESKTOP);
     await page.goto(urlOf(PLUGIN));
     await expect(page.locator('dialog[data-shotbox]')).toBeHidden();
@@ -232,5 +232,11 @@ test.describe('JavaScript off', () => {
     expect(response?.ok()).toBe(true);
     expect(page.url()).toContain(href ?? 'missing');
     expect(response?.headers()['content-type']).toMatch(/image\//);
+    // The page is now the browser's own image viewer. Chromium styles it with inline CSS, which the site's
+    // `style-src 'self'` (sent with every response by nginx) blocks: the image still shows. Not the site's markup.
+    const viewerOnly = (problem: string): boolean => /inline style/i.test(problem) && /content security policy/i.test(problem);
+    const rest = problems.filter((problem) => !viewerOnly(problem));
+    problems.length = 0;
+    problems.push(...rest);
   });
 });
