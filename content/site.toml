@@ -2,14 +2,13 @@
 
 [site]
 url = "https://nessynet.io"
-description = "Plugins, mods and small tools for FFXIV, Minecraft and Linux, with the bookmarks behind them. [sample]"
+description = "Collection of projects, tools, ideas that I've created over time. Mostly FFXIV, Minecraft, or Linux related in some way."
 
 [whoami]
-sample = true
 name = "Nessy"
-tagline = "I make *plugins*{green}, *mods*{yellow} and *small tools*{cyan}. [sample]"
-bio = "FFXIV plugins and web tools, Minecraft mods and a modpack, and Linux utilities. Free to use. Some are open source; some live on private Git or only on my machine. [sample]"
+tagline = "I cobble together things for *ffxiv*{blue}, *minecraft*{orange}, *linux*{yellow}, and other *stuff*{purple}."
+bio = "FFXIV tools, Minecraft mods, and Linux utils. Free to use. Some open source; some private."
 
 [whoami.links]
-github = "https://github.com/example"
+github = "https://github.com/tnessy"
 mail = "hello@nessynet.io"

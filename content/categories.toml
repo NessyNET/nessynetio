@@ -2,67 +2,42 @@
 
 [[category]]
 id = "ffxiv"
-sample = true
 label = "Final Fantasy XIV"
 short_label = "FFXIV"
-blurb = "Dalamud plugins, browser tools, and desktop apps. Web tools open on their own subdomain. [sample]"
+blurb = "Dalamud plugins and browser tools for the critically acclaimed MMORPG..."
 accent = "blue"
 tags = [
   { id = "plugin", type = true, description = "Dalamud plugin; installs from the custom repo" },
-  { id = "web", type = true, label = "web tool", description = "Runs in the browser on its own subdomain" },
-  { id = "offline", type = true, label = "offline tool", description = "Desktop app or script" },
-  { id = "dalamud", description = "Built on the Dalamud framework" },
-  { id = "api12", description = "Works on Dalamud API 12" },
-  { id = "windows", description = "Runs on Windows" },
-  { id = "linux", description = "Runs on Linux" },
-  { id = "gear", description = "Gear and melds" },
+  { id = "web", type = true, label = "web tool", description = "Runs in the browser" }
 ]
 
 [[category]]
 id = "minecraft"
-sample = true
 label = "Minecraft"
-blurb = "Mods and a modpack. Each page says which loader and game version it needs. [sample]"
+blurb = "Mods and modpacks. Each page says which loader and game version it needs."
 accent = "orange"
 tags = [
   { id = "mod", type = true, description = "A single mod" },
-  { id = "modpack", type = true, description = "A curated pack of mods" },
-  { id = "fabric", description = "Fabric loader" },
-  { id = "neoforge", description = "NeoForge loader" },
-  { id = "mc121", description = "Minecraft 1.21.x" },
-  { id = "worldgen", description = "Changes world generation" },
+  { id = "modpack", type = true, description = "A curated pack of mods" }
 ]
 
 [[category]]
 id = "linux"
-sample = true
 label = "Linux tools"
-blurb = "Command-line helpers, a couple of TUIs, and themes. Arch users can install some from the AUR. [sample]"
+blurb = "Command-line scripts, TUIs, desktop customization, etc."
 accent = "yellow"
 tags = [
   { id = "cli", type = true, label = "cli tool", description = "Command-line tool" },
   { id = "tui", type = true, description = "Full-screen terminal UI" },
-  { id = "aur", description = "Installable from the AUR" },
-  { id = "theme", type = true, description = "Colour theme or dotfiles" },
+  { id = "style", type = true, layout = "tool", description = "Styles, dotfiles, and more" }
 ]
 
 [[category]]
 id = "other"
-sample = true
 label = "Other projects"
-blurb = "Bots and experiments that fit nowhere else. [sample]"
+blurb = "Experiments and projects that fit nowhere else."
 accent = "purple"
 tags = [
-  { id = "bot", type = true, description = "Chat bot" },
   { id = "web", description = "Runs in the browser" },
   { id = "experiment", type = true, layout = "generic", description = "A one-off experiment" },
 ]
-
-# Declared but empty and without show_empty: not published; the build prints a NOTE (ux 5.8).
-[[category]]
-id = "terraria"
-sample = true
-label = "Terraria"
-blurb = "Terraria mods, coming one day. [sample]"
-accent = "pink"
-tags = [{ id = "mod", type = true, description = "A single mod" }]
