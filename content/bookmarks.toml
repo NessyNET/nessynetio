@@ -47,5 +47,4 @@ url = "https://alacritty.org/"
 note = "Current terminal I use"
 relation = "tool"
 category = "linux"
-author = "Kovid Goyal"
 projects = ["nessy-theme"]
