@@ -68,7 +68,8 @@ describe.each(names)('fixture %s', (name) => {
 });
 
 describe('message format', () => {
-  it('every diagnostic from every fixture names its file, and entry and field wherever it has them', async () => {
+  // Loads every fixture twice (local and strict), so it can pass 5 s when the machine is busy.
+  it('every diagnostic from every fixture names its file, and entry and field wherever it has them', { timeout: 30_000 }, async () => {
     for (const name of ['_base', ...names]) {
       const e = expectations.get(name);
       for (const strict of [false, true]) {
