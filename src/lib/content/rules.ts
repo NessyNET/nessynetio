@@ -78,7 +78,7 @@ export const RULES: readonly Rule[] = [
   { code: 'bookmark/unknown-project', local: 'warning', strict: 'error', uxRow: 'Bookmark unknown project slug: warning; link dropped', message: (c) => `project '${c['slug']}' does not exist; the link is dropped` },
   { code: 'bookmark/own-host', local: 'warning', strict: 'error', uxRow: 'Bookmark URL on nessynet.io', message: (c) => `url '${c['url']}' is on the site host; bookmarks are for other sites` },
   { code: 'whoami/name-long', local: 'warning', strict: 'warning', uxRow: 'whoami over-length name (max 24)', message: (c) => `name is ${c['length']} characters; at most 24 are expected` },
-  { code: 'whoami/tagline-long', local: 'warning', strict: 'warning', uxRow: 'whoami over-length tagline (max 60 rendered chars)', message: (c) => `tagline renders ${c['length']} characters; at most 60 are expected` },
+  { code: 'whoami/tagline-long', local: 'warning', strict: 'warning', uxRow: 'whoami over-length tagline (max 80 rendered chars)', message: (c) => `tagline renders ${c['length']} characters; at most 80 are expected` },
   { code: 'whoami/bio-long', local: 'warning', strict: 'warning', uxRow: 'whoami over-length bio (max 280)', message: (c) => `bio is ${c['length']} characters; at most 280 are expected` },
   { code: 'whoami/unknown-link', local: 'warning', strict: 'error', uxRow: 'whoami link key other than github or mail: warning; ignored', message: (c) => `link key '${c['key']}' is not supported (only github and mail); it is ignored` },
   { code: 'whoami/tagline-markup', local: 'warning', strict: 'error', uxRow: 'Malformed tagline markup (ux 7.14)', message: text('detail') },
@@ -125,7 +125,7 @@ class Report {
 
 const ID_FORMAT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MAX_NAME = 24;
-const MAX_TAGLINE = 60;
+const MAX_TAGLINE = 80;
 const MAX_BIO = 280;
 const MAX_NON_TYPE_TAGS = 3;
 const MAX_SCREENSHOT_WIDTH = 3000;

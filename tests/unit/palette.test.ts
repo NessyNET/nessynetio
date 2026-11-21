@@ -9,8 +9,8 @@ describe('palette allow-lists', () => {
     expect([...TAGLINE_COLOURS]).toEqual(['green', 'yellow', 'cyan', 'teal', 'blue', 'purple', 'pink', 'orange']);
     expect(isTaglineColour('red')).toBe(false);
   });
-  it('auto cycle is green yellow cyan', () => {
-    expect([...TAGLINE_AUTO_CYCLE]).toEqual(['green', 'yellow', 'cyan']);
+  it('auto cycle is green yellow cyan pink purple', () => {
+    expect([...TAGLINE_AUTO_CYCLE]).toEqual(['green', 'yellow', 'cyan', 'pink', 'purple']);
   });
   it('type guards accept members and reject others', () => {
     expect(isCategoryAccent('teal')).toBe(true);

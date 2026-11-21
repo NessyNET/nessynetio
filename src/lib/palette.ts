@@ -3,7 +3,7 @@ import { PALETTE } from './palette-data.ts';
 
 export const CATEGORY_ACCENTS = ['blue', 'orange', 'yellow', 'purple', 'cyan', 'teal', 'pink'] as const;
 export const TAGLINE_COLOURS = ['green', 'yellow', 'cyan', 'teal', 'blue', 'purple', 'pink', 'orange'] as const;
-export const TAGLINE_AUTO_CYCLE = ['green', 'yellow', 'cyan'] as const;
+export const TAGLINE_AUTO_CYCLE = ['green', 'yellow', 'cyan', 'pink', 'purple'] as const;
 
 export type CategoryAccent = (typeof CATEGORY_ACCENTS)[number];
 export type TaglineColour = (typeof TAGLINE_COLOURS)[number];

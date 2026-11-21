@@ -4,7 +4,7 @@ description = "Validation base fixture."
 
 [whoami]
 name = "Nessy"
-tagline = "word word word word word word word word word word word word word *end*"
+tagline = "word word word word word word word word word word word word word word word word word *end*"
 bio = "Base fixture bio."
 
 [whoami.links]

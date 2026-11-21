@@ -4,7 +4,7 @@ description = "Plugins, mods and small tools for FFXIV, Minecraft and Linux, wit
 
 [whoami]
 name = "Nessy"
-tagline = "I make *plugins*{green}, *mods*{yellow} and *small tools*{cyan}."
+tagline = "I make *plugins*{green}, *mods*{yellow}, *small tools*{cyan}, *themes* and *bots* for games and Linux desktops."
 bio = "FFXIV plugins and web tools, Minecraft mods and a modpack, and Linux utilities. Free to use. Some are open source; some live on private Git or only on my machine."
 
 [whoami.links]

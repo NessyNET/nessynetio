@@ -44,7 +44,7 @@ describe('Whoami', () => {
   it('h1 reads "{name}. {plain tagline}" and its cursor is aria-hidden', async () => {
     const html = await render(Whoami, { whoami: model.whoami });
     const h1 = /<h1>([\s\S]*?)<\/h1>/.exec(html)?.[1] ?? '';
-    expect(text(h1)).toBe('Nessy. I make plugins, mods and small tools.');
+    expect(text(h1)).toBe('Nessy. I make plugins, mods, small tools, themes and bots for games and Linux desktops.');
     expect(h1).toMatch(/<span class="cursor" aria-hidden="true"><\/span>$/);
   });
 
@@ -55,6 +55,8 @@ describe('Whoami', () => {
       ['acc-green', 'plugins'],
       ['acc-yellow', 'mods'],
       ['acc-cyan', 'small tools'],
+      ['acc-pink', 'themes'],
+      ['acc-purple', 'bots'],
     ]);
     expect(html).not.toMatch(/<(em|strong)[\s>]/);
   });

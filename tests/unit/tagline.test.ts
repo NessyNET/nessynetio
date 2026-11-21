@@ -21,11 +21,11 @@ describe('parseTagline: valid markup', () => {
     expect(parseTagline('*x*{pink}').segments).toEqual([{ text: 'x', accent: 'pink' }]);
   });
 
-  it('does not advance the auto cycle for explicit colours', () => {
+  it('takes the automatic colour from the position among all accents, explicit ones included', () => {
     expect(parseTagline('*a*{pink} *b*').segments).toEqual([
       { text: 'a', accent: 'pink' },
       { text: ' ' },
-      { text: 'b', accent: 'green' },
+      { text: 'b', accent: 'yellow' },
     ]);
   });
 
@@ -89,17 +89,25 @@ describe('parseTagline: malformed markup', () => {
     expect(r.issues).toEqual([expect.objectContaining({ code: 'empty', index: 2 })]);
   });
 
-  it('renders the 4th and later accents plain and reports them', () => {
+  it('renders five unmarked accents in five distinct colours, with no issue', () => {
     const r = parseTagline('*a* *b* *c* *d* *e*');
-    expect(r.segments.filter((s) => s.accent !== undefined).map((s) => s.accent)).toEqual(['green', 'yellow', 'cyan']);
+    expect(r.segments.filter((s) => s.accent !== undefined).map((s) => s.accent)).toEqual(['green', 'yellow', 'cyan', 'pink', 'purple']);
     expect(r.plain).toBe('a b c d e');
-    expect(r.segments.at(-1)).toEqual({ text: ' d e' });
-    expect(r.issues.map((x) => x.code)).toEqual(['too-many', 'too-many']);
+    expect(r.issues).toEqual([]);
   });
 
-  it('counts explicit accents towards the cap of 3', () => {
-    const r = parseTagline('*a*{pink} *b*{blue} *c*{teal} *d*{orange}');
-    expect(r.segments.filter((s) => s.accent !== undefined)).toHaveLength(3);
+  it('renders the 6th and later accents plain and reports each', () => {
+    const r = parseTagline('*a* *b* *c* *d* *e* *f* *g*');
+    expect(r.segments.filter((s) => s.accent !== undefined)).toHaveLength(5);
+    expect(r.plain).toBe('a b c d e f g');
+    expect(r.segments.at(-1)).toEqual({ text: ' f g' });
+    expect(r.issues.map((x) => x.code)).toEqual(['too-many', 'too-many']);
+    expect(r.issues[0]?.detail).toBe('more than 5 accents, rendered plain');
+  });
+
+  it('counts explicit accents towards the cap of 5 and lets five distinct colours through', () => {
+    const r = parseTagline('*a*{pink} *b*{blue} *c*{teal} *d*{orange} *e*{purple} *f*{green}');
+    expect(r.segments.filter((s) => s.accent !== undefined).map((s) => s.accent)).toEqual(['pink', 'blue', 'teal', 'orange', 'purple']);
     expect(r.issues.map((x) => x.code)).toEqual(['too-many']);
   });
 
@@ -132,12 +140,12 @@ describe('parseTagline: lengths', () => {
     expect(r.renderedLength).toBe(4);
   });
 
-  it('measures a 60-character rendered tagline whose raw form is longer', () => {
-    const src = '*aaaaaaaaaaaaaaaaaaaa*{purple} *bbbbbbbbbbbbbbbbbbbb*{orange} *cccccccccccccccccc*{teal}';
-    expect(src.length).toBeGreaterThan(60);
+  it('measures an 80-character rendered tagline whose raw form is longer', () => {
+    const src = '*aaaaaaaaaaaaaaaaaaaaaaaaaaaa*{purple} *bbbbbbbbbbbbbbbbbbbbbbbbbbbb*{orange} *cccccccccccccccccccccc*{teal}';
+    expect(src.length).toBeGreaterThan(80);
     const r = parseTagline(src);
-    expect(r.renderedLength).toBe(60);
-    expect(r.plain).toHaveLength(60);
+    expect(r.renderedLength).toBe(80);
+    expect(r.plain).toHaveLength(80);
   });
 
   it('counts code points, not UTF-16 units', () => {

@@ -16,7 +16,7 @@ export interface ParsedTagline {
   readonly issues: TaglineIssue[];
 }
 
-const MAX_ACCENTS = 3;
+const MAX_ACCENTS = 5;
 /** Longest `{colour}` suffix examined; keeps the closing-brace search bounded. */
 const MAX_COLOUR_LENGTH = 16;
 
@@ -52,7 +52,6 @@ export function parseTagline(src: string): ParsedTagline {
   let plain = '';
   let pending = '';
   let accents = 0;
-  let autoUsed = 0;
 
   const flush = (): void => {
     if (pending !== '') segments.push({ text: pending });
@@ -112,8 +111,8 @@ export function parseTagline(src: string): ParsedTagline {
       continue;
     }
     accents++;
-    // Only automatic spans advance the colour cycle; explicit colours leave it alone.
-    const accent = explicit ?? TAGLINE_AUTO_CYCLE[autoUsed++ % TAGLINE_AUTO_CYCLE.length]!;
+    // The automatic colour is the one for this span's position among all accents; explicit colours take a position too.
+    const accent = explicit ?? TAGLINE_AUTO_CYCLE[accents - 1]!;
     flush();
     segments.push({ text: span.text, accent });
   }

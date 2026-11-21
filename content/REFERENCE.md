@@ -18,7 +18,7 @@ Every key is listed. Unknown keys give a warning (an error under `--strict`). Da
 | Key | Need | Notes |
 |---|---|---|
 | `name` | required | At most 24 characters. |
-| `tagline` | optional | `*words*{colour}` marks a coloured word. |
+| `tagline` | optional | At most 80 characters as shown (the markup is not counted). `*words*{colour}` marks a coloured word; up to 5 per tagline, more show plain. Without `{colour}` the colour follows the word's position: green, yellow, cyan, pink, purple. |
 | `bio` | required | 1 to 3 sentences, at most 280 characters. |
 | `sample` | optional | `true` for placeholder; remove when real. |
 | `links` | optional | See the next table. |
