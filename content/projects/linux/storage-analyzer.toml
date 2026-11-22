@@ -5,9 +5,10 @@ category = "linux"
 status = "active"
 summary = "A disk-usage TUI with a directory tree and a treemap that fill in live while it scans."
 priority = 1
-updated = 2026-10-24
+updated = 2026-11-21
 version = "0.1.0"
 tags = ["tui"]
+source = { host = "GitHub", url = "https://github.com/tnessy/storage-analyzer" }
 description = """
 Point it at a folder and see where the space goes. It scans in the background and the interface stays responsive, with a directory tree, a treemap of the current folder, a file-type breakdown and a list of the largest files, all updating as results arrive.
 
@@ -17,6 +18,11 @@ The layout is inspired by WinDirStat and WizTree. You can delete files and folde
 [linux]
 language = "Rust"
 needs = []
+
+[[linux.install]]
+method = "Cargo (crates.io)"
+command = "cargo install storage-analyzer"
+note = "Needs Rust 1.99 or newer."
 
 [linux.usage]
 synopsis = "storage-analyzer [OPTIONS] [PATH]"
@@ -39,8 +45,9 @@ file = "02.png"
 caption = "Breakdown of what filetypes take up the most space"
 
 [[get]]
-kind = "none"
+kind = "install"
 
-[notice]
-kind = "local"
-text = "storage-analyzer currently is private/personal only. Source will be available and installable through AUR and cargo."
+[[changelog]]
+version = "0.1.0"
+date = 2026-11-21
+items = ["Initial public release"]
