@@ -40,4 +40,5 @@ accent = "purple"
 tags = [
   { id = "web", description = "Runs in the browser" },
   { id = "experiment", type = true, layout = "generic", description = "A one-off experiment" },
+  { id = "style", type = true, layout = "tool", description = "Styles, dotfiles, and more" },
 ]
